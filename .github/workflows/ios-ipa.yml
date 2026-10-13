@@ -1,0 +1,63 @@
+# Personal build, only on this fork's ios-build branch (never part of a pull request): the
+# iPhone app as an .ipa for Sideloadly/AltStore, built on a GitHub macOS runner the way
+# .gitlab-ci.yml's build:ios does it. The archive is unsigned; the .app then gets an ad-hoc
+# signature that carries App.entitlements, so the tool that re-signs it with your Apple ID
+# keeps HealthKit.
+name: iOS IPA (personal)
+
+on:
+  push:
+    branches: [ios-build]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ipa:
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Mobile bundle, synced into ios/ (cap sync runs pod install)
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run build:mobile
+
+      - name: Archive without signing
+        working-directory: frontend/ios/App
+        run: |
+          set -o pipefail
+          xcodebuild -workspace App.xcworkspace -scheme App -configuration Release \
+            -destination 'generic/platform=iOS' -archivePath "$PWD/build/App.xcarchive" \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            archive | tail -80
+
+      - name: Package the .ipa, entitlements embedded
+        working-directory: frontend/ios/App
+        run: |
+          set -eu
+          rm -rf Payload && mkdir Payload
+          cp -R build/App.xcarchive/Products/Applications/App.app Payload/
+          if [ -d Payload/App.app/Frameworks ]; then
+            for f in Payload/App.app/Frameworks/*; do codesign -f -s - "$f"; done
+          fi
+          codesign -f -s - --entitlements App/App.entitlements Payload/App.app
+          codesign -d --entitlements - Payload/App.app
+          VER="$(node -p "require('../../package.json').version")"
+          zip -qry "$GITHUB_WORKSPACE/openGym-$VER-unsigned.ipa" Payload
+          ls -la "$GITHUB_WORKSPACE"/*.ipa
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: openGym-ipa
+          path: openGym-*-unsigned.ipa
+          retention-days: 14
