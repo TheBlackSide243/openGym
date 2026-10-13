@@ -155,7 +155,7 @@ export const metricSheet = type => openSheet(close => <MetricDetail type={type} 
 
 /* ---------------- the screen ---------------- */
 
-function MetricCard({ S, type }) {
+export function MetricCard({ S, type }) {
   const latest = latestOf(S, type)
   const m = HEALTH_METRICS[type]
   const spark = useMemo(() => seriesOf(S, type, 'month').map(p => ({ t: p.t, d: p.d, y: chartValue(type, p.v, S) })), [S, type])
@@ -182,7 +182,8 @@ export default function Health() {
   // empty state's pointer to Settings.
   const [canConnect, setCanConnect] = useState(false)
   useEffect(() => {
-    if (!MOBILE) return
+    // The web app and the PWA always can: Health's export, or a Shortcut (Settings → Health).
+    if (!MOBILE) { setCanConnect(true); return }
     let gone = false
     Promise.all(PROVIDERS.map(p => p.isAvailable().catch(() => false))).then(r => { if (!gone) setCanConnect(r.some(Boolean)) })
     return () => { gone = true }

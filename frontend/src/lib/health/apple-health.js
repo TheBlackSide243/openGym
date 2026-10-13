@@ -67,7 +67,7 @@ export function readingsFromDays(type, days) {
     if (!d || v == null) continue
     // A day with nothing counted (0 steps on a phone left in a drawer) is not a reading.
     if (spec.stat === 'sum' && v <= 0) continue
-    const r = { type, v: round(v, spec.unit === 'count' ? 0 : 2), t: new Date(d + 'T12:00:00').getTime(), d, sid: `${type}:${d}`, src: APPLE_HEALTH }
+    const r = { type, v: round(v, spec.unit === 'count' ? 0 : 2), t: Date.parse(d + 'T12:00:00Z'), d, sid: `${type}:${d}`, src: APPLE_HEALTH }
     if (num(day.min) != null) r.lo = round(Number(day.min), 0)
     if (num(day.max) != null) r.hi = round(Number(day.max), 0)
     out.push(r)
