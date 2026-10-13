@@ -353,6 +353,8 @@ function trainedIds(S, workouts) {
 // 10k+ tokens a small local model cannot hold and a metered API should not be billed for —
 // while stalls and trends already live in `aggregates`, computed over the full window.
 export const FULL_DETAIL_SESSIONS = 3;
+// The sessions a question in the chat sees: enough for "last week", not a review's whole window.
+export const ASK_SESSIONS = 8;
 
 // A set taken to failure (the app's "F", `failure: true`) is RIR 0 when nothing was rated.
 const fmtSet = s => {
@@ -395,6 +397,7 @@ function compactWorkout(w) {
       return {
         id: ident(en.id),
         name: libraryName(en.id),
+        ...(en.extra === true ? { extra: true } : {}),
         done: done.length + '/' + sets.length,
         ...(target ? { target: fmtSet({ w: target.weight, r: target.reps, sec: target.sec }) } : {}),
         ...(top ? { top: fmtSet(top) } : {})
@@ -412,13 +415,99 @@ function cleanWorkout(w) {
     ...(w.rating ? { rating: typeof w.rating === 'number' ? w.rating : text(String(w.rating), 20) } : {}),
     ...(w.note ? { note: String(w.note).slice(0, NOTE_MAX) } : {}),
     prs: list(w.prs).length,
+    ...extrasSummary(w),
     entries: entriesOf(w).map(en => ({
       id: ident(en.id),
       name: libraryName(en.id),
+      ...(en.extra === true ? { extra: true } : {}),
       target: targetOf(en),
-      sets: setsOf(en).map(cleanSet)
+      sets: setsOf(en).slice(0, MAX_SETS_PER_ENTRY).map(cleanSet)
     }))
   };
+}
+
+// The most sets of one exercise a payload carries — far past any real session, and a bound on a
+// running session the client sends along with a question (`today`).
+const MAX_SETS_PER_ENTRY = 30;
+const MAX_ENTRIES_TODAY = 40;
+
+// An exercise added during a session (`extra: true`, frontend/src/lib/session-extras.js) is real
+// training but not the plan. A session with any carries the split, so "the plan had 12 sets and
+// 17 were done" can be read without adding it up; one without stays exactly the shape it was.
+function extrasSummary(w) {
+  const entries = entriesOf(w);
+  if (!entries.some(en => en.extra === true)) return {};
+  const work = en => setsOf(en).filter(s => s.done && !isWarmupSet(s)).length;
+  const planned = entries.filter(en => en.extra !== true), extra = entries.filter(en => en.extra === true);
+  return {
+    summary: {
+      plannedExercises: Number.isInteger(w.planEx) ? w.planEx : planned.length,
+      plannedSets: planned.reduce((n, en) => n + work(en), 0),
+      extraExercises: extra.length,
+      extraSets: extra.reduce((n, en) => n + work(en), 0)
+    }
+  };
+}
+
+/** The session running on the phone as the question is asked, bounded like a logged one. */
+function cleanToday(a) {
+  if (!a || typeof a !== 'object' || !Array.isArray(a.entries)) return null;
+  const w = { ...a, entries: a.entries.filter(en => en && typeof en === 'object').slice(0, MAX_ENTRIES_TODAY), end: null };
+  const out = cleanWorkout(w);
+  out.minutes = num(a.minutes) ?? null;
+  return out;
+}
+
+/* ---------- health, for a question about the body ---------- */
+
+// Health readings (frontend/src/lib/health/records.js) are the most sensitive part of a profile,
+// so a question carries them only when it is about the body: these words, in the app's main
+// languages. A question about sets or exercise choice sends none of it.
+const BODY_WORDS = /(weight|weigh|bmi|body ?fat|lean|muscle mass|water|visceral|bone|metaboli|bmr|calor|kcal|sleep|slept|steps|walk|heart|pulse|bpm|resting|tired|bulk|diet|peso|grass|magra|massa|acqua|sonno|dorm|passi|cuore|battit|frequenza|calori|stanc|dieta|gewicht|fett|schlaf|schritt|herz|kalor|poids|graisse|sommeil|coeur|cœur|grasa|sueño|pasos|corazón|gordura|sono|passos|coração)/i;
+export const asksAboutBody = q => typeof q === 'string' && BODY_WORDS.test(q);
+
+const HEALTH_TYPES = ['weight', 'bmi', 'bodyFat', 'fatMass', 'leanMass', 'muscleMass', 'bodyWater', 'visceralFat', 'boneMass', 'bmr',
+  'height', 'steps', 'distance', 'activeEnergy', 'restingEnergy', 'heartRate', 'restingHeartRate', 'sleep'];
+const DAILY_SUM = new Set(['steps', 'distance', 'activeEnergy', 'restingEnergy', 'sleep']);
+
+/**
+ * The latest value of each health metric and its change over about a month, from S.health, in
+ * the canonical units the records keep (kg, cm, km, kcal, %, bpm, steps, minutes). A day's total
+ * is given as the average of the last seven days that have one. Nothing per reading, no source.
+ */
+export function healthSummary(S, today = iso(new Date())) {
+  const byType = new Map();
+  for (const r of list(S.health)) {
+    if (!r || typeof r !== 'object' || !HEALTH_TYPES.includes(r.type) || num(r.v) === undefined || !day(r.d)) continue;
+    if (!byType.has(r.type)) byType.set(r.type, new Map());
+    const days = byType.get(r.type);
+    const d = day(r.d);
+    const v = Number(r.v);
+    const t = Number(r.t) || 0;
+    // One value per day: a day's total is the larger of two sources, a reading the latest.
+    const cur = days.get(d);
+    if (!cur || (DAILY_SUM.has(r.type) ? v > cur.v : t >= cur.t)) days.set(d, { v, t });
+  }
+  const monthAgo = new Date(today + 'T12:00:00');
+  monthAgo.setDate(monthAgo.getDate() - 30);
+  const cutoff = iso(monthAgo);
+  const round = n => Math.round(n * 10) / 10;
+  const out = {};
+  for (const [type, days] of byType) {
+    const sorted = [...days.entries()].sort(([a], [b]) => (a < b ? -1 : 1));
+    if (!sorted.length) continue;
+    if (DAILY_SUM.has(type)) {
+      const last7 = sorted.slice(-7);
+      const before = sorted.filter(([d]) => d < last7[0][0] && d >= cutoff).slice(-7);
+      const avg = xs => xs.reduce((n, [, x]) => n + x.v, 0) / xs.length;
+      out[type] = { avgLast7: round(avg(last7)), days: last7.length, ...(before.length ? { avgBefore: round(avg(before)) } : {}) };
+    } else {
+      const [d, last] = sorted[sorted.length - 1];
+      const old = sorted.filter(([x]) => x <= cutoff).pop() || sorted[0];
+      out[type] = { latest: round(last.v), on: d, ...(old[0] !== d ? { monthAgo: round(old[1].v), since: old[0] } : {}) };
+    }
+  }
+  return out;
 }
 
 /** The body-weight series between two days, each weigh-in a date and a number. */
@@ -485,7 +574,7 @@ export function build(S, opts = {}) {
   const profile = opts.intake || coach.profile || null;
   const p = {
     coach_contract: CONTRACT,
-    task: opts.kind === 'review' ? 'review' : opts.kind === 'debrief' ? 'debrief' : 'create',
+    task: opts.kind === 'review' ? 'review' : opts.kind === 'debrief' ? 'debrief' : opts.kind === 'ask' ? 'ask' : 'create',
     meta: {
       profile: opts.handle,
       // Both are short codes in any real state; cut anyway, since the state is the client's.
@@ -541,6 +630,28 @@ export function build(S, opts = {}) {
       p.previous = [];
     }
     if (opts.cohort) p.cohort = cleanCohort(opts.cohort);
+  } else if (opts.kind === 'ask') {
+    // A question in the chat: the recent sessions (the newest in full), the stalls, the session
+    // running now when the phone sent it, and the body's numbers only for a question about them.
+    const question = String(opts.note || '').slice(0, MAX_NOTE_CHARS);
+    p.question = question;
+    const workouts = (S.workouts || []).filter(w => w && w.d).slice(-ASK_SESSIONS);
+    const detailFrom = Math.max(0, workouts.length - FULL_DETAIL_SESSIONS);
+    p.window = {
+      from: day(workouts[0]?.d),
+      to: day(workouts[workouts.length - 1]?.d),
+      workouts: workouts.map((w, i) => (i >= detailFrom ? cleanWorkout(w) : compactWorkout(w)))
+    };
+    p.aggregates = aggregates(S, workouts);
+    const today = cleanToday(opts.today);
+    if (today) p.today = today;
+    if (asksAboutBody(question)) {
+      const health = healthSummary(S);
+      if (Object.keys(health).length) p.health = health;
+      const since = new Date();
+      since.setDate(since.getDate() - 56);
+      p.bodyweight = { goal: num(S.targetW) ?? null, series: weighIns(S, iso(since), null) };
+    }
   } else if (opts.kind === 'review') {
     const workouts = reviewWindow(S, coach.lastReview?.at ? String(coach.lastReview.at).slice(0, 10) : null);
     const detailFrom = Math.max(0, workouts.length - FULL_DETAIL_SESSIONS);
