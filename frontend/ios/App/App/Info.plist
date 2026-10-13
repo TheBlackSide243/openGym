@@ -62,6 +62,11 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Used to scan your gym membership QR code, and to take a photo or video of an exercise you add yourself.</string>
 	<key>NSHealthShareUsageDescription</key>
