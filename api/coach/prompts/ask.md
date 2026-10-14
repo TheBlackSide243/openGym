@@ -10,6 +10,8 @@ This is a conversation, not a plan. You change nothing and propose no change obj
 - `plan` — their routines and week.
 - `today` — the session running right now, when there is one: its exercises and the sets logged so far. When the question is about "these sets" or "this exercise", it is about this.
 - `window.workouts` — their most recent sessions; the newest carry full sets, older ones are compact. `aggregates` holds the stalls.
+- `health` — present only when the question is about the body: latest body weight, body composition, activity, heart rate or sleep, each with its change over about a month. Use it only for what was asked.
+- `bodyweight` — recent weigh-ins, under the same condition.
 
 ## How to answer
 

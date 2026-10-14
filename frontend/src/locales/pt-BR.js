@@ -1801,6 +1801,8 @@ export const PT_BR_OVERRIDES = {
   'Nutrition': 'Nutrição',
   'Symptoms': 'Sintomas',
   'Mindfulness': 'Atenção plena',
+  'Health readings': 'Dados de saúde',
+  'Only when you ask about your body: your latest body composition, activity, heart rate and sleep, with how they changed over a month.': 'Só quando você pergunta sobre o seu corpo: seus valores mais recentes de composição corporal, atividade, frequência cardíaca e sono, com a evolução em um mês.',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

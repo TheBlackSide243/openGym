@@ -2660,4 +2660,6 @@ export default {
   'Cycle tracking': 'Zyklusprotokoll',
   'Symptoms': 'Symptome',
   'Mindfulness': 'Achtsamkeit',
+  'Health readings': 'Gesundheitswerte',
+  'Only when you ask about your body: your latest body composition, activity, heart rate and sleep, with how they changed over a month.': 'Nur wenn du nach deinem Körper fragst: deine neuesten Werte zu Körperzusammensetzung, Aktivität, Herzfrequenz und Schlaf, mit ihrer Veränderung über einen Monat.',
 }

@@ -2695,4 +2695,6 @@ export default {
   'Cycle tracking': 'تتبع الدورة',
   'Symptoms': 'الأعراض',
   'Mindfulness': 'اليقظة الذهنية',
+  'Health readings': 'بيانات الصحة',
+  'Only when you ask about your body: your latest body composition, activity, heart rate and sleep, with how they changed over a month.': 'فقط عندما تسأل عن جسمك: أحدث قيم تكوين الجسم والنشاط ونبض القلب والنوم، مع تغيّرها خلال شهر.',
 }

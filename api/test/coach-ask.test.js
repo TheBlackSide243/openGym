@@ -1,5 +1,6 @@
 /* A question in the Coach's chat (the `ask` job): answered in words, with the recent sessions,
- * and the session running on the phone. */
+ * the session running on the phone, and the body's numbers only when the question is about the
+ * body. */
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { tempData } from './helpers.mjs';
@@ -24,6 +25,11 @@ const S = {
     ]
   }],
   bodyweight: [{ d: '2026-10-01', w: 80, t: 1 }],
+  health: [
+    { id: 'a', type: 'bodyFat', v: 18, u: '%', t: Date.parse('2026-09-01T07:00:00'), d: '2026-09-01', src: 'manual' },
+    { id: 'b', type: 'bodyFat', v: 17, u: '%', t: Date.parse('2026-10-10T07:00:00'), d: '2026-10-10', src: 'manual' },
+    { id: 'c', type: 'steps', v: 9000, u: 'count', t: Date.parse('2026-10-10T12:00:00'), d: '2026-10-10', src: 'apple-health', sid: 'steps:2026-10-10' }
+  ],
   coach: { consent: { agreedAt: 1 }, chat: [{ role: 'user', kind: 'text', text: 'ciao' }, { role: 'coach', kind: 'text', text: 'Ciao!' }] }
 };
 
@@ -47,6 +53,21 @@ test('ask payload: the running session the phone sent is bounded like a logged o
   assert.ok(!JSON.stringify(p.today).includes('private'));
   assert.ok(!JSON.stringify(p.today).includes('dropped'));
   assert.equal(payloadLib.build(S, { handle: 'h'.repeat(16), kind: 'ask', note: 'x', today: 'nope' }).today, undefined);
+});
+
+test('ask payload: health readings travel only for a question about the body', () => {
+  const plain = payloadLib.build(S, { handle: 'h'.repeat(16), kind: 'ask', note: 'Meglio squat o pressa?' });
+  assert.equal(plain.health, undefined);
+  assert.equal(plain.bodyweight, undefined);
+  const body = payloadLib.build(S, { handle: 'h'.repeat(16), kind: 'ask', note: 'Il mio grasso corporeo sta scendendo?' });
+  assert.deepEqual(body.health.bodyFat, { latest: 17, on: '2026-10-10', monthAgo: 18, since: '2026-09-01' });
+  assert.equal(body.health.steps.avgLast7, 9000);
+  assert.ok(!JSON.stringify(body.health).includes('apple-health'), 'no source, no record ids');
+});
+
+test('asksAboutBody reads the body words of the app languages, and nothing else', () => {
+  for (const q of ['How is my weight?', 'Dormo poco, è un problema?', 'Wie viel Körperfett?', 'Mon sommeil est mauvais ?', 'quanti passi?']) assert.ok(payloadLib.asksAboutBody(q), q);
+  for (const q of ['How long should I rest?', 'Aggiungo un altro esercizio?', 'Meglio questo o quello?']) assert.ok(!payloadLib.asksAboutBody(q), q);
 });
 
 test('validateAsk: one answer, no changes', () => {

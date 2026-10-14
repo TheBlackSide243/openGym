@@ -2640,4 +2640,6 @@ export default {
   'Cycle tracking': 'Döngü takibi',
   'Symptoms': 'Belirtiler',
   'Mindfulness': 'Farkındalık',
+  'Health readings': 'Sağlık verileri',
+  'Only when you ask about your body: your latest body composition, activity, heart rate and sleep, with how they changed over a month.': 'Yalnızca vücudunla ilgili bir soru sorduğunda: en son vücut kompozisyonu, aktivite, nabız ve uyku değerlerin ve bir aydaki değişimleri.',
 }

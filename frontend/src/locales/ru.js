@@ -2644,4 +2644,6 @@ export default {
   'Cycle tracking': 'Отслеживание цикла',
   'Symptoms': 'Симптомы',
   'Mindfulness': 'Осознанность',
+  'Health readings': 'Данные о здоровье',
+  'Only when you ask about your body: your latest body composition, activity, heart rate and sleep, with how they changed over a month.': 'Только когда вы спрашиваете о своём теле: последние значения состава тела, активности, пульса и сна и их изменение за месяц.',
 }

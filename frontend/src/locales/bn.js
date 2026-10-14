@@ -2719,4 +2719,6 @@ export default {
   'Cycle tracking': 'চক্র ট্র্যাকিং',
   'Symptoms': 'উপসর্গ',
   'Mindfulness': 'মননশীলতা',
+  'Health readings': 'স্বাস্থ্যের তথ্য',
+  'Only when you ask about your body: your latest body composition, activity, heart rate and sleep, with how they changed over a month.': 'শুধু যখন আপনি নিজের শরীর নিয়ে প্রশ্ন করেন: দেহের গঠন, কার্যকলাপ, হৃদস্পন্দন ও ঘুমের সাম্প্রতিক মান, আর এক মাসে সেগুলোর পরিবর্তন।',
 }

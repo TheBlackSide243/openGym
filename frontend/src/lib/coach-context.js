@@ -6,7 +6,9 @@
 // Today that is the session running on this device: the server never holds `S.active` (a push
 // leaves it out), so a question asked mid-workout ("how long between these sets?") would
 // otherwise be answered without the workout it is about. Only the numbers go: exercise ids,
-// planned or extra, targets and logged sets — no notes, media or device bookkeeping.
+// planned or extra, targets and logged sets — no notes, media or device bookkeeping. Health
+// readings are not added here: the payload builder takes them from the profile, and only for a
+// question about the body.
 import { isWarmupRow } from './workout-model.js'
 
 const SET_KEYS = ['w', 'r', 'sec', 'min', 'speed', 'rir', 'rpe']

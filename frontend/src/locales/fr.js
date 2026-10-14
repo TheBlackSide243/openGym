@@ -2640,4 +2640,6 @@ export default {
   'Cycle tracking': 'Suivi du cycle',
   'Symptoms': 'Symptômes',
   'Mindfulness': 'Pleine conscience',
+  'Health readings': 'Données de santé',
+  'Only when you ask about your body: your latest body composition, activity, heart rate and sleep, with how they changed over a month.': 'Seulement quand tu poses une question sur ton corps : tes dernières valeurs de composition corporelle, d’activité, de fréquence cardiaque et de sommeil, avec leur évolution sur un mois.',
 }

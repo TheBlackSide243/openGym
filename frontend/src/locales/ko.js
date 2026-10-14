@@ -2640,4 +2640,6 @@ export default {
   'Cycle tracking': '주기 추적',
   'Symptoms': '증상',
   'Mindfulness': '마음 챙기기',
+  'Health readings': '건강 데이터',
+  'Only when you ask about your body: your latest body composition, activity, heart rate and sleep, with how they changed over a month.': '몸에 대해 물어볼 때만: 최신 체성분, 활동, 심박수, 수면 값과 한 달 동안의 변화.',
 }

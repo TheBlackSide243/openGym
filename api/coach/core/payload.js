@@ -437,6 +437,58 @@ function cleanToday(a) {
   return out;
 }
 
+/* ---------- health, for a question about the body ---------- */
+
+// Health readings (frontend/src/lib/health/records.js) are the most sensitive part of a profile,
+// so a question carries them only when it is about the body: these words, in the app's main
+// languages. A question about sets or exercise choice sends none of it.
+const BODY_WORDS = /(weight|weigh|bmi|body ?fat|lean|muscle mass|water|visceral|bone|metaboli|bmr|calor|kcal|sleep|slept|steps|walk|heart|pulse|bpm|resting|tired|bulk|diet|peso|grass|magra|massa|acqua|sonno|dorm|passi|cuore|battit|frequenza|calori|stanc|dieta|gewicht|fett|schlaf|schritt|herz|kalor|poids|graisse|sommeil|coeur|cœur|grasa|sueño|pasos|corazón|gordura|sono|passos|coração)/i;
+export const asksAboutBody = q => typeof q === 'string' && BODY_WORDS.test(q);
+
+const HEALTH_TYPES = ['weight', 'bmi', 'bodyFat', 'fatMass', 'leanMass', 'muscleMass', 'bodyWater', 'visceralFat', 'boneMass', 'bmr',
+  'height', 'steps', 'distance', 'activeEnergy', 'restingEnergy', 'heartRate', 'restingHeartRate', 'sleep'];
+const DAILY_SUM = new Set(['steps', 'distance', 'activeEnergy', 'restingEnergy', 'sleep']);
+
+/**
+ * The latest value of each health metric and its change over about a month, from S.health, in
+ * the canonical units the records keep (kg, cm, km, kcal, %, bpm, steps, minutes). A day's total
+ * is given as the average of the last seven days that have one. Nothing per reading, no source.
+ */
+export function healthSummary(S, today = iso(new Date())) {
+  const byType = new Map();
+  for (const r of list(S.health)) {
+    if (!r || typeof r !== 'object' || !HEALTH_TYPES.includes(r.type) || num(r.v) === undefined || !day(r.d)) continue;
+    if (!byType.has(r.type)) byType.set(r.type, new Map());
+    const days = byType.get(r.type);
+    const d = day(r.d);
+    const v = Number(r.v);
+    const t = Number(r.t) || 0;
+    // One value per day: a day's total is the larger of two sources, a reading the latest.
+    const cur = days.get(d);
+    if (!cur || (DAILY_SUM.has(r.type) ? v > cur.v : t >= cur.t)) days.set(d, { v, t });
+  }
+  const monthAgo = new Date(today + 'T12:00:00');
+  monthAgo.setDate(monthAgo.getDate() - 30);
+  const cutoff = iso(monthAgo);
+  const round = n => Math.round(n * 10) / 10;
+  const out = {};
+  for (const [type, days] of byType) {
+    const sorted = [...days.entries()].sort(([a], [b]) => (a < b ? -1 : 1));
+    if (!sorted.length) continue;
+    if (DAILY_SUM.has(type)) {
+      const last7 = sorted.slice(-7);
+      const before = sorted.filter(([d]) => d < last7[0][0] && d >= cutoff).slice(-7);
+      const avg = xs => xs.reduce((n, [, x]) => n + x.v, 0) / xs.length;
+      out[type] = { avgLast7: round(avg(last7)), days: last7.length, ...(before.length ? { avgBefore: round(avg(before)) } : {}) };
+    } else {
+      const [d, last] = sorted[sorted.length - 1];
+      const old = sorted.filter(([x]) => x <= cutoff).pop() || sorted[0];
+      out[type] = { latest: round(last.v), on: d, ...(old[0] !== d ? { monthAgo: round(old[1].v), since: old[0] } : {}) };
+    }
+  }
+  return out;
+}
+
 /** The body-weight series between two days, each weigh-in a date and a number. */
 function weighIns(S, from, to) {
   return list(S.bodyweight)
@@ -558,9 +610,10 @@ export function build(S, opts = {}) {
     }
     if (opts.cohort) p.cohort = cleanCohort(opts.cohort);
   } else if (opts.kind === 'ask') {
-    // A question in the chat: the recent sessions (the newest in full), the stalls, and the
-    // session running now when the phone sent it.
-    p.question = String(opts.note || '').slice(0, MAX_NOTE_CHARS);
+    // A question in the chat: the recent sessions (the newest in full), the stalls, the session
+    // running now when the phone sent it, and the body's numbers only for a question about them.
+    const question = String(opts.note || '').slice(0, MAX_NOTE_CHARS);
+    p.question = question;
     const workouts = (S.workouts || []).filter(w => w && w.d).slice(-ASK_SESSIONS);
     const detailFrom = Math.max(0, workouts.length - FULL_DETAIL_SESSIONS);
     p.window = {
@@ -571,6 +624,13 @@ export function build(S, opts = {}) {
     p.aggregates = aggregates(S, workouts);
     const today = cleanToday(opts.today);
     if (today) p.today = today;
+    if (asksAboutBody(question)) {
+      const health = healthSummary(S);
+      if (Object.keys(health).length) p.health = health;
+      const since = new Date();
+      since.setDate(since.getDate() - 56);
+      p.bodyweight = { goal: num(S.targetW) ?? null, series: weighIns(S, iso(since), null) };
+    }
   } else if (opts.kind === 'review') {
     const workouts = reviewWindow(S, coach.lastReview?.at ? String(coach.lastReview.at).slice(0, 10) : null);
     const detailFrom = Math.max(0, workouts.length - FULL_DETAIL_SESSIONS);

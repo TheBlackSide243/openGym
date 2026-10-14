@@ -2640,4 +2640,6 @@ export default {
   'Cycle tracking': 'चक्र ट्रैकिंग',
   'Symptoms': 'लक्षण',
   'Mindfulness': 'सचेतनता',
+  'Health readings': 'स्वास्थ्य डेटा',
+  'Only when you ask about your body: your latest body composition, activity, heart rate and sleep, with how they changed over a month.': 'सिर्फ़ तब जब आप अपने शरीर के बारे में पूछें: शरीर की संरचना, गतिविधि, हृदय गति और नींद के आपके ताज़ा मान, और एक महीने में उनका बदलाव।',
 }

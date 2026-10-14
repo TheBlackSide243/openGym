@@ -2651,4 +2651,6 @@ export default {
   'Cycle tracking': 'การติดตามรอบเดือน',
   'Symptoms': 'อาการ',
   'Mindfulness': 'การฝึกสติ',
+  'Health readings': 'ข้อมูลสุขภาพ',
+  'Only when you ask about your body: your latest body composition, activity, heart rate and sleep, with how they changed over a month.': 'เฉพาะเมื่อคุณถามเรื่องร่างกาย: ค่าองค์ประกอบร่างกาย กิจกรรม อัตราการเต้นหัวใจ และการนอนล่าสุด พร้อมการเปลี่ยนแปลงในหนึ่งเดือน',
 }

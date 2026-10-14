@@ -215,5 +215,5 @@ export const demoAsk = (S, text) => start('ask', () => ({
 export const demoResolve = () => { pending = null; return { ok: true } }
 export const demoDisclosure = () => ({
   provider: 'demo', providerLabel: t('the configured AI provider'),
-  categories: ['plan', 'training', 'bodyweight', 'profile', 'prefs'], version: 1
+  categories: ['plan', 'training', 'bodyweight', 'profile', 'prefs', 'health'], version: 1
 })

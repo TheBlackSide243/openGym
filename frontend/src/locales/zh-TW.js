@@ -2633,4 +2633,6 @@ export default {
   'Cycle tracking': '週期追蹤',
   'Symptoms': '症狀',
   'Mindfulness': '正念',
+  'Health readings': '健康資料',
+  'Only when you ask about your body: your latest body composition, activity, heart rate and sleep, with how they changed over a month.': '僅在你詢問身體相關問題時：你最新的身體組成、活動、心率與睡眠數據，以及它們一個月內的變化。',
 }

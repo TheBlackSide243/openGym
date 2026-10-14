@@ -2637,4 +2637,6 @@ export default {
   'Cycle tracking': 'Відстеження циклу',
   'Symptoms': 'Симптоми',
   'Mindfulness': 'Усвідомленість',
+  'Health readings': 'Дані про здоров’я',
+  'Only when you ask about your body: your latest body composition, activity, heart rate and sleep, with how they changed over a month.': 'Лише коли ви питаєте про своє тіло: останні значення складу тіла, активності, пульсу і сну та їх зміна за місяць.',
 }

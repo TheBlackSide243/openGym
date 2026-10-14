@@ -2643,4 +2643,6 @@ export default {
   'Cycle tracking': 'Ciklus követése',
   'Symptoms': 'Tünetek',
   'Mindfulness': 'Tudatos jelenlét',
+  'Health readings': 'Egészségadatok',
+  'Only when you ask about your body: your latest body composition, activity, heart rate and sleep, with how they changed over a month.': 'Csak ha a testedről kérdezel: a legfrissebb testösszetétel-, aktivitás-, pulzus- és alvásértékeid, az egy hónap alatti változásukkal.',
 }
