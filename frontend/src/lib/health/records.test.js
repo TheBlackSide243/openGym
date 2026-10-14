@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest'
+import { isoOf } from '../format.js'
 import {
   makeRecord, normalizeHealthState, importRecords, withoutSource, compositionMeasurements, saveComposition,
   deleteComposition, bridgeWeights, weighInsWithoutSource, dailyValues, derivedBmi, latestOf, seriesOf, historyOf, importId,
 } from './records.js'
 import { readingsFromSamples, readingsFromDays, readingsFromSleep, APPLE_HEALTH } from './apple-health.js'
 import { applyReadings, readSince, FIRST_DAYS, OVERLAP_DAYS } from './sync.js'
-import { toDisplay, fromDisplay, displayUnit, fmtHealth, fmtMinutes, fmtFeetInches } from './units.js'
+import { toDisplay, fromDisplay, displayUnit, fmtHealth, fmtHealthDelta, fmtMinutes, fmtFeetInches } from './units.js'
 import { mergeHealth, mergeStates, stampChange, stampHealth } from '../sync-merge.js'
 
 const T = new Date('2026-10-10T07:30:00').getTime()
@@ -164,9 +165,9 @@ describe('reading the records back', () => {
 })
 
 describe('Apple Health readings', () => {
-  it('samples: one reading per UUID, percent scaled to 0–100', () => {
-    expect(readingsFromSamples('bodyFat', [{ id: 'U', value: 0.184, start: T }, { value: 1, start: T }]))
-      .toEqual([{ type: 'bodyFat', v: 18.4, t: T, sid: 'U', src: AH }])
+  it('samples: one reading per time, the same id an export gives it, percent scaled to 0–100', () => {
+    expect(readingsFromSamples('bodyFat', [{ id: 'U', value: 0.184, start: T }, { value: 0.184, start: T }, { value: 'x', start: T }]))
+      .toEqual([{ type: 'bodyFat', v: 18.4, t: T, d: isoOf(new Date(T)), sid: `bodyFat:${T}`, src: AH }])
   })
   it('daily statistics: one per day, keyed by day, zero totals skipped, heart rate range kept', () => {
     expect(readingsFromDays('steps', [{ date: '2026-10-10', value: 8123.6 }, { date: '2026-10-11', value: 0 }]))
@@ -240,5 +241,13 @@ describe('sync merge of health records', () => {
     desk._ts = stampChange(base, desk, 30)
     const merged = mergeStates(phone, desk)
     expect(merged.health.map(r => r.id)).toEqual(['p'])
+  })
+})
+
+describe('a change too small to show', () => {
+  it('reads as no change rather than a signed zero', () => {
+    expect(fmtHealthDelta('spo2', -0.4, { unit: 'kg' })).toBe('')
+    expect(fmtHealthDelta('spo2', 2, { unit: 'kg' })).toBe('+2 %')
+    expect(fmtHealthDelta('sleep', 0.2, { unit: 'kg' })).toBe('')
   })
 })
