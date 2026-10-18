@@ -12,10 +12,12 @@ import HealthKit
  * Registered by AppViewController (a local plugin is not in Capacitor's generated plugin list).
  *
  *   isAvailable()                                  -> { available }
- *   requestAuthorization({ read: [identifier] })   -> { asked }
+ *   requestAuthorization({ read: [identifier] })   -> { asked, skipped: [identifier] }
  *   querySamples({ type, unit, start, end })       -> { samples: [{ id, value, start, end }] }
- *   queryDaily({ type, unit, start, end, stat })   -> { days: [{ date, value, min?, max? }] }
- *                                                     stat: 'sum' | 'avg' | 'range'
+ *   queryDaily({ type, unit, start, end, stat, hourly? })
+ *                                                  -> { days: [{ date, start, value, min?, max? }] }
+ *                                                     stat: 'sum' | 'avg' | 'range'; hourly: an hour
+ *                                                     at a time instead of a day
  *   querySleep({ start, end })                     -> { nights: [{ date, minutes, start, end }] }
  *   queryCategory({ type, start, end })            -> { samples: [{ value, start, end, source }] }
  *   queryWorkouts({ start, end })                  -> { workouts: [{ activity, start, end, minutes, kcal?, km? }] }
@@ -93,9 +95,9 @@ public class HealthKitPlugin: CAPPlugin, CAPBridgedPlugin {
 
     private func reject(_ call: CAPPluginCall, _ error: Error) {
         if let hk = error as? HKError, hk.code == .errorAuthorizationDenied || hk.code == .errorAuthorizationNotDetermined {
-            call.reject("Not authorised", "permission")
+            call.reject("Not authorised: " + error.localizedDescription, "permission")
         } else {
-            call.reject("Health query failed", "failed")
+            call.reject("Health query failed: " + error.localizedDescription, "failed")
         }
     }
 
@@ -123,10 +125,20 @@ public class HealthKitPlugin: CAPPlugin, CAPBridgedPlugin {
             call.reject("No known Health types", "invalid")
             return
         }
-        // Read only: nothing is ever shared (written) to Apple Health.
+        // Read only: nothing is ever shared (written) to Apple Health. HealthKit refuses the whole
+        // request when one type in it may not be read by this app, and names it ("Authorization to
+        // read the following types is disallowed: …"): asked once more without those, every other
+        // type still can be. What was left out is handed back.
         store.requestAuthorization(toShare: nil, read: types) { ok, error in
-            if let error = error { self.reject(call, error); return }
-            call.resolve(["asked": ok])
+            guard let error = error else { call.resolve(["asked": ok, "skipped": []]); return }
+            let text = error.localizedDescription
+            let named = Set(types.filter { text.contains($0.identifier) })
+            let rest = types.subtracting(named)
+            if named.isEmpty || rest.isEmpty { call.reject(text, "permission"); return }
+            self.store.requestAuthorization(toShare: nil, read: rest) { ok2, error2 in
+                if let error2 = error2 { call.reject(error2.localizedDescription, "permission"); return }
+                call.resolve(["asked": ok2, "skipped": named.map { $0.identifier }])
+            }
         }
     }
 
@@ -173,18 +185,20 @@ public class HealthKitPlugin: CAPPlugin, CAPBridgedPlugin {
         let options: HKStatisticsOptions = stat == "sum" ? .cumulativeSum
             : stat == "range" ? [.discreteAverage, .discreteMin, .discreteMax] : .discreteAverage
         let calendar = Calendar.current
+        let hourly = call.getBool("hourly") ?? false
         let anchor = calendar.startOfDay(for: date(call, "start", Date()))
         let end = date(call, "end", Date())
         let predicate = HKQuery.predicateForSamples(withStart: anchor, end: end, options: [])
         let query = HKStatisticsCollectionQuery(quantityType: type, quantitySamplePredicate: predicate,
-                                                options: options, anchorDate: anchor, intervalComponents: DateComponents(day: 1))
+                                                options: options, anchorDate: anchor,
+                                                intervalComponents: hourly ? DateComponents(hour: 1) : DateComponents(day: 1))
         query.initialResultsHandler = { _, results, error in
             if let error = error { self.reject(call, error); return }
             var days: [[String: Any]] = []
             results?.enumerateStatistics(from: anchor, to: end) { s, _ in
                 let value = cumulative ? s.sumQuantity()?.doubleValue(for: unit) : s.averageQuantity()?.doubleValue(for: unit)
                 guard let v = value else { return }
-                var day: [String: Any] = ["date": self.dayString(s.startDate), "value": v]
+                var day: [String: Any] = ["date": self.dayString(s.startDate), "start": self.ms(s.startDate), "value": v]
                 if stat == "range" {
                     if let lo = s.minimumQuantity()?.doubleValue(for: unit) { day["min"] = lo }
                     if let hi = s.maximumQuantity()?.doubleValue(for: unit) { day["max"] = hi }
