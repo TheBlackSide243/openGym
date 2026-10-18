@@ -2676,4 +2676,5 @@ export default {
   'Connected to your account': 'Connecté à votre compte',
   'Connected to your account as {0}': 'Connecté à votre compte en tant que {0}',
   'Spotify is linked to your openGym account: every device you sign in on can show and control it.': 'Spotify est lié à votre compte openGym : chaque appareil sur lequel vous êtes connecté peut l\'afficher et le contrôler.',
+  'Admin': 'Admin',
 }

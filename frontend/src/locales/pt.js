@@ -2676,4 +2676,5 @@ export default {
   'Connected to your account': 'Ligado à sua conta',
   'Connected to your account as {0}': 'Ligado à sua conta como {0}',
   'Spotify is linked to your openGym account: every device you sign in on can show and control it.': 'O Spotify está ligado à sua conta openGym: qualquer dispositivo em que inicie sessão pode mostrá-lo e controlá-lo.',
+  'Admin': 'Admin',
 }

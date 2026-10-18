@@ -1838,6 +1838,8 @@ export const PT_BR_OVERRIDES = {
   'Connected to your account as {0}': 'Conectado à sua conta como {0}',
   'Spotify is linked to your openGym account: every device you sign in on can show and control it.': 'O Spotify está vinculado à sua conta do openGym: qualquer dispositivo em que você entrar pode mostrá-lo e controlá-lo.',
 
+
+  'Admin': 'Admin',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

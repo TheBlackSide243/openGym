@@ -2755,4 +2755,5 @@ export default {
   'Connected to your account': 'আপনার অ্যাকাউন্টে সংযুক্ত',
   'Connected to your account as {0}': 'আপনার অ্যাকাউন্টে {0} হিসেবে সংযুক্ত',
   'Spotify is linked to your openGym account: every device you sign in on can show and control it.': 'Spotify আপনার openGym অ্যাকাউন্টের সাথে যুক্ত: যে ডিভাইসেই সাইন ইন করুন, সেটি এটি দেখাতে ও নিয়ন্ত্রণ করতে পারে।',
+  'Admin': 'অ্যাডমিন',
 }

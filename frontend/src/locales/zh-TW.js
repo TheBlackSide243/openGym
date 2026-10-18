@@ -2669,4 +2669,5 @@ export default {
   'Connected to your account': '已連結到你的帳號',
   'Connected to your account as {0}': '已以 {0} 的身分連結到你的帳號',
   'Spotify is linked to your openGym account: every device you sign in on can show and control it.': 'Spotify 已連結到你的 openGym 帳號：你登入的每部裝置都能顯示並控制它。',
+  'Admin': '管理員',
 }

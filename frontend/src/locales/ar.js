@@ -2731,4 +2731,5 @@ export default {
   'Connected to your account': 'متصل بحسابك',
   'Connected to your account as {0}': 'متصل بحسابك باسم {0}',
   'Spotify is linked to your openGym account: every device you sign in on can show and control it.': 'Spotify مرتبط بحسابك في openGym: يمكن لكل جهاز تسجّل الدخول عليه عرضه والتحكم فيه.',
+  'Admin': 'المشرف',
 }

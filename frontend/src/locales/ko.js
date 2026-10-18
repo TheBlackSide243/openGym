@@ -2676,4 +2676,5 @@ export default {
   'Connected to your account': '계정에 연결됨',
   'Connected to your account as {0}': '{0}(으)로 계정에 연결됨',
   'Spotify is linked to your openGym account: every device you sign in on can show and control it.': 'Spotify가 openGym 계정에 연결되어 있습니다. 로그인한 모든 기기에서 표시하고 제어할 수 있습니다.',
+  'Admin': '관리자',
 }
