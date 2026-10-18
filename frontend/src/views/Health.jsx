@@ -12,7 +12,8 @@ import {
   saveComposition, seriesOf,
 } from '../lib/health/records.js'
 import { chartValue, displayUnit, fmtHealth, fmtHealthDelta, fmtMinutes, fromDisplay, toDisplay } from '../lib/health/units.js'
-import { PROVIDERS, sourceLabel } from '../lib/health/providers.js'
+import { PROVIDERS, providerById, sourceLabel } from '../lib/health/providers.js'
+import { loadSources } from '../lib/health/sync.js'
 import LineChart from '../components/LineChart.jsx'
 import Icon from '../components/Icon.jsx'
 import { Button, NumberField, Segmented } from '../components/ui.jsx'
@@ -98,6 +99,46 @@ function CompositionForm({ g, close }) {
 
 export const compositionSheet = (g = null) => openSheet(close => <CompositionForm g={g} close={close} />)
 
+/* ---------------- a day, hour by hour (iPhone app) ---------------- */
+
+// What the iPhone records many times a day (heart rate, blood oxygen…) is kept one value a day;
+// the app can still show any day hour by hour, read from Apple Health on the spot and kept nowhere.
+const HOURLY_KINDS = new Set(['range', 'mean', 'hour'])
+function DayDetail({ type, from }) {
+  const S = useStore(s => s.S)
+  const [on, setOn] = useState(false)
+  const [day, setDay] = useState(from)
+  const [points, setPoints] = useState(null)
+  useEffect(() => {
+    if (!MOBILE) return
+    let gone = false
+    const p = providerById('apple-health')
+    Promise.all([p?.isAvailable?.().catch(() => false), loadSources().catch(() => null)])
+      .then(([ok, f]) => { if (!gone) setOn(!!ok && !!f?.providers?.['apple-health']?.on) })
+    return () => { gone = true }
+  }, [])
+  useEffect(() => {
+    if (!on || !day) return
+    let gone = false
+    setPoints(null)
+    providerById('apple-health').hourly(type, day).then(h => { if (!gone) setPoints(h.map(x => ({ t: x.t, d: day, y: chartValue(type, x.v, S) }))) },
+      () => { if (!gone) setPoints([]) })
+    return () => { gone = true }
+  }, [on, day, type])
+  if (!on || !day) return null
+  const shift = n => { const d = new Date(day + 'T12:00:00'); d.setDate(d.getDate() + n); const iso = isoOf(d); if (iso <= isoOf(new Date())) setDay(iso) }
+  return <>
+    <div className="row between" style={{ margin: '16px 0 6px' }}>
+      <button className="iconbtn" style={{ width: 30, height: 30, fontSize: 15 }} onClick={() => shift(-1)} aria-label={t('Previous day')}><Icon name="chevronLeft" /></button>
+      <h4 className="sec" style={{ margin: 0 }}>{fmtDate(day, true)}</h4>
+      <button className="iconbtn" style={{ width: 30, height: 30, fontSize: 15 }} onClick={() => shift(1)} aria-label={t('Next day')}><Icon name="chevronRight" /></button>
+    </div>
+    {points == null ? <div className="empty small">…</div>
+      : points.length ? <div className="chart"><LineChart points={points} h={140} unit={chartUnit(type, S)} color={metricOf(type)?.color} /></div>
+        : <div className="empty small">{t('No readings yet')}</div>}
+  </>
+}
+
 /* ---------------- one metric: chart and history ---------------- */
 
 function MetricDetail({ type, close }) {
@@ -137,6 +178,7 @@ function MetricDetail({ type, close }) {
     <Segmented className="seg-range" value={range} onChange={setRange} options={RANGE_OPTS()} />
     <div className="chart"><LineChart points={points} h={170} unit={chartUnit(type, S)} color={m?.color} /></div>
     {(range === 'year' || range === 'all') && m?.daily === 'sum' && <div className="small dim">{t('Each point is the daily average of its week or month.')}</div>}
+    {HOURLY_KINDS.has(m?.kind) && latest && <DayDetail type={type} from={latest.d} />}
     <h4 className="sec" style={{ marginTop: 16 }}>{t('History')}</h4>
     {rows.length ? <div className="list">{rows.map(r => <div key={r.id} className="mrow" style={{ minHeight: 44 }}>
       <span className="nm" style={{ cursor: r.g ? 'pointer' : undefined }} onClick={r.g ? () => compositionSheet(r.g) : undefined}>

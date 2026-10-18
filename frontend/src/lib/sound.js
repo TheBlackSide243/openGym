@@ -21,6 +21,28 @@
 // session busy. (Suspending does NOT hand the phone back to a paused music app — see 1.)
 import { REST_SOUNDS } from './rest-sounds.js'
 
+// The iOS app can do what a page cannot (1. above): turn the music down for the length of a sound
+// and let it come back up, instead of stopping it (ios/App/App/AudioFocusPlugin.swift). Used in
+// place of the 'playback' session when "Play sounds when the phone is on silent" is on.
+const MOBILE = import.meta.env.VITE_MOBILE === '1'
+let duckOn = false
+let ducked = false
+let focusP = null
+const focus = () => focusP || (focusP = (async () => {
+  const { Capacitor, registerPlugin } = await import('@capacitor/core')
+  return Capacitor.getPlatform() === 'ios' ? { F: registerPlugin('AudioFocus') } : null
+})().catch(() => null))
+const duck = () => {
+  if (!duckOn || ducked) return
+  ducked = true
+  focus().then(f => f && f.F.duck()).catch(() => {})
+}
+const unduck = () => {
+  if (!ducked) return
+  ducked = false
+  focus().then(f => f && f.F.release()).catch(() => {})
+}
+
 let audioCtx = null
 let idleTm = null
 let idleAt = 0
@@ -46,6 +68,7 @@ const sleepAfter = endSec => {
   idleTm = setTimeout(() => {
     idleTm = null
     try { if (audioCtx && audioCtx.state === 'running') { const p = audioCtx.suspend(); if (p && p.catch) p.catch(() => {}) } } catch (e) { /* */ }
+    unduck()
   }, at - Date.now())
 }
 
@@ -73,6 +96,8 @@ const setTimbre = (ctx, o, name) => {
 // fade), `timbre` (one of TIMBRES; `bright: true` is the chime's) and `glide` (a frequency the
 // tone slides to by its end, for the whistle) exist for the end-of-rest sounds below.
 const tone = (freq, dur, when, { peak = 0.35, hold = 0, bright = false, timbre = bright ? 'bright' : null, glide = 0 } = {}) => {
+  // Only a sound that will be heard turns the music down: unlock() wakes the context too, silently.
+  duck()
   const ctx = wake()
   const o = ctx.createOscillator(), g = ctx.createGain()
   o.connect(g); g.connect(ctx.destination)
@@ -158,6 +183,9 @@ export const appleTouchDevice = () => {
 }
 export function setPlayOnSilent(on) {
   if (!playOnSilentSupported()) return
+  // The iOS app ducks the music around each sound instead (duck() above); the page's own session
+  // stays as the browser chooses, so it never takes the audio away for good.
+  if (MOBILE) { duckOn = !!on; try { navigator.audioSession.type = 'auto' } catch (e) { /* */ } if (!on) unduck(); return }
   try { navigator.audioSession.type = on ? 'playback' : 'auto' } catch (e) { /* */ }
 }
 

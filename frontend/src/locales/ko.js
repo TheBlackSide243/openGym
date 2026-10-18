@@ -2650,4 +2650,6 @@ export default {
   'Cycle tracking': '주기 추적',
   'Symptoms': '증상',
   'Mindfulness': '마음 챙기기',
+  'Previous day': '이전 날',
+  'Next day': '다음 날',
 }

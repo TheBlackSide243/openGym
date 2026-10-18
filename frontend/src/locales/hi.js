@@ -2650,4 +2650,6 @@ export default {
   'Cycle tracking': 'चक्र ट्रैकिंग',
   'Symptoms': 'लक्षण',
   'Mindfulness': 'सचेतनता',
+  'Previous day': 'पिछला दिन',
+  'Next day': 'अगला दिन',
 }

@@ -20,6 +20,7 @@ import HealthKit
  *                                                     at a time instead of a day
  *   querySleep({ start, end })                     -> { nights: [{ date, minutes, start, end }] }
  *   queryCategory({ type, start, end })            -> { samples: [{ value, start, end, source }] }
+ *   queryStats({ type, unit, start, end })         -> { avg?, min?, max? } of a discrete type between two times
  *   queryWorkouts({ start, end })                  -> { workouts: [{ activity, start, end, minutes, kcal?, km? }] }
  * Times are milliseconds since 1970; `date` is the local day, YYYY-MM-DD.
  */
@@ -35,6 +36,7 @@ public class HealthKitPlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "querySleep", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "queryCategory", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "queryWorkouts", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "queryStats", returnType: CAPPluginReturnPromise),
     ]
 
     private let store = HKHealthStore()
@@ -291,6 +293,31 @@ public class HealthKitPlugin: CAPPlugin, CAPBridgedPlugin {
                 return o
             }
             call.resolve(["workouts": out])
+        }
+        store.execute(query)
+    }
+
+    // One measurement over a span of time — the heart rate of a workout, from its start to its end.
+    // Nothing recorded then answers an empty object, not an error.
+    @objc func queryStats(_ call: CAPPluginCall) {
+        guard let args = quantityArgs(call) else { return }
+        let (type, unit) = args
+        if type.aggregationStyle == .cumulative {
+            call.reject("Statistic does not fit the type", "invalid")
+            return
+        }
+        let start = date(call, "start", Date())
+        let end = date(call, "end", Date())
+        let predicate = HKQuery.predicateForSamples(withStart: start, end: end, options: [])
+        let query = HKStatisticsQuery(quantityType: type, quantitySamplePredicate: predicate,
+                                      options: [.discreteAverage, .discreteMin, .discreteMax]) { _, s, error in
+            if let error = error as? HKError, error.code == .errorNoData { call.resolve([:]); return }
+            if let error = error { self.reject(call, error); return }
+            var out: [String: Any] = [:]
+            if let v = s?.averageQuantity()?.doubleValue(for: unit) { out["avg"] = v }
+            if let v = s?.minimumQuantity()?.doubleValue(for: unit) { out["min"] = v }
+            if let v = s?.maximumQuantity()?.doubleValue(for: unit) { out["max"] = v }
+            call.resolve(out)
         }
         store.execute(query)
     }

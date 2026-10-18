@@ -2653,4 +2653,6 @@ export default {
   'Cycle tracking': 'Ciklus követése',
   'Symptoms': 'Tünetek',
   'Mindfulness': 'Tudatos jelenlét',
+  'Previous day': 'Előző nap',
+  'Next day': 'Következő nap',
 }

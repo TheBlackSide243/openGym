@@ -2729,4 +2729,6 @@ export default {
   'Cycle tracking': 'চক্র ট্র্যাকিং',
   'Symptoms': 'উপসর্গ',
   'Mindfulness': 'মননশীলতা',
+  'Previous day': 'আগের দিন',
+  'Next day': 'পরের দিন',
 }

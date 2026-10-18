@@ -2650,4 +2650,6 @@ export default {
   'Cycle tracking': 'Döngü takibi',
   'Symptoms': 'Belirtiler',
   'Mindfulness': 'Farkındalık',
+  'Previous day': 'Önceki gün',
+  'Next day': 'Sonraki gün',
 }

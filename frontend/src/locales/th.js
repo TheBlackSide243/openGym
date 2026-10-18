@@ -2661,4 +2661,6 @@ export default {
   'Cycle tracking': 'การติดตามรอบเดือน',
   'Symptoms': 'อาการ',
   'Mindfulness': 'การฝึกสติ',
+  'Previous day': 'วันก่อนหน้า',
+  'Next day': 'วันถัดไป',
 }
