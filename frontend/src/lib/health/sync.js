@@ -82,6 +82,7 @@ export function syncSource(id, getState, update, { full = false, now = Date.now(
         onBatch: r => { streamed = true; take(r) } })
       if (!streamed) take(readings)
       await saveSource(id, { at: now, error: null, detail: null })
+      try { await fillWorkoutHeartRate(id, getState, update, now) } catch { /* a workout without it is fine */ }
       return { ok: true, ...counts, error: null }
     } catch (e) {
       const error = e?.code === 'unavailable' ? 'unavailable' : 'failed'
@@ -112,6 +113,27 @@ export async function connectSource(id, getState, update, types = null) {
   // What the system would not let be asked for is not read (nor asked for again on every read).
   await saveSource(id, { on: true, types: want.filter(t => !skipped.includes(t)), skipped, at: 0, error: null, detail: null })
   return syncSource(id, getState, update, { full: true })
+}
+
+// A workout's heart rate, from the source that has it (Apple Health, from a Watch): read for the
+// workouts of the last days that have none yet — a Watch hands its samples over late, so a session
+// just finished may get it on a later read. Kept on the workout as { avg, min, max }, in bpm.
+const HR_DAYS = 3
+export async function fillWorkoutHeartRate(id, getState, update, now = Date.now()) {
+  const provider = providerById(id)
+  if (!provider?.spanStats) return 0
+  const S = getState()
+  const todo = (S?.workouts || []).filter(w => w && w.id != null && !w.hr && w.start > 0 && w.end > w.start && w.end > now - HR_DAYS * DAY && w.end - w.start < 86400000).slice(-10)
+  let filled = 0
+  for (const w of todo) {
+    let hr = null
+    try { hr = await provider.spanStats('heartRate', w.start, w.end) } catch { hr = null }
+    if (!hr || !(hr.avg > 0)) continue
+    const val = { avg: Math.round(hr.avg), ...(hr.min > 0 ? { min: Math.round(hr.min) } : {}), ...(hr.max > 0 ? { max: Math.round(hr.max) } : {}) }
+    update(s => { const x = (s.workouts || []).find(y => y && y.id === w.id); if (x && !x.hr) x.hr = val })
+    filled++
+  }
+  return filled
 }
 
 /** Disconnecting: stops reading. Nothing imported is removed (see removeSourceData). */

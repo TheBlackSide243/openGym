@@ -2670,4 +2670,6 @@ export default {
   'Cycle tracking': 'Zyklusprotokoll',
   'Symptoms': 'Symptome',
   'Mindfulness': 'Achtsamkeit',
+  'Previous day': 'Vorheriger Tag',
+  'Next day': 'Nächster Tag',
 }

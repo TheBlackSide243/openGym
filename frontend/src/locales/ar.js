@@ -2705,4 +2705,6 @@ export default {
   'Cycle tracking': 'تتبع الدورة',
   'Symptoms': 'الأعراض',
   'Mindfulness': 'اليقظة الذهنية',
+  'Previous day': 'اليوم السابق',
+  'Next day': 'اليوم التالي',
 }

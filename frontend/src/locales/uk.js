@@ -2647,4 +2647,6 @@ export default {
   'Cycle tracking': 'Відстеження циклу',
   'Symptoms': 'Симптоми',
   'Mindfulness': 'Усвідомленість',
+  'Previous day': 'Попередній день',
+  'Next day': 'Наступний день',
 }

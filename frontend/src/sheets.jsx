@@ -2521,6 +2521,11 @@ function WorkoutDetail({ w, close }) {
     <div className="muted small" style={{ marginBottom: plan.extra ? 4 : 12 }}>{[fmtDate(w.d, true), ...durPart(w.end - w.start), fmtVol(w.vol, st.unit), ...(w.bw ? [fmtNum(w.bw) + ' ' + st.unit] : [])].join(' · ')}</div>
     {/* Exercises added during the session (lib/session-extras.js): what was planned, apart from what was added. */}
     {plan.extra > 0 && <div className="muted small" style={{ marginBottom: 12 }}>{t('Plan {0}/{1} · Extra {2} · {3} sets in total', plan.plannedDone, plan.planned, plan.extra, plan.totalSets)}</div>}
+    {/* The heart rate Apple Health recorded during the session (lib/health/sync.js fillWorkoutHeartRate). */}
+    {w.hr?.avg > 0 && <div className="muted small row" style={{ gap: 5, margin: '-6px 0 12px' }}>
+      <Icon name="heart" style={{ color: 'var(--red)' }} />
+      {t('Heart rate')} {Math.round(w.hr.avg)} bpm{w.hr.min > 0 && w.hr.max > 0 ? ` · ${Math.round(w.hr.min)}–${Math.round(w.hr.max)}` : ''}
+    </div>}
     {grouped ? groups.map(g => {
       const r = g.rid ? st.routines.find(x => x.id === g.rid) : null
       const items = g.items.map(i => w.entries[i])

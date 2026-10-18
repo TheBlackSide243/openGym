@@ -2650,4 +2650,6 @@ export default {
   'Cycle tracking': '周期跟踪',
   'Symptoms': '症状',
   'Mindfulness': '正念',
+  'Previous day': '前一天',
+  'Next day': '后一天',
 }

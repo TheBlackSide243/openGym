@@ -1811,6 +1811,8 @@ export const PT_BR_OVERRIDES = {
   'Nutrition': 'Nutrição',
   'Symptoms': 'Sintomas',
   'Mindfulness': 'Atenção plena',
+  'Next day': 'Próximo dia',
+  'Previous day': 'Dia anterior',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

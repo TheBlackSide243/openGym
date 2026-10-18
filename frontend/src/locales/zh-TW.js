@@ -2643,4 +2643,6 @@ export default {
   'Cycle tracking': '週期追蹤',
   'Symptoms': '症狀',
   'Mindfulness': '正念',
+  'Previous day': '前一天',
+  'Next day': '後一天',
 }

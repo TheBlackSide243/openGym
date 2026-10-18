@@ -21,7 +21,7 @@
 // per document), which is why everything but body readings and workouts arrives a day at a time.
 import { MOBILE } from '../mobile.js'
 import { isoOf } from '../format.js'
-import { TYPES } from '../../../../api/health/catalogue.js'
+import { TYPES, canonical } from '../../../../api/health/catalogue.js'
 import { APPLE_HEALTH, createFolder } from '../../../../api/health/fold.js'
 
 export { APPLE_HEALTH }
@@ -171,6 +171,26 @@ export const appleHealth = {
       await p.HK.requestAuthorization({ read: ids(core) })
       return { asked: true, skipped: (types || []).filter(t => !TYPES[t]?.core) }
     }
+  },
+
+  /** One measurement over a span (a workout's heart rate): { avg, min, max } canonical, or null. */
+  async spanStats(type, start, end) {
+    const p = await plugin(), x = TYPES[type]
+    if (!p || !x) return null
+    const r = await p.HK.queryStats({ type: x.hk, unit: nativeUnit(x.unit), start, end })
+    const v = k => (num(r?.[k]) == null ? null : canonical(type, num(r[k]), unitOf(type)))
+    return v('avg') == null ? null : { avg: v('avg'), min: v('min'), max: v('max') }
+  },
+
+  /** A day an hour at a time, read on the spot and kept nowhere: [{ t, v, lo, hi }] canonical. */
+  async hourly(type, day) {
+    const p = await plugin(), x = TYPES[type]
+    if (!p || !x || x.kind === 'sum' || !/^\d{4}-\d{2}-\d{2}$/.test(day)) return []
+    const start = new Date(day + 'T00:00:00').getTime()
+    const r = await p.HK.queryDaily({ type: x.hk, unit: nativeUnit(x.unit), start, end: start + 86400000, stat: 'range', hourly: true })
+    const c = v => (num(v) == null ? null : canonical(type, num(v), unitOf(type)))
+    return list(r?.days).filter(h => num(h?.start) != null && c(h.value) != null && num(h.start) < start + 86400000)
+      .map(h => ({ t: num(h.start), v: c(h.value), lo: c(h.min), hi: c(h.max) }))
   },
 
   // The core types first, then a group at a time; `onBatch` gets each batch's readings as soon as

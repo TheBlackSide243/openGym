@@ -2650,4 +2650,6 @@ export default {
   'Cycle tracking': 'Suivi du cycle',
   'Symptoms': 'Symptômes',
   'Mindfulness': 'Pleine conscience',
+  'Previous day': 'Jour précédent',
+  'Next day': 'Jour suivant',
 }
