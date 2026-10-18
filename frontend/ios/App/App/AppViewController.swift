@@ -10,5 +10,6 @@ class AppViewController: CAPBridgeViewController {
     override open func capacitorDidLoad() {
         bridge?.registerPluginInstance(HealthKitPlugin())
         bridge?.registerPluginInstance(AudioFocusPlugin())
+        bridge?.registerPluginInstance(MusicPlayerPlugin())
     }
 }
