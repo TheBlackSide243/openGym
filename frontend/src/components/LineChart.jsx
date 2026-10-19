@@ -12,10 +12,11 @@ const W = 340   // viewBox width; the svg stretches to its container, height com
 // opts: { h, unit, color, axes, goal, invert, series }
 //   invert flips the y axis, for a scale that counts down as it gets harder (RIR). Without it
 //   a curve of reps-in-reserve reads upside down, with the hardest sets at the floor.
+//   hours  one day hour by hour: the axis reads 00:00, 06:00… and the tooltip the hour, not the date
 //   series draws several lines instead of one: [{ points, color }] (issue #145, one per set
 //   number). `points` then only anchors the hover — one per date, its `note` the tooltip — and
 //   the y axis spans every series.
-export default function LineChart({ points, h = 150, unit = '', color = 'var(--acc)', axes = true, goal = null, invert = false, series = null }) {
+export default function LineChart({ points, h = 150, unit = '', color = 'var(--acc)', axes = true, goal = null, invert = false, series = null, hours = false }) {
   const svgRef = useRef(null)
   const wrapRef = useRef(null)
   const tipRef = useRef(null)
@@ -82,8 +83,16 @@ export default function LineChart({ points, h = 150, unit = '', color = 'var(--a
     }
     const d0 = new Date(t0), d1 = new Date(t1)
     const ticks = []
+    if (hours) {
+      // Every six hours of the day, on the hour, inside what the points cover.
+      const first = new Date(d0); first.setMinutes(0, 0, 0)
+      for (let tv = +first; tv <= t1; tv += 3600000) {
+        const hh = new Date(tv).getHours()
+        if (tv >= t0 && hh % 6 === 0) ticks.push({ t: tv, txt: String(hh).padStart(2, '0') + ':00' })
+      }
+    }
     let m = new Date(d0.getFullYear(), d0.getMonth() + 1, 1)
-    while (m <= d1) { ticks.push({ t: +m, txt: t(MONTHS[m.getMonth()]) }); m = new Date(m.getFullYear(), m.getMonth() + 1, 1) }
+    while (!hours && m <= d1) { ticks.push({ t: +m, txt: t(MONTHS[m.getMonth()]) }); m = new Date(m.getFullYear(), m.getMonth() + 1, 1) }
     if (ticks.length === 0 && !single) {
       for (let i = 0; i <= 2; i++) {
         const tv = t0 + (t1 - t0) * i / 2, dd = new Date(tv)
@@ -109,6 +118,7 @@ export default function LineChart({ points, h = 150, unit = '', color = 'var(--a
   const showYear = new Set(hoverDates.map(iso => new Date(iso + 'T12:00:00').getFullYear())).size > 1
   const hoverPts = hoverSource.map((p, i) => ({ x: X(p.t), y: Y(p.y), t: p.t, iso: hoverDates[i], v: p.y, note: p.note }))
   const marked = points.some(p => p.m != null)
+  const when = p => (hours ? String(new Date(p.t).getHours()).padStart(2, '0') + ':00' : fmtDate(p.iso, true, showYear))
 
   const onMove = e => {
     const c = e.touches ? e.touches[0] : e
@@ -165,8 +175,8 @@ export default function LineChart({ points, h = 150, unit = '', color = 'var(--a
       </svg>
       {hover && <div className="ctip" ref={tipRef}>
         {multi
-          ? <>{fmtDate(hover.iso, true, showYear)}{hover.note ? ' · ' + hover.note : ''}</>
-          : <>{fmtDate(hover.iso, true, showYear)} · {fmtNum(hover.v)}{unit ? ' ' + unit : ''}{hover.note ? ' · ' + hover.note : ''}</>}
+          ? <>{when(hover)}{hover.note ? ' · ' + hover.note : ''}</>
+          : <>{when(hover)} · {fmtNum(hover.v)}{unit ? ' ' + unit : ''}{hover.note ? ' · ' + hover.note : ''}</>}
       </div>}
     </div>
   )

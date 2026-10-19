@@ -155,7 +155,7 @@ function DayDetail({ type, from }) {
       <button className="iconbtn" style={{ width: 30, height: 30, fontSize: 15 }} onClick={() => shift(1)} aria-label={t('Next day')}><Icon name="chevronRight" /></button>
     </div>
     {shown == null ? <div className="empty small">…</div>
-      : shown.length ? <div className="chart"><LineChart points={shown} h={140} unit={chartUnit(type, S)} color={metricOf(type)?.color} /></div>
+      : shown.length ? <div className="chart"><LineChart points={shown} h={140} unit={chartUnit(type, S)} color={metricOf(type)?.color} hours /></div>
         : <div className="empty small">{t('No readings yet')}</div>}
   </>
 }
