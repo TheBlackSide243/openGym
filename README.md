@@ -24,8 +24,11 @@ Non è il progetto ufficiale né è affiliato con esso. Le stesse modifiche sono
 git clone -b plus https://github.com/TheBlackSide243/openGym.git opengym-plus
 cd opengym-plus
 cp .env.example .env        # imposta RP_ID e ORIGIN · set RP_ID and ORIGIN (docs/SELF_HOSTING.md)
-docker compose up -d --build
+docker compose pull && docker compose up -d     # immagini pronte · prebuilt images
+# oppure dal sorgente · or from source: docker compose up -d --build
 ```
+
+Immagini · images: `ghcr.io/theblackside243/opengym-plus-api:latest`, `ghcr.io/theblackside243/opengym-plus-web:latest` (amd64, arm64).
 
 Apri `http://localhost:8080` e crea il tuo profilo per primo: diventa l'amministratore.
 *Open `http://localhost:8080` and create your profile first: it becomes the admin.*
