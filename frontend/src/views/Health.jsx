@@ -116,14 +116,19 @@ export const compositionSheet = (g = null) => openSheet(close => <CompositionFor
 
 /* ---------------- a day, hour by hour (iPhone app) ---------------- */
 
-// What the iPhone records many times a day (heart rate, blood oxygen…) is kept one value a day;
-// the app can still show any day hour by hour, read from Apple Health on the spot and kept nowhere.
-const HOURLY_KINDS = new Set(['range', 'mean', 'hour'])
+// A day hour by hour. Recent days are kept an hour at a time (api/health/catalogue.js hourlyFrom:
+// heart rate 90 days, the rest 30), so any device shows them from the profile; on the iPhone an
+// older day of a measurement is read from Apple Health on the spot and kept nowhere.
+const DAY_KINDS = new Set(['range', 'mean', 'hour', 'sum'])
+const isHour = r => /:\d+$/.test(String(r?.sid || ''))
+const keptHours = (S, type, day) => (S.health || []).filter(r => r?.type === type && r.d === day && isHour(r)).sort((a, b) => a.t - b.t)
 function DayDetail({ type, from }) {
   const S = useStore(s => s.S)
   const [on, setOn] = useState(false)
   const [day, setDay] = useState(from)
   const [points, setPoints] = useState(null)
+  const anyKept = useMemo(() => (S.health || []).some(r => r?.type === type && isHour(r)), [S.health, type])
+  const kept = useMemo(() => keptHours(S, type, day), [S.health, type, day])
   useEffect(() => {
     if (!MOBILE) return
     let gone = false
@@ -133,14 +138,15 @@ function DayDetail({ type, from }) {
     return () => { gone = true }
   }, [])
   useEffect(() => {
-    if (!on || !day) return
+    if (!on || !day || kept.length) return
     let gone = false
     setPoints(null)
     providerById('apple-health').hourly(type, day).then(h => { if (!gone) setPoints(h.map(x => ({ t: x.t, d: day, y: chartValue(type, x.v, S) }))) },
       () => { if (!gone) setPoints([]) })
     return () => { gone = true }
-  }, [on, day, type])
-  if (!on || !day) return null
+  }, [on, day, type, kept.length])
+  if (!day || (!on && !anyKept)) return null
+  const shown = kept.length ? kept.map(r => ({ t: r.t, d: day, y: chartValue(type, r.v, S) })) : on ? points : []
   const shift = n => { const d = new Date(day + 'T12:00:00'); d.setDate(d.getDate() + n); const iso = isoOf(d); if (iso <= isoOf(new Date())) setDay(iso) }
   return <>
     <div className="row between" style={{ margin: '16px 0 6px' }}>
@@ -148,8 +154,8 @@ function DayDetail({ type, from }) {
       <h4 className="sec" style={{ margin: 0 }}>{fmtDate(day, true)}</h4>
       <button className="iconbtn" style={{ width: 30, height: 30, fontSize: 15 }} onClick={() => shift(1)} aria-label={t('Next day')}><Icon name="chevronRight" /></button>
     </div>
-    {points == null ? <div className="empty small">…</div>
-      : points.length ? <div className="chart"><LineChart points={points} h={140} unit={chartUnit(type, S)} color={metricOf(type)?.color} /></div>
+    {shown == null ? <div className="empty small">…</div>
+      : shown.length ? <div className="chart"><LineChart points={shown} h={140} unit={chartUnit(type, S)} color={metricOf(type)?.color} /></div>
         : <div className="empty small">{t('No readings yet')}</div>}
   </>
 }
@@ -193,7 +199,7 @@ function MetricDetail({ type, close }) {
     <Segmented className="seg-range" value={range} onChange={setRange} options={RANGE_OPTS()} />
     <div className="chart"><LineChart points={points} h={170} unit={chartUnit(type, S)} color={m?.color} /></div>
     {(range === 'year' || range === 'all') && m?.daily === 'sum' && <div className="small dim">{t('Each point is the daily average of its week or month.')}</div>}
-    {HOURLY_KINDS.has(m?.kind) && latest && <DayDetail type={type} from={latest.d} />}
+    {DAY_KINDS.has(m?.kind) && latest && <DayDetail type={type} from={latest.d} />}
     <h4 className="sec" style={{ marginTop: 16 }}>{t('History')}</h4>
     {rows.length ? <div className="list">{rows.map(r => <div key={r.id} className="mrow" style={{ minHeight: 44 }}>
       <span className="nm" style={{ cursor: r.g ? 'pointer' : undefined }} onClick={r.g ? () => compositionSheet(r.g) : undefined}>
