@@ -1,3 +1,46 @@
+# openGym Plus
+
+**🇮🇹 Versione non ufficiale di [openGym](https://github.com/DuarteSantos8/openGym) con funzioni in più, da provare.**
+**🇬🇧 An unofficial build of [openGym](https://github.com/DuarteSantos8/openGym) with extra features, for anyone to try.**
+
+Non è il progetto ufficiale né è affiliato con esso. Le stesse modifiche sono proposte all'originale come pull request ([#587](https://github.com/DuarteSantos8/openGym/pull/587), [#588](https://github.com/DuarteSantos8/openGym/pull/588), [#589](https://github.com/DuarteSantos8/openGym/pull/589), [#590](https://github.com/DuarteSantos8/openGym/pull/590), [#680](https://github.com/DuarteSantos8/openGym/pull/680), [#681](https://github.com/DuarteSantos8/openGym/pull/681), [#683](https://github.com/DuarteSantos8/openGym/pull/683)). Licenza AGPL-3.0-or-later, come l'originale.
+*Not the official project and not affiliated with it. The same changes are proposed upstream as pull requests. AGPL-3.0-or-later, like the original.*
+
+### Cosa c'è in più · What's added
+
+| 🇮🇹 | 🇬🇧 |
+| --- | --- |
+| **Area Salute**: tutti i tipi di Apple Salute (183), allenamenti, ciclo, sintomi, mindfulness; app iPhone con HealthKit, export di Salute, Comando Rapido, Health Auto Export | **Health area**: every Apple Health type (183), workouts, cycle, symptoms, mindfulness; iPhone app with HealthKit, Health export, a Shortcut, Health Auto Export |
+| **RENPHO Health**: collega l'account e importa ogni pesata della bilancia, anche ciò che RENPHO non passa ad Apple Salute, con analisi segmentale (braccia, gambe, tronco) e impedenze 20/100 kHz quando disponibili | **RENPHO Health**: connect the account and import every weigh-in, also what RENPHO does not pass to Apple Health, with segmental analysis (arms, legs, trunk) and 20/100 kHz impedances when available |
+| **Musica**: barra con brano in corso e comandi, sempre visibile; Spotify collegato all'account openGym (o per dispositivo) e Apple Music nell'app iPhone | **Music**: a bar with what plays and its controls, always at hand; Spotify on the openGym account (or per device) and Apple Music in the iPhone app |
+| **Coach**: domande libere in chat, legge anche i dati di Salute | **Coach**: ask it anything in the chat; it reads the Health data too |
+| **Allenamento**: esercizi extra in sessione, battito dell'allenamento da Salute, suoni che abbassano la musica invece di fermarla | **Workouts**: extra exercises in a session, a workout's heart rate from Health, timer sounds that lower the music instead of stopping it |
+| **Interfaccia**: Home con widget Salute, Impostazioni nella barra in basso, voce Coach per l'admin | **Interface**: Home with Health widgets, Settings in the tab bar, a Coach row for admins |
+| **Primo utente = amministratore** (disattivabile con `FIRST_USER_ADMIN=0`) | **First profile = admin** (`FIRST_USER_ADMIN=0` turns it off) |
+
+### Provala con Docker · Try it with Docker
+
+```bash
+git clone -b plus https://github.com/TheBlackSide243/openGym.git opengym-plus
+cd opengym-plus
+cp .env.example .env        # imposta RP_ID e ORIGIN · set RP_ID and ORIGIN (docs/SELF_HOSTING.md)
+docker compose up -d --build
+```
+
+Apri `http://localhost:8080` e crea il tuo profilo per primo: diventa l'amministratore.
+*Open `http://localhost:8080` and create your profile first: it becomes the admin.*
+
+Opzionali in `.env` · optional in `.env`: `SPOTIFY_CLIENT_ID` (Spotify sull'account · on the account), `RENPHO_SYNC_HOURS` (ogni quante ore · how often, default 6). Vedi · see [docs/SELF_HOSTING.md](docs/SELF_HOSTING.md).
+
+### App iPhone · iPhone app
+
+Nelle [Release](https://github.com/TheBlackSide243/openGym/releases) c'è l'`.ipa` non firmata: installala con Sideloadly o AltStore. Per HealthKit serve un account sviluppatore Apple con la capacità HealthKit sull'App ID.
+*The [Releases](https://github.com/TheBlackSide243/openGym/releases) have the unsigned `.ipa`: install it with Sideloadly or AltStore. HealthKit needs an Apple developer account with the HealthKit capability on the App ID.*
+
+> RENPHO non ha un'API pubblica: openGym usa quella della sua app e potrebbe smettere di funzionare se RENPHO la cambia. · *RENPHO has no public API: openGym uses its app's, which may stop working if RENPHO changes it.*
+
+---
+
 <div align="center">
 
 <img src="assets/banner.png" alt="openGym" width="720">

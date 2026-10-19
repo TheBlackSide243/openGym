@@ -62,6 +62,11 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
 	<key>NSAppleMusicUsageDescription</key>
 	<string>Used to show the song the Music app is playing at the top of a workout, with buttons to pause it or skip to the next one.</string>
 	<key>NSCameraUsageDescription</key>
