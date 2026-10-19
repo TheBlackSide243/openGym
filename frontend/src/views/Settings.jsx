@@ -3,6 +3,7 @@ import { useNavigate, useParams, useLocation, Navigate } from 'react-router-dom'
 import { useStore, DEF, hasData } from '../store/useStore.js'
 import { healthStatus, loadHealth, enableHealth, disableHealth, openHealthConnect, onHealthChange } from '../lib/health-sync.js'
 import HealthSources from '../components/HealthSources.jsx'
+import RenphoSource from '../components/RenphoSource.jsx'
 import AppleHealthWeb from '../components/AppleHealthWeb.jsx'
 import { widgetsSheet } from '../components/HealthWidgets.jsx'
 import { widgetsOf } from '../lib/health/widgets.js'
@@ -821,6 +822,7 @@ export default function Settings({ page = null, find = null, via = null }) {
           subtitle={t('Body composition, activity, heart and sleep')} accessory="chevron" onClick={() => nav('/health')} />
       </Section>
       {MOBILE && <HealthSources />}
+      <RenphoSource />
       {!MOBILE && <AppleHealthWeb />}
     </>,
 
