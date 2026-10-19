@@ -3,6 +3,7 @@ import { useNavigate, useParams, useLocation, Navigate } from 'react-router-dom'
 import { useStore, DEF, hasData } from '../store/useStore.js'
 import { healthStatus, loadHealth, enableHealth, disableHealth, openHealthConnect, onHealthChange } from '../lib/health-sync.js'
 import HealthSources from '../components/HealthSources.jsx'
+import RenphoSource from '../components/RenphoSource.jsx'
 import AppleHealthWeb from '../components/AppleHealthWeb.jsx'
 import { widgetsSheet } from '../components/HealthWidgets.jsx'
 import { widgetsOf } from '../lib/health/widgets.js'
@@ -821,6 +822,7 @@ export default function Settings({ page = null, find = null, via = null }) {
           subtitle={t('Body composition, activity, heart and sleep')} accessory="chevron" onClick={() => nav('/health')} />
       </Section>
       {MOBILE && <HealthSources />}
+      <RenphoSource />
       {!MOBILE && <AppleHealthWeb />}
     </>,
 
@@ -956,6 +958,8 @@ function SettingsRoot({ ctx, preview, open, user, sync, go }) {
     : { title: t('Guest'), sub: t('Your data lives on this device. Sign in to sync.') }
   const initial = user && !DEMO ? String(user.name || '?').trim().charAt(0).toUpperCase() : null
   // A tab of its own in the bar (components/TabBar.jsx), so no way back to Home above the title.
+  const nav = useNavigate()
+  const adminCoach = !MOBILE && !DEMO && !!user?.admin
   return <div className="narrow">
     <h1 className="sp-root-title">{t('Settings')}</h1>
     <div className="sp-search">
@@ -978,6 +982,11 @@ function SettingsRoot({ ctx, preview, open, user, sync, go }) {
         <Section key={g[0]}>
           {g.map(id => <Row key={id} icon={PAGES[id].icon} iconTint={PAGES[id].tint} title={t(PAGES[id].title)}
             value={preview[id]?.() || null} accessory="chevron" onClick={() => open(id)} className="sp-root-row" />)}
+          {/* The phone app sets up its own Coach on the Coach page beside Look; in a hosted app the
+              Coach is the server's, set up by an admin on the admin dashboard. Its admins get the
+              same row, in the same place, straight to that card; nobody else has anything to set. */}
+          {g[0] === 'look' && adminCoach && <Row icon={PAGES.coach.icon} iconTint={PAGES.coach.tint} title={t(PAGES.coach.title)}
+            value={t('Admin')} accessory="chevron" onClick={() => nav('/admin', { state: { section: 'coach' } })} className="sp-root-row" />}
         </Section>
       ))}
       <div className="dim small sp-version">openGym v{__APP_VERSION__}</div>
