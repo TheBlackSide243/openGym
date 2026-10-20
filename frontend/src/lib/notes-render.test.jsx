@@ -7,7 +7,7 @@ import React, { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import { useStore } from '../store/useStore.js'
 import { useUI } from '../store/useUI.js'
-import { exerciseNoteSheet, setNoteSheet } from '../sheets.jsx'
+import { exerciseNoteSheet, setNoteSheet, machineNoteSheet } from '../sheets.jsx'
 
 const activeWith = entry => ({ id: 'w1', d: '2026-08-25', start: 1, routineId: 'r1', name: 'Push', entries: [entry] })
 
@@ -42,6 +42,48 @@ const type = (el, value) => {
   setter.call(el, value)
   el.dispatchEvent(new Event('input', { bubbles: true }))
 }
+
+// Settings → Features → Machine settings: the line under an exercise opens this, and what is
+// written is the exercise's standing note, so it is there again next week and in every routine.
+describe('machine settings sheet', () => {
+  beforeEach(() => {
+    globalThis.IS_REACT_ACT_ENVIRONMENT = true
+    useUI.setState({ sheets: [] })
+    useStore.setState(s => ({ S: { ...s.S, exNotes: { squat: 'rack at 12' }, active: activeWith({ id: 'bench', sets: [] }) } }))
+    document.body.innerHTML = ''
+  })
+  afterEach(() => { act(() => { mounted.splice(0).forEach(r => r.unmount()) }) })
+
+  const open = exId => {
+    machineNoteSheet(exId)
+    const sheet = useUI.getState().sheets.at(-1)
+    const host = document.createElement('div')
+    document.body.appendChild(host)
+    const root = createRoot(host)
+    mounted.push(root)
+    act(() => root.render(sheet.render(sheet_close(sheet))))
+    return host
+  }
+  const save = host => act(() => { [...host.querySelectorAll('button')].find(b => /save/i.test(b.textContent)).click() })
+
+  it('saves what is written on the exercise, and leaves the other exercises alone', () => {
+    const host = open('bench')
+    act(() => { type(host.querySelector('textarea'), '  seat height 5\nbackrest 3 ') })
+    save(host)
+    const S = useStore.getState().S
+    expect(S.exNotes).toEqual({ bench: 'seat height 5\nbackrest 3', squat: 'rack at 12' })
+    expect(S.active.entries[0].note).toBeUndefined()
+    expect(useUI.getState().sheets).toHaveLength(0)
+  })
+
+  it('opens with what was written, and an emptied one is gone', () => {
+    const host = open('squat')
+    expect(host.querySelector('textarea').value).toBe('rack at 12')
+    act(() => { type(host.querySelector('textarea'), '   ') })
+    save(host)
+    expect('squat' in useStore.getState().S.exNotes).toBe(false)
+  })
+})
 
 describe('exercise note sheet', () => {
   beforeEach(() => {
