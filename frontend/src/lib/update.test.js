@@ -162,7 +162,7 @@ describe('semver comparison (via checkForUpdate behavior)', () => {
   // when package.json bumps. bump(2, +1) raises the patch; bump(0, +1) raises the major.
   // Read without its build metadata, the way compareSemver reads it: a build that sets
   // APP_BUILD (#244) runs this suite as "1.3.8+<build>", and then it checks the installed side.
-  const [MAJ, MIN, PATCH] = __APP_VERSION__.split('+')[0].split('.').map(Number)
+  const [MAJ, MIN, PATCH] = __APP_VERSION__.split('+')[0].split('-')[0].split('.').map(Number)
   const bump = (idx, by) => {
     const parts = [MAJ, MIN, PATCH]
     parts[idx] += by
@@ -191,7 +191,7 @@ describe('semver comparison (via checkForUpdate behavior)', () => {
   // installed side is __APP_VERSION__, a build-time define: run the suite with APP_BUILD set
   // and every case in this block reads it with metadata too.
   const BUILD = '+2026-09-18.2'
-  const [MAJOR, MINOR, PATCH_N] = __APP_VERSION__.split('+')[0].split('.').map(Number)
+  const [MAJOR, MINOR, PATCH_N] = __APP_VERSION__.split('+')[0].split('-')[0].split('.').map(Number)
   const tagged = (maj, min, patch) => 'v' + [maj, min, patch].join('.') + BUILD
 
   it('judges a tag that carries build metadata on its numbers alone', async () => {
@@ -202,7 +202,7 @@ describe('semver comparison (via checkForUpdate behavior)', () => {
     mockRelease(tagged(MAJOR, MINOR, PATCH_N))
     const same = await checkForUpdate()
     expect(same.hasUpdate).toBe(false)                                   // the running release
-    expect(same.latestVersion).toBe(__APP_VERSION__.split('+')[0] + BUILD)   // echoed as it came
+    expect(same.latestVersion).toBe([MAJOR, MINOR, PATCH_N].join('.') + BUILD)   // echoed as it came
 
     resetUpdateCheck()
     mockRelease(tagged(MAJOR, Math.max(0, MINOR - 1), 0))
@@ -210,6 +210,16 @@ describe('semver comparison (via checkForUpdate behavior)', () => {
 
     resetUpdateCheck()
     mockRelease(tagged(MAJOR + 1, 0, 0))
+    expect((await checkForUpdate()).hasUpdate).toBe(true)
+  })
+
+  // A fork numbers its own releases after a dash on the version it is built on ("1.4.1-5"): the
+  // same numbers are the same release, the next patch is an update, whichever side has the dash.
+  it('reads a build number after a dash as the version it is built on', async () => {
+    mockRelease('v' + [MAJOR, MINOR, PATCH_N].join('.') + '-7')
+    expect((await checkForUpdate()).hasUpdate).toBe(false)
+    resetUpdateCheck()
+    mockRelease('v' + [MAJOR, MINOR, PATCH_N + 1].join('.') + '-1')
     expect((await checkForUpdate()).hasUpdate).toBe(true)
   })
 

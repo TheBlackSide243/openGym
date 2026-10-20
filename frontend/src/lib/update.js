@@ -25,10 +25,13 @@ export const RELEASES_PAGE = `https://github.com/${REPO}/releases/latest`
  * unnoticed. Semver says the metadata plays no part in precedence, so "1.3.7+anything" and
  * "1.3.7" are the same version here. Dropped on both operands, so it holds whichever side
  * carries it.
+ *
+ * So is a build number after a dash ("1.4.1-5", a fork's fifth release on top of 1.4.1): the
+ * comparison is with the releases it is built on, and 1.4.1-5 is 1.4.1 there.
  */
 function compareSemver(a, b) {
-  const pa = a.replace(/^v/, '').split('+')[0].split('.').map(Number)
-  const pb = b.replace(/^v/, '').split('+')[0].split('.').map(Number)
+  const pa = a.replace(/^v/, '').split('+')[0].split('-')[0].split('.').map(Number)
+  const pb = b.replace(/^v/, '').split('+')[0].split('-')[0].split('.').map(Number)
   for (let i = 0; i < 3; i++) {
     const diff = (pa[i] || 0) - (pb[i] || 0)
     if (diff > 0) return 1
