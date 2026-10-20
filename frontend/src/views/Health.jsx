@@ -116,9 +116,9 @@ export const compositionSheet = (g = null) => openSheet(close => <CompositionFor
 
 /* ---------------- a day, hour by hour (iPhone app) ---------------- */
 
-// A day hour by hour. Recent days are kept an hour at a time (api/health/catalogue.js hourlyFrom:
-// heart rate 90 days, the rest 30), so any device shows them from the profile; on the iPhone an
-// older day of a measurement is read from Apple Health on the spot and kept nowhere.
+// A day hour by hour. Heart rate's recent days are kept an hour at a time (api/health/catalogue.js
+// hourlyFrom: 90 days), so any device shows them from the profile; on the iPhone a day of another
+// measurement, or an older one, is read from Apple Health on the spot and kept nowhere.
 const DAY_KINDS = new Set(['range', 'mean', 'hour', 'sum'])
 const isHour = r => /:\d+$/.test(String(r?.sid || ''))
 const keptHours = (S, type, day) => (S.health || []).filter(r => r?.type === type && r.d === day && isHour(r)).sort((a, b) => a.t - b.t)
