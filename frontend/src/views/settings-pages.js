@@ -115,6 +115,7 @@ export const SEARCH = [
   { page: 'look', title: 'Show connection status', icon: 'cloud', tint: 'var(--blue)', kw: 'sync offline banner bar connection', when: c => !c.demo },
   // Features
   { page: 'features', title: 'Music bar', icon: 'music', tint: 'var(--pink)', kw: 'music bar spotify apple music show hide turn on off enable disable' },
+  { page: 'features', title: 'Machine settings', icon: 'wrench', tint: 'var(--orange)', kw: 'machine settings seat height pin position backrest adjustments setup gym equipment notes' },
   { page: 'features', title: 'Music player', icon: 'music', tint: 'var(--pink)', kw: 'music spotify apple music song songs playlist player track skip next pause', when: c => c.musicBar },
   // Data & backup
   { page: 'health', title: 'Open Health', icon: 'heart', tint: 'var(--red)', kw: 'health body composition bia scale fat muscle water steps heart rate sleep apple health healthkit' },

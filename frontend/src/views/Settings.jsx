@@ -525,7 +525,16 @@ export default function Settings({ page = null, find = null, via = null }) {
 
     // Things to turn on and off. The music bar is the first; its player and Spotify rows sit under
     // its switch, and stay set while it is off.
-    features: () => <MusicSettings />,
+    features: () => <>
+      <MusicSettings />
+      {/* The standing note of each exercise (S.exNotes), as a line under every exercise of a
+          workout: the seat, the pins, the backrest, there to read and to change at the machine. */}
+      <Section title={t('Workout')} footer={t('A line under each exercise for the seat, pins and the like: saved with the exercise and shown every time you train it.')}>
+        <Row icon="wrench" iconTint="var(--orange)" title={t('Machine settings')}>
+          <Switch aria-label={t('Machine settings')} checked={!!S.machineNotes} onChange={v => update(s => { if (v) s.machineNotes = true; else delete s.machineNotes })} />
+        </Row>
+      </Section>
+    </>,
 
     advanced: () => {
       // S.wc overlays DEF.wc, so a profile from before these switches existed reads as the lean default.

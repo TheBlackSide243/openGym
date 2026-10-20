@@ -325,6 +325,17 @@ describe('the pages', () => {
     expect(titles()).toContain('Music player')
   })
 
+  it('Features turns on the machine settings line', () => {
+    mount('features')
+    const sw = () => rowTitled('Machine settings').querySelector('[role="switch"]')
+    expect(sw().getAttribute('aria-checked')).toBe('false')
+    act(() => sw().click())
+    expect(mocks.S.machineNotes).toBe(true)
+    mount('features')
+    act(() => sw().click())
+    expect('machineNotes' in mocks.S).toBe(false)
+  })
+
   it('the Fine-tuning switches write S.wc as the old Workout controls sheet did', () => {
     mount('advanced')
     act(() => rowTitled('Superset buttons in the exercise header').querySelector('[role="switch"]').click())

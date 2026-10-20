@@ -3051,6 +3051,36 @@ function ExerciseNote({ entryIdx, close }) {
 }
 export const exerciseNoteSheet = entryIdx => ui().openSheet(close => <ExerciseNote entryIdx={entryIdx} close={close} />)
 
+/* The machine's settings for an exercise (Settings → Features → Machine settings): the standing
+   note above on its own, opened from the line under the exercise in a workout. Kept per exercise,
+   so it comes back in every routine and every week the exercise is trained, on every device. */
+function MachineNote({ exId, close }) {
+  const ref = useRef(null)
+  const onFocus = useSheetKeyboard(ref)
+  const update = useStore(s => s.update)
+  const [text, setText] = useState(() => useStore.getState().S.exNotes?.[exId] || '')
+  const ex = exOr(exId)
+  const save = () => {
+    const v = text.trim().slice(0, NOTE_MAX)
+    update(s => {
+      s.exNotes = s.exNotes || {}
+      if (v) s.exNotes[exId] = v
+      else delete s.exNotes[exId]
+    })
+    close()
+  }
+  return <>
+    <h3 className={exerciseNameClass(ex)}>{exerciseNameFor(ex)}</h3>
+    <div className="small muted" style={{ marginBottom: 6 }}>{t('Machine settings')}</div>
+    <textarea ref={ref} className="input" rows={3} maxLength={NOTE_MAX} value={text} autoFocus
+      placeholder={t('For example: seat height 5, backrest 3.')}
+      onFocus={onFocus} onChange={e => setText(e.target.value)} />
+    <div style={{ height: 18 }} />
+    <Button variant="primary" onClick={save}>{t('Save')}</Button>
+  </>
+}
+export const machineNoteSheet = exId => ui().openSheet(close => <MachineNote exId={exId} close={close} />)
+
 function SetNote({ entryIdx, setIdx, close }) {
   const noteRef = useRef(null)
   const onNoteFocus = useSheetKeyboard(noteRef)

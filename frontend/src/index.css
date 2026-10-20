@@ -671,6 +671,9 @@ body.chips-dragging *{cursor:inherit}
   background:var(--surface);border-radius:var(--r);padding:13px 15px;
   line-height:1.45;white-space:pre-wrap;font-size:15px;margin-bottom:10px;color:var(--label-2);
 }
+.exnote-tap{display:block;width:100%;text-align:start;border:0;font:inherit;font-size:15px;cursor:pointer}
+.exnote-tap.blank{background:none;border:1px dashed var(--sep);color:var(--label-3)}
+.exnote-tap .icn{display:inline-block}
 
 /* --- search field --- */
 .searchf{position:relative;display:flex;align-items:center}
