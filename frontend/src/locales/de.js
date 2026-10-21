@@ -2680,6 +2680,8 @@ export default {
   'Music bar': 'Musikleiste',
   'Machine settings': 'Geräteeinstellungen',
   'Add machine settings': 'Geräteeinstellungen hinzufügen',
+  'Photo of the machine': 'Foto des Geräts',
+  'Optional. To spot the right machine at a glance.': 'Optional. Damit du das richtige Gerät auf einen Blick erkennst.',
   'For example: seat height 5, backrest 3.': 'Zum Beispiel: Sitzhöhe 5, Lehne 3.',
   'A line under each exercise for the seat, pins and the like: saved with the exercise and shown every time you train it.': 'Eine Zeile unter jeder Übung für Sitz, Stecker und Ähnliches: mit der Übung gespeichert und bei jedem Training angezeigt.',
   'Above the tab bar and at the top of a workout.': 'Über der Tab-Leiste und oben im Training.',

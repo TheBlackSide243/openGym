@@ -674,6 +674,9 @@ body.chips-dragging *{cursor:inherit}
 .exnote-tap{display:block;width:100%;text-align:start;border:0;font:inherit;font-size:15px;cursor:pointer}
 .exnote-tap.blank{background:none;border:1px dashed var(--sep);color:var(--label-3)}
 .exnote-tap .icn{display:inline-block}
+.exnote-tap.with-photo{display:flex;align-items:center;gap:12px;padding-block:9px}
+.exnote-photo{flex:none;display:flex}
+.exmedia.machine-photo{margin-bottom:12px}
 
 /* --- search field --- */
 .searchf{position:relative;display:flex;align-items:center}

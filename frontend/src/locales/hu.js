@@ -2663,6 +2663,8 @@ export default {
   'Music bar': 'Zenesáv',
   'Machine settings': 'Gépbeállítások',
   'Add machine settings': 'Gépbeállítások hozzáadása',
+  'Photo of the machine': 'A gép fotója',
+  'Optional. To spot the right machine at a glance.': 'Nem kötelező. Hogy első ránézésre felismerd a megfelelő gépet.',
   'For example: seat height 5, backrest 3.': 'Például: ülésmagasság 5, háttámla 3.',
   'A line under each exercise for the seat, pins and the like: saved with the exercise and shown every time you train it.': 'Egy sor minden gyakorlat alatt az ülésnek, a csapoknak és hasonlóknak: a gyakorlattal mentődik, és minden alkalommal megjelenik.',
   'Above the tab bar and at the top of a workout.': 'A lapsáv fölött és az edzés tetején.',

@@ -1,5 +1,5 @@
 {
-  "about": "Which blob hashes a state references. api/media.js referencedHashes() and frontend/src/lib/media-refs.js referencedHashes() must both give `expect` (compared as sorted lists) for every `state` here: the server keeps and the client keeps exactly this set. Each of customEx[].media.hash, customEx[].media.poster.hash and the same two of every entry of workouts[].media counts on its own when it matches /^[0-9a-f]{64}$/ — deliberately looser than normalizeMediaRef, because this set decides what is kept.",
+  "about": "Which blob hashes a state references. api/media.js referencedHashes() and frontend/src/lib/media-refs.js referencedHashes() must both give `expect` (compared as sorted lists) for every `state` here: the server keeps and the client keeps exactly this set. Each of customEx[].media.hash, customEx[].media.poster.hash and the same two of every entry of workouts[].media and of every exPhotos value counts on its own when it matches /^[0-9a-f]{64}$/ — deliberately looser than normalizeMediaRef, because this set decides what is kept.",
   "referencedHashes": [
     {
       "name": "no state at all",
@@ -867,6 +867,62 @@
           ]
         },
         "workouts": []
+      },
+      "expect": []
+    },
+    {
+      "name": "a machine photo per exercise (exPhotos), anything else in the map skipped",
+      "state": {
+        "exPhotos": {
+          "2259": {
+            "kind": "image",
+            "hash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+            "mime": "image/webp",
+            "size": 1000,
+            "width": 800,
+            "height": 600,
+            "at": 1,
+            "poster": {
+              "hash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+              "mime": "image/webp",
+              "size": 100,
+              "width": 240,
+              "height": 180
+            }
+          },
+          "x": null,
+          "y": "not a ref",
+          "z": {
+            "hash": "short"
+          }
+        }
+      },
+      "expect": [
+        "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+      ]
+    },
+    {
+      "name": "exPhotos that is not a map",
+      "state": {
+        "exPhotos": [
+          {
+            "kind": "image",
+            "hash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            "mime": "image/webp",
+            "size": 1000,
+            "width": 800,
+            "height": 600,
+            "at": 1,
+            "poster": {
+              "hash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "mime": "image/webp",
+              "size": 100,
+              "width": 240,
+              "height": 180
+            }
+          }
+        ]
       },
       "expect": []
     }

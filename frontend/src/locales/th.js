@@ -2671,6 +2671,8 @@ export default {
   'Music bar': 'แถบเพลง',
   'Machine settings': 'การปรับเครื่อง',
   'Add machine settings': 'เพิ่มการปรับเครื่อง',
+  'Photo of the machine': 'รูปเครื่อง',
+  'Optional. To spot the right machine at a glance.': 'ไม่บังคับ ช่วยให้จำเครื่องที่ถูกต้องได้ในแวบเดียว',
   'For example: seat height 5, backrest 3.': 'เช่น ความสูงเบาะ 5 พนักพิง 3',
   'A line under each exercise for the seat, pins and the like: saved with the exercise and shown every time you train it.': 'บรรทัดใต้ทุกท่าสำหรับเบาะ หมุด และอื่นๆ: บันทึกไว้กับท่าและแสดงทุกครั้งที่ฝึก',
   'Above the tab bar and at the top of a workout.': 'เหนือแถบแท็บและด้านบนของการฝึก',

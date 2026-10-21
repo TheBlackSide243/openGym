@@ -421,7 +421,7 @@ const RESET_LISTS = {
   measurements: bodyweightKey, gymCards: x => x?.id, equipProfiles: x => x?.id, favEx: x => x,
   health: x => x?.id,
 }
-const RESET_MAPS = ['exNotes', 'barWeights', ...STAMPED_MAPS]
+const RESET_MAPS = ['exNotes', 'exPhotos', 'barWeights', ...STAMPED_MAPS]
 /** An entry's name in resetIds: a workout's id (or day and start), a weigh-in's day and time, … */
 export const entryKey = (field, x) => String(RESET_LISTS[field](x))
 // Per field, the most names a reset keeps — far more workouts than anyone logs, and a bound on
@@ -481,6 +481,7 @@ export function sinceReset(S, at, ids) {
     out.gymCards = []
     out.favEx = []
     out.exNotes = {}
+    out.exPhotos = {}
     out.barWeights = {}
     for (const f of STAMPED_MAPS) {
       out[f] = Object.fromEntries(Object.entries(isMap(S[f]) ? S[f] : {}).filter(([, v]) => after(stampOf(v))))
@@ -637,7 +638,7 @@ const OWN_MERGE = new Set([
   'exWeights', 'balanceOverrides', 'loadKind', 'plates', 'dbLoad', 'dumbbells', 'dayNotes',
 ])
 // Stamped per key instead of whole: one day of the plan, one exercise's note or bar.
-const PER_KEY = new Set(['week', 'dayPlan', 'exNotes', 'barWeights'])
+const PER_KEY = new Set(['week', 'dayPlan', 'exNotes', 'exPhotos', 'barWeights'])
 // The order of the routines, as the list shows them, is a choice of its own (`edited.routineOrder`):
 // a reorder on one device was lost to the other's whole copy whenever that one was newer.
 export const ORDER_KEY = 'routineOrder'
@@ -866,7 +867,7 @@ export function mergeStates(a0, b0, { prefer } = {}) {
     if (kept) out.exWeights[id] = clone(kept)
     else delete out.exWeights[id]
   }
-  for (const f of ['exNotes', 'barWeights']) {
+  for (const f of ['exNotes', 'exPhotos', 'barWeights']) {
     if (n[f] || o[f]) out[f] = clone({ ...(o[f] || {}), ...(n[f] || {}) })
   }
   // The plate-loading choices (lib/plates.js) are stamped the same way: an exercise's loading and

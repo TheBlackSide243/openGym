@@ -1821,6 +1821,8 @@ export const PT_BR_OVERRIDES = {
   'Music bar': 'Barra de música',
   'Machine settings': 'Ajustes do aparelho',
   'Add machine settings': 'Adicionar ajustes do aparelho',
+  'Photo of the machine': 'Foto do aparelho',
+  'Optional. To spot the right machine at a glance.': 'Opcional. Para reconhecer o aparelho certo num relance.',
   'For example: seat height 5, backrest 3.': 'Por exemplo: altura do banco 5, encosto 3.',
   'A line under each exercise for the seat, pins and the like: saved with the exercise and shown every time you train it.': 'Uma linha sob cada exercício para o banco, os pinos e afins: salva com o exercício e mostrada toda vez que você o treina.',
   'Above the tab bar and at the top of a workout.': 'Acima da barra de abas e no topo do treino.',
