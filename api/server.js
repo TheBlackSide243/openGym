@@ -35,6 +35,7 @@ import { effectiveRoutineId } from './queue.js';
 import { stampPut, highestStamp } from './sync-stamps.js';
 import { readingsFromShortcut, readingsFromAutoExport, isAutoExport, mergeReadings } from './health/fold.js';
 import { createRenphoService, reasonOf } from './providers/renpho/service.js';
+import { watchSummary } from './watch.js';
 import { createRenphoClient, BASE_URL as RENPHO_DEFAULT_URL } from './providers/renpho/client.js';
 import { atomicWrite as durableWrite } from './durable.js';
 import { excusedOn, nudgeFor, nudgeWindowOpen, toneOf } from './nudge.js';
@@ -2289,6 +2290,15 @@ const routes = {
   // `_unstamped` is the server's note of what it stamped for an older app's last push
   // (sync-stamps.js ownRecord), `_prior` what each field held before (notePrior): read back only
   // by the next PUT, never sent to a client.
+  // The Apple Watch app's view of the profile (watch.js): the workout in progress, the last one and
+  // the body weight, in a few kilobytes. Read-only, by the paired app's Bearer token or a session.
+  'GET /api/watch': async (req, res) => {
+    const user = readSession(req);
+    if (!user) return json(res, 401, { error: 'not signed in' });
+    const state = readStateStrict(user.id);
+    if (state === UNREADABLE) return json(res, 503, { error: 'state unreadable' });
+    json(res, 200, watchSummary(state || {}));
+  },
   'GET /api/data': async (req, res) => {
     const user = readSession(req);
     if (!user) return json(res, 401, { error: 'not signed in' });

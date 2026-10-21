@@ -1,0 +1,55 @@
+# openGym for Apple Watch: a watch-only SwiftUI app (no iPhone app needed), generated into an Xcode
+# project by XcodeGen (`xcodegen generate` in this folder), which the plus-watch workflow does on
+# a macOS runner. See README.md.
+name: OpenGymWatch
+options:
+  bundleIdPrefix: app.opengym.plus
+  developmentLanguage: en
+  deploymentTarget:
+    watchOS: "10.0"
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    MARKETING_VERSION: "1.4.1"
+    CURRENT_PROJECT_VERSION: "8"
+targets:
+  OpenGymWatch:
+    type: application
+    platform: watchOS
+    sources:
+      - path: Sources
+      - path: Resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.opengym.plus.watch
+        PRODUCT_NAME: openGym
+        INFOPLIST_FILE: Info.plist
+        CODE_SIGN_ENTITLEMENTS: OpenGymWatch.entitlements
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        GENERATE_INFOPLIST_FILE: NO
+        TARGETED_DEVICE_FAMILY: "4"
+        SKIP_INSTALL: NO
+    info:
+      path: Info.plist
+      properties:
+        CFBundleDisplayName: openGym
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        WKApplication: true
+        WKWatchOnly: true
+        WKBackgroundModes: [workout-processing]
+        NSHealthShareUsageDescription: openGym reads your heart rate and active energy during a workout to show them live.
+        NSHealthUpdateUsageDescription: openGym saves the workout you track on the watch to Apple Health.
+        CFBundleLocalizations: [en, it]
+    entitlements:
+      path: OpenGymWatch.entitlements
+      properties:
+        com.apple.developer.healthkit: true
+        com.apple.developer.healthkit.access: []
+schemes:
+  OpenGymWatch:
+    build:
+      targets:
+        OpenGymWatch: all
+    run:
+      config: Debug

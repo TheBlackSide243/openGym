@@ -1587,6 +1587,66 @@ paths:
                   wid: { type: string, description: 'The write id (`_wid`) of the stored document; absent before its first write.' }
         '401': { $ref: '#/components/responses/Unauthorized' }
 
+  /api/watch:
+    get:
+      tags: [data]
+      summary: What the Apple Watch app shows
+      description: |
+        A few kilobytes read from the caller's profile, for the watch to fetch every few seconds
+        instead of the whole document: the workout in progress (each exercise with its sets, and
+        `current`, the first one with a set still to do), the last finished workout and the last
+        body weight. Read-only.
+      responses:
+        '200':
+          description: The summary.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  unit: { type: string, enum: [kg, lb] }
+                  restSec: { type: number }
+                  active:
+                    nullable: true
+                    type: object
+                    properties:
+                      name: { type: string }
+                      start: { type: number, nullable: true }
+                      current: { type: integer, description: 'Index of the first exercise with a set to do; -1 when all are done.' }
+                      entries:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id: { type: string }
+                            name: { type: string }
+                            sets:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  done: { type: boolean }
+                                  w: { type: number }
+                                  r: { type: number }
+                                  min: { type: number }
+                                  s: { type: number }
+                  last:
+                    nullable: true
+                    type: object
+                    properties:
+                      name: { type: string }
+                      d: { type: string }
+                      vol: { type: number, nullable: true }
+                      sets: { type: integer }
+                  weight:
+                    nullable: true
+                    type: object
+                    properties:
+                      d: { type: string }
+                      w: { type: number }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '503': { description: The profile's state could not be read. }
+
   /api/media/{hash}:
     parameters:
       - name: hash

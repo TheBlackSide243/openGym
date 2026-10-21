@@ -1,0 +1,5 @@
+OpenGymWatch.xcodeproj/
+build/
+out/
+Info.plist
+OpenGymWatch.entitlements
