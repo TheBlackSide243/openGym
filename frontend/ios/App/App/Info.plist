@@ -77,7 +77,7 @@
 	<key>NSAppleMusicUsageDescription</key>
 	<string>Used to show the song the Music app is playing at the top of a workout, with buttons to pause it or skip to the next one.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Used to scan your gym membership QR code, and to take a photo or video of an exercise you add yourself.</string>
+	<string>Used to scan your gym membership QR code or barcode, and to take a photo or video of an exercise you add yourself.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Used to record the sound of a video you take of an exercise you add yourself.</string>
 	<key>CFBundleURLTypes</key>
