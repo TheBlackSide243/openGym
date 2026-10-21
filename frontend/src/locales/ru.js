@@ -2664,6 +2664,8 @@ export default {
   'Music bar': 'Музыкальная панель',
   'Machine settings': 'Настройки тренажёра',
   'Add machine settings': 'Добавить настройки тренажёра',
+  'Photo of the machine': 'Фото тренажёра',
+  'Optional. To spot the right machine at a glance.': 'Необязательно. Чтобы сразу узнать нужный тренажёр.',
   'For example: seat height 5, backrest 3.': 'Например: высота сиденья 5, спинка 3.',
   'A line under each exercise for the seat, pins and the like: saved with the exercise and shown every time you train it.': 'Строка под каждым упражнением для сиденья, штифтов и прочего: сохраняется вместе с упражнением и показывается каждый раз.',
   'Above the tab bar and at the top of a workout.': 'Над панелью вкладок и вверху тренировки.',

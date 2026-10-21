@@ -82,7 +82,7 @@ export function mediaLimits(env = process.env) {
 // `workouts: true`: this server keeps the files a logged workout's `media` names (its GC walks
 // workouts[].media), so a signed-in client may offer attaching them. A server from before says
 // nothing, and the client offers them on custom exercises only.
-export const mediaConfig = l => ({ imageMB: l.imageMB, gifMB: l.gifMB, videoMB: l.videoMB, videoSec: l.videoSec, quotaMB: l.quotaMB, workouts: true });
+export const mediaConfig = l => ({ imageMB: l.imageMB, gifMB: l.gifMB, videoMB: l.videoMB, videoSec: l.videoSec, quotaMB: l.quotaMB, workouts: true, machinePhotos: true });
 
 /* ---------------------------------------------------------------- errors */
 
@@ -278,8 +278,9 @@ export function mp4Info(fd, size) {
 /* ---------------------------------------------------------------- references */
 
 /**
- * Every blob a state refers to: customEx[].media.hash and .poster.hash, and the same two of every
- * entry of workouts[].media (the photos and videos of a logged workout). Deliberately loose —
+ * Every blob a state refers to: customEx[].media.hash and .poster.hash, the same two of every
+ * entry of workouts[].media (the photos and videos of a logged workout) and of every exPhotos
+ * value (the photo of the machine an exercise is done on). Deliberately loose —
  * each field counts on its own as long as it is a well-formed hash, even when the rest of the ref
  * would not pass the client's normalizeMediaRef, and a workout's list counts past the client's
  * cap of six. This set decides what is KEPT, so erring towards more is the safe direction.
@@ -300,6 +301,7 @@ export function referencedHashes(state) {
     if (!isObj(w) || !Array.isArray(w.media)) continue;
     for (const m of w.media) if (isObj(m)) ref(m);
   }
+  if (isObj(state.exPhotos)) for (const m of Object.values(state.exPhotos)) if (isObj(m)) ref(m);
   return out;
 }
 

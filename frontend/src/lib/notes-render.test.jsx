@@ -76,6 +76,21 @@ describe('machine settings sheet', () => {
     expect(useUI.getState().sheets).toHaveLength(0)
   })
 
+  it('shows the photo of the machine, and Remove then Save takes it off the exercise only', () => {
+    const photo = { kind: 'image', hash: 'a'.repeat(64), mime: 'image/webp', size: 1000, width: 800, height: 600, at: 1,
+      poster: { hash: 'b'.repeat(64), mime: 'image/webp', size: 100, width: 240, height: 180 } }
+    useStore.setState(s => ({ S: { ...s.S, exPhotos: { bench: photo, squat: photo } } }))
+    const host = open('bench')
+    expect(host.textContent).toContain('Photo of the machine')
+    const remove = host.querySelector('button[aria-label="Remove"]')
+    expect(remove).toBeTruthy()
+    act(() => { remove.click() })
+    save(host)
+    const S = useStore.getState().S
+    expect('bench' in S.exPhotos).toBe(false)
+    expect(S.exPhotos.squat.hash).toBe('a'.repeat(64))
+  })
+
   it('opens with what was written, and an emptied one is gone', () => {
     const host = open('squat')
     expect(host.querySelector('textarea').value).toBe('rack at 12')

@@ -31,6 +31,8 @@ import { afterScrollRestore, scrollRestorePending } from '../components/Modals.j
 import { effortColor } from '../lib/effort.js'
 import Elapsed from '../components/Elapsed.jsx'
 import MusicBar from '../components/MusicBar.jsx'
+import { MachineThumb } from '../components/MachinePhoto.jsx'
+import { machinePhotoOf } from '../lib/media-refs.js'
 import { shownSource } from '../lib/music/index.js'
 import Icon from '../components/Icon.jsx'
 import { Button, Check, NumberField } from '../components/ui.jsx'
@@ -195,6 +197,8 @@ function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSi
   // same one the rows and the progression line were built from (#216).
   const last = lastEntryFor(H, entry.id, entry.rid)
   const standingNote = exNoteFor(S, entry.id)
+  // The photo of the machine, with the settings (Settings → Features → Machine settings).
+  const machinePhoto = S.machineNotes ? machinePhotoOf(S, entry.id) : null
   // Only worth surfacing while there is still work left: once the exercise is finished, a note
   // telling you what to do in it is behind you, and the block is already long.
   const pinnedNote = entry.sets.some(s => !s.done) ? pinnedNoteFor(S, entry.id) : null
@@ -678,9 +682,11 @@ function ExerciseBlock({ entryIdx, compact, dense, editing, onToggle, onToggleSi
     {/* With Settings → Features → Machine settings on, the standing note is the machine's
         settings: a line under every exercise, empty until written, a tap from being changed. */}
     {S.machineNotes
-      ? <button type="button" className={'exnote exnote-tap' + (standingNote ? '' : ' blank')} onClick={() => machineNoteSheet(entry.id)}
-          aria-label={standingNote ? t('Machine settings') + ': ' + standingNote : t('Add machine settings')}>
-          <Icon name="wrench" style={{ fontSize: 13, marginInlineEnd: 5, verticalAlign: '-2px' }} />{standingNote || t('Add machine settings')}
+      ? <button type="button" className={'exnote exnote-tap' + (standingNote || machinePhoto ? '' : ' blank') + (machinePhoto ? ' with-photo' : '')}
+          onClick={() => machineNoteSheet(entry.id)}
+          aria-label={standingNote ? t('Machine settings') + ': ' + standingNote : machinePhoto ? t('Photo of the machine') : t('Add machine settings')}>
+          {machinePhoto && <MachineThumb m={machinePhoto} />}
+          <span><Icon name="wrench" style={{ fontSize: 13, marginInlineEnd: 5, verticalAlign: '-2px' }} />{standingNote || (machinePhoto ? t('Machine settings') : t('Add machine settings'))}</span>
         </button>
       : standingNote && <div className="exnote"><Icon name="info" style={{ fontSize: 13, marginInlineEnd: 5, verticalAlign: '-2px' }} />{standingNote}</div>}
     {pinnedNote && <div className="exnote" style={{ color: 'var(--yellow)' }}>

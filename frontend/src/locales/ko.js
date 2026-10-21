@@ -2660,6 +2660,8 @@ export default {
   'Music bar': '음악 바',
   'Machine settings': '기구 설정',
   'Add machine settings': '기구 설정 추가',
+  'Photo of the machine': '기구 사진',
+  'Optional. To spot the right machine at a glance.': '선택 사항. 맞는 기구를 한눈에 알아볼 수 있어요.',
   'For example: seat height 5, backrest 3.': '예: 시트 높이 5, 등받이 3.',
   'A line under each exercise for the seat, pins and the like: saved with the exercise and shown every time you train it.': '운동마다 아래에 시트, 핀 등을 적는 한 줄: 운동과 함께 저장되어 할 때마다 보여요.',
   'Above the tab bar and at the top of a workout.': '탭 바 위와 운동 화면 맨 위에 표시돼요.',

@@ -14,8 +14,9 @@ import { nav, closeThenNav, navToWorkout } from './lib/nav.js'
 import { buildStarterPlan, starterPlanDays, starterPlanOptions } from './lib/starter.js'
 import Media, { Thumb } from './components/Media.jsx'
 import CustomMediaField from './components/CustomMediaField.jsx'
+import { MachinePhotoField, MachinePhotoView } from './components/MachinePhoto.jsx'
 import WorkoutMediaSection, { workoutMediaCount } from './components/WorkoutMedia.jsx'
-import { mediaOf, normalizeMediaRef, cleanUrl, workoutMediaOf } from './lib/media-refs.js'
+import { mediaOf, normalizeMediaRef, cleanUrl, workoutMediaOf, machinePhotoOf } from './lib/media-refs.js'
 import { syncMedia } from './lib/media-sync.js'
 import LineChart from './components/LineChart.jsx'
 import Stepper from './components/Stepper.jsx'
@@ -3059,6 +3060,8 @@ function MachineNote({ exId, close }) {
   const onFocus = useSheetKeyboard(ref)
   const update = useStore(s => s.update)
   const [text, setText] = useState(() => useStore.getState().S.exNotes?.[exId] || '')
+  // The photo of the machine (components/MachinePhoto.jsx), a draft until Save like the text.
+  const [photo, setPhoto] = useState(() => machinePhotoOf(useStore.getState().S, exId))
   const ex = exOr(exId)
   const save = () => {
     const v = text.trim().slice(0, NOTE_MAX)
@@ -3066,15 +3069,21 @@ function MachineNote({ exId, close }) {
       s.exNotes = s.exNotes || {}
       if (v) s.exNotes[exId] = v
       else delete s.exNotes[exId]
+      s.exPhotos = s.exPhotos || {}
+      if (photo) s.exPhotos[exId] = photo
+      else delete s.exPhotos[exId]
     })
     close()
   }
   return <>
     <h3 className={exerciseNameClass(ex)}>{exerciseNameFor(ex)}</h3>
+    {photo && <MachinePhotoView m={photo} name={exerciseNameFor(ex)} />}
     <div className="small muted" style={{ marginBottom: 6 }}>{t('Machine settings')}</div>
-    <textarea ref={ref} className="input" rows={3} maxLength={NOTE_MAX} value={text} autoFocus
+    <textarea ref={ref} className="input" rows={3} maxLength={NOTE_MAX} value={text} autoFocus={!text && !photo}
       placeholder={t('For example: seat height 5, backrest 3.')}
       onFocus={onFocus} onChange={e => setText(e.target.value)} />
+    <div style={{ height: 10 }} />
+    <div className="sect-b"><MachinePhotoField photo={photo} onChange={setPhoto} /></div>
     <div style={{ height: 18 }} />
     <Button variant="primary" onClick={save}>{t('Save')}</Button>
   </>
