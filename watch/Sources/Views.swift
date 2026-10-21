@@ -101,6 +101,7 @@ struct ActiveWorkout: View {
                 Spacer()
                 if let start = active.start {
                     Text(Date(timeIntervalSince1970: start / 1000), style: .timer).font(.footnote.monospacedDigit()).foregroundStyle(.secondary)
+                        .fixedSize().layoutPriority(1)
                 }
             }
             ProgressView(value: Double(done), total: Double(max(total, 1)))
@@ -185,6 +186,7 @@ struct HeartView: View {
                 }
                 .font(.footnote).foregroundStyle(.secondary)
                 Button(role: .destructive) { Task { await heart.end() } } label: { Label("End workout", systemImage: "stop.fill") }
+                    .tint(.red)
             } else {
                 Text("Records the workout in Apple Health and shows your heart rate live.").font(.footnote).foregroundStyle(.secondary).multilineTextAlignment(.center)
                 Button { Task { await heart.begin() } } label: { Label("Start workout", systemImage: "play.fill") }
@@ -211,7 +213,7 @@ struct SettingsView: View {
                 }
                 if let e = store.error { Text(e).font(.caption2).foregroundStyle(.orange) }
                 Button("Refresh") { Task { await store.refresh() } }
-                Button("Disconnect", role: .destructive) { store.unpair() }
+                Button("Disconnect", role: .destructive) { store.unpair() }.tint(.red)
                 Text("openGym \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "")").font(.caption2).foregroundStyle(.secondary)
             }
         }
