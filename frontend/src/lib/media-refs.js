@@ -112,7 +112,8 @@ export function workoutMediaOf(w, max = WORKOUT_MEDIA_MAX) {
 
 /**
  * Every MediaRef-like object a state holds, as it stands (not normalised): each custom
- * exercise's `media` and each entry of each logged workout's `media` list. The one walk behind
+ * exercise's `media`, each entry of each logged workout's `media` list, and each exercise's
+ * machine photo (`exPhotos`, keyed by exercise id). The one walk behind
  * referencedHashes, referencedFiles and the owed count, so they can never disagree about where
  * media live. The session in progress is not walked: it never syncs (the server drops `active`),
  * media are only ever attached to a saved workout, and the history editor's copy of one leaves
@@ -129,8 +130,12 @@ export function stateMediaRefs(state) {
     if (!isObj(w) || !Array.isArray(w.media)) continue
     for (const m of w.media) if (isObj(m)) out.push(m)
   }
+  if (isObj(state.exPhotos)) for (const m of Object.values(state.exPhotos)) if (isObj(m)) out.push(m)
   return out
 }
+
+/** The photo of the machine an exercise is done on (Settings → Features → Machine settings), or null. */
+export const machinePhotoOf = (S, exId) => normalizeMediaRef(S?.exPhotos?.[exId]) || null
 
 /**
  * Every blob hash a state refers to, the same answer as api/media.js referencedHashes (the shared

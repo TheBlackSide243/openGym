@@ -2739,6 +2739,8 @@ export default {
   'Music bar': 'সংগীত বার',
   'Machine settings': 'মেশিনের সেটিং',
   'Add machine settings': 'মেশিনের সেটিং যোগ করুন',
+  'Photo of the machine': 'মেশিনের ছবি',
+  'Optional. To spot the right machine at a glance.': 'ঐচ্ছিক। এক নজরে সঠিক মেশিন চিনতে।',
   'For example: seat height 5, backrest 3.': 'যেমন: সিটের উচ্চতা 5, ব্যাকরেস্ট 3।',
   'A line under each exercise for the seat, pins and the like: saved with the exercise and shown every time you train it.': 'প্রতিটি ব্যায়ামের নিচে সিট, পিন ইত্যাদির জন্য একটি লাইন: ব্যায়ামের সঙ্গে সংরক্ষিত হয় এবং প্রতিবার দেখা যায়।',
   'Above the tab bar and at the top of a workout.': 'ট্যাব বারের উপরে এবং ওয়ার্কআউটের শীর্ষে।',

@@ -2660,6 +2660,8 @@ export default {
   'Music bar': 'Pasek muzyki',
   'Machine settings': 'Ustawienia maszyny',
   'Add machine settings': 'Dodaj ustawienia maszyny',
+  'Photo of the machine': 'Zdjęcie maszyny',
+  'Optional. To spot the right machine at a glance.': 'Opcjonalne. Żeby od razu rozpoznać właściwą maszynę.',
   'For example: seat height 5, backrest 3.': 'Na przykład: wysokość siedziska 5, oparcie 3.',
   'A line under each exercise for the seat, pins and the like: saved with the exercise and shown every time you train it.': 'Linijka pod każdym ćwiczeniem na siedzisko, sworznie i tym podobne: zapisana z ćwiczeniem i widoczna przy każdym treningu.',
   'Above the tab bar and at the top of a workout.': 'Nad paskiem kart i na górze treningu.',

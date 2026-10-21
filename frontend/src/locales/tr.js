@@ -2660,6 +2660,8 @@ export default {
   'Music bar': 'Müzik çubuğu',
   'Machine settings': 'Makine ayarları',
   'Add machine settings': 'Makine ayarlarını ekle',
+  'Photo of the machine': 'Makinenin fotoğrafı',
+  'Optional. To spot the right machine at a glance.': 'İsteğe bağlı. Doğru makineyi bir bakışta tanımak için.',
   'For example: seat height 5, backrest 3.': 'Örneğin: oturak yüksekliği 5, sırtlık 3.',
   'A line under each exercise for the seat, pins and the like: saved with the exercise and shown every time you train it.': 'Her egzersizin altında oturak, pim ve benzerleri için bir satır: egzersizle kaydedilir ve her çalıştığınızda gösterilir.',
   'Above the tab bar and at the top of a workout.': 'Sekme çubuğunun üstünde ve antrenmanın en üstünde.',

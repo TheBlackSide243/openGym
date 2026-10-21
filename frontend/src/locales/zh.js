@@ -2660,6 +2660,8 @@ export default {
   'Music bar': '音乐栏',
   'Machine settings': '器械设置',
   'Add machine settings': '添加器械设置',
+  'Photo of the machine': '器械照片',
+  'Optional. To spot the right machine at a glance.': '选填。一眼认出正确的器械。',
   'For example: seat height 5, backrest 3.': '例如：座椅高度 5，靠背 3。',
   'A line under each exercise for the seat, pins and the like: saved with the exercise and shown every time you train it.': '每个动作下方一行，记下座椅、插销等设置：与动作一起保存，每次训练都会显示。',
   'Above the tab bar and at the top of a workout.': '在标签栏上方和训练页面顶部。',

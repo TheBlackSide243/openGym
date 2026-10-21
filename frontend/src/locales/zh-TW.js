@@ -2653,6 +2653,8 @@ export default {
   'Music bar': '音樂列',
   'Machine settings': '器材設定',
   'Add machine settings': '新增器材設定',
+  'Photo of the machine': '器材照片',
+  'Optional. To spot the right machine at a glance.': '選填。一眼認出正確的器材。',
   'For example: seat height 5, backrest 3.': '例如：座椅高度 5，靠背 3。',
   'A line under each exercise for the seat, pins and the like: saved with the exercise and shown every time you train it.': '每個動作下方一行，記下座椅、插銷等設定：與動作一起儲存，每次訓練都會顯示。',
   'Above the tab bar and at the top of a workout.': '在分頁列上方及訓練畫面頂端。',

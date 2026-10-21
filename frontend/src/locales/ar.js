@@ -2715,6 +2715,8 @@ export default {
   'Music bar': 'شريط الموسيقى',
   'Machine settings': 'إعدادات الجهاز',
   'Add machine settings': 'أضف إعدادات الجهاز',
+  'Photo of the machine': 'صورة الجهاز',
+  'Optional. To spot the right machine at a glance.': 'اختياري. لتتعرّف على الجهاز الصحيح بنظرة.',
   'For example: seat height 5, backrest 3.': 'مثال: ارتفاع المقعد 5، المسند 3.',
   'A line under each exercise for the seat, pins and the like: saved with the exercise and shown every time you train it.': 'سطر تحت كل تمرين للمقعد والمسامير وما شابه: يُحفظ مع التمرين ويظهر في كل مرة تتمرنه.',
   'Above the tab bar and at the top of a workout.': 'فوق شريط التبويب وفي أعلى التمرين.',
