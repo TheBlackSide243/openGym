@@ -14,11 +14,19 @@ permissions:
 
 jobs:
   ipa:
-    # v1.4.2's code needs the iOS 26 SDK (Background Assets' AssetPackManager), as upstream's ios.yml.
-    runs-on: macos-26
+    # v1.4.2's code needs the iOS 26 SDK (Background Assets' AssetPackManager). macos-26 runners
+    # queue for long and get cancelled; macos-15 carries Xcode 26 too, picked below.
+    runs-on: macos-15
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
+
+      - name: Xcode 26 (the iOS 26 SDK)
+        run: |
+          XC=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
+          test -n "$XC" || { echo "no Xcode 26 on this runner"; ls -d /Applications/Xcode*.app; exit 1; }
+          sudo xcode-select -s "$XC"
+          xcodebuild -version
 
       - uses: actions/setup-node@v4
         with:
