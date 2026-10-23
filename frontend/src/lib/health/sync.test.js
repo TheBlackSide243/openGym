@@ -15,11 +15,10 @@ const fake = {
   getAvailableDataTypes: () => ['weight', 'steps', 'spo2'],
   requestPermissions: vi.fn(async () => ({ asked: true, skipped: ['spo2'] })),
   fetchMeasurements: vi.fn(),
-  spanStats: vi.fn(async () => ({ avg: 131.6, min: 88.2, max: 171.4 })),
 }
 vi.mock('./providers.js', () => ({ providerById: id => (id === 'apple-health' ? fake : null), PROVIDERS: [] }))
 
-const { connectSource, syncSource, loadSources, fillWorkoutHeartRate } = await import('./sync.js')
+const { connectSource, syncSource, loadSources } = await import('./sync.js')
 
 const reading = (type, d, v) => ({ type, v, t: Date.parse(d + 'T12:00:00Z'), d, sid: `${type}:${d}`, src: 'apple-health' })
 
@@ -63,26 +62,3 @@ describe('reading from a source', () => {
   })
 })
 
-describe("a workout's heart rate", () => {
-  it('fills the recent workouts that have none, once, and leaves the rest alone', async () => {
-    const now = Date.parse('2026-10-18T20:00:00Z')
-    const S = { workouts: [
-      { id: 'old', start: now - 10 * 86400000, end: now - 10 * 86400000 + 3600000 },
-      { id: 'new', start: now - 7200000, end: now - 3600000 },
-      { id: 'done', start: now - 9000000, end: now - 8000000, hr: { avg: 120 } },
-      { id: 'live', start: now - 600000, end: 0 },
-    ] }
-    const n = await fillWorkoutHeartRate('apple-health', () => S, fn => fn(S), now)
-    expect(n).toBe(1)
-    expect(S.workouts.find(w => w.id === 'new').hr).toEqual({ avg: 132, min: 88, max: 171 })
-    expect(S.workouts.find(w => w.id === 'old').hr).toBeUndefined()
-    expect(S.workouts.find(w => w.id === 'done').hr).toEqual({ avg: 120 })
-    expect(fake.spanStats).toHaveBeenCalledWith('heartRate', now - 7200000, now - 3600000)
-  })
-  it('a workout the Watch recorded nothing for stays without', async () => {
-    fake.spanStats.mockResolvedValueOnce(null)
-    const now = Date.now(), S = { workouts: [{ id: 'a', start: now - 7200000, end: now - 3600000 }] }
-    expect(await fillWorkoutHeartRate('apple-health', () => S, fn => fn(S), now)).toBe(0)
-    expect(S.workouts[0].hr).toBeUndefined()
-  })
-})

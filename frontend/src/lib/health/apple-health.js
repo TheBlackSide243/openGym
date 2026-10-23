@@ -183,15 +183,6 @@ export const appleHealth = {
     }
   },
 
-  /** One measurement over a span (a workout's heart rate): { avg, min, max } canonical, or null. */
-  async spanStats(type, start, end) {
-    const p = await plugin(), x = TYPES[type]
-    if (!p || !x) return null
-    const r = await p.HK.queryStats({ type: x.hk, unit: nativeUnit(x.unit), start, end })
-    const v = k => (num(r?.[k]) == null ? null : canonical(type, num(r[k]), unitOf(type)))
-    return v('avg') == null ? null : { avg: v('avg'), min: v('min'), max: v('max') }
-  },
-
   /** A day an hour at a time, read on the spot and kept nowhere: [{ t, v, lo, hi }] canonical. */
   async hourly(type, day) {
     const p = await plugin(), x = TYPES[type]

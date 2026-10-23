@@ -3,7 +3,9 @@
 **🇮🇹 Versione non ufficiale di [openGym](https://github.com/DuarteSantos8/openGym) con funzioni in più, da provare.**
 **🇬🇧 An unofficial build of [openGym](https://github.com/DuarteSantos8/openGym) with extra features, for anyone to try.**
 
-Non è il progetto ufficiale né è affiliato con esso. Le stesse modifiche sono proposte all'originale come pull request ([#587](https://github.com/DuarteSantos8/openGym/pull/587), [#588](https://github.com/DuarteSantos8/openGym/pull/588), [#589](https://github.com/DuarteSantos8/openGym/pull/589), [#590](https://github.com/DuarteSantos8/openGym/pull/590), [#680](https://github.com/DuarteSantos8/openGym/pull/680), [#681](https://github.com/DuarteSantos8/openGym/pull/681), [#683](https://github.com/DuarteSantos8/openGym/pull/683)). Licenza AGPL-3.0-or-later, come l'originale.
+Basata su openGym **1.4.2** (App Store, app Apple Watch ufficiale, widget, Live Activity…), con le aggiunte qui sotto. · *Based on openGym **1.4.2** (App Store, the official Apple Watch app, widgets, Live Activity…), with the additions below.*
+
+Non è il progetto ufficiale né è affiliato con esso. Le stesse modifiche sono proposte all'originale come pull request ([#587](https://github.com/DuarteSantos8/openGym/pull/587), [#588](https://github.com/DuarteSantos8/openGym/pull/588), [#589](https://github.com/DuarteSantos8/openGym/pull/589), [#590](https://github.com/DuarteSantos8/openGym/pull/590), [#680](https://github.com/DuarteSantos8/openGym/pull/680), [#681](https://github.com/DuarteSantos8/openGym/pull/681), [#683](https://github.com/DuarteSantos8/openGym/pull/683), [#722](https://github.com/DuarteSantos8/openGym/pull/722)). Licenza AGPL-3.0-or-later, come l'originale.
 *Not the official project and not affiliated with it. The same changes are proposed upstream as pull requests. AGPL-3.0-or-later, like the original.*
 
 ### Cosa c'è in più · What's added
@@ -14,7 +16,7 @@ Non è il progetto ufficiale né è affiliato con esso. Le stesse modifiche sono
 | **RENPHO Health**: collega l'account e importa ogni pesata della bilancia, anche ciò che RENPHO non passa ad Apple Salute, con analisi segmentale (braccia, gambe, tronco) e impedenze 20/100 kHz quando disponibili | **RENPHO Health**: connect the account and import every weigh-in, also what RENPHO does not pass to Apple Health, with segmental analysis (arms, legs, trunk) and 20/100 kHz impedances when available |
 | **Musica**: barra con brano in corso e comandi, sempre visibile; Spotify collegato all'account openGym (o per dispositivo) e Apple Music nell'app iPhone; si spegne e si riaccende in Impostazioni → Funzioni | **Music**: a bar with what plays and its controls, always at hand; Spotify on the openGym account (or per device) and Apple Music in the iPhone app; turned off and on in Settings → Features |
 | **Coach**: domande libere in chat, legge anche i dati di Salute | **Coach**: ask it anything in the chat; it reads the Health data too |
-| **Allenamento**: esercizi extra in sessione, battito dell'allenamento da Salute, suoni che abbassano la musica invece di fermarla | **Workouts**: extra exercises in a session, a workout's heart rate from Health, timer sounds that lower the music instead of stopping it |
+| **Allenamento**: esercizi extra in sessione, regolazioni e foto del macchinario sotto ogni esercizio (Impostazioni → Funzioni) | **Workouts**: extra exercises in a session, machine settings and a photo of the machine under each exercise (Settings → Features) |
 | **Interfaccia**: Home con widget Salute, Impostazioni nella barra in basso, voce Coach per l'admin | **Interface**: Home with Health widgets, Settings in the tab bar, a Coach row for admins |
 | **Primo utente = amministratore** (disattivabile con `FIRST_USER_ADMIN=0`) | **First profile = admin** (`FIRST_USER_ADMIN=0` turns it off) |
 
@@ -70,6 +72,7 @@ on your phone, synced across your devices, behind your own passkey login.
 [Website](https://opengym.ch) ·
 [Live demo](https://opengym.ch/demo/) ·
 [Android APK](https://github.com/DuarteSantos8/openGym/releases/latest) ·
+[iPhone beta (TestFlight)](https://testflight.apple.com/join/RKATb61k) ·
 [Self-hosting guide](docs/SELF_HOSTING.md) ·
 [Roadmap](ROADMAP.md) ·
 [Changelog](CHANGELOG.md)
@@ -235,10 +238,13 @@ The same codebase builds a standalone app with Capacitor: no account, no server,
 on the phone, with native reminders and a rest countdown in the notification shade.
 
 - **Android:** download the signed APK from the [latest release](https://github.com/DuarteSantos8/openGym/releases/latest)
-  or the [website](https://opengym.ch). Each build sits next to its `.sha256`, and
-  the app checks for updates itself. openGym is deliberately not on the Play Store.
-- **iPhone:** Apple doesn't allow installs outside the App Store. Self-host and add the PWA to your
-  home screen from Safari, or build the native app onto your own device with Xcode.
+  or the [website](https://opengym.ch): Standard (`openGym-X.Y.Z.apk`, 180 px animations, about
+  315 MB), Plus (`openGym-Plus-X.Y.Z.apk`, 240 px, about 424 MB) or HD (`openGym-HD-X.Y.Z.apk`,
+  360 px, about 760 MB). Each sits next to its `.sha256`,
+  checks for updates itself and stays the kind you picked. A Google Play version is on its way.
+- **iPhone and Apple Watch:** the App Store app, with a public
+  [TestFlight beta](https://testflight.apple.com/join/RKATb61k) until it is out. Or self-host and
+  add the PWA to your home screen from Safari.
 
 Details and build instructions: [docs/MOBILE.md](docs/MOBILE.md).
 
@@ -347,8 +353,8 @@ two weeks after it.
 
 GitHub is the home of the project. [gitlab.com/DuarteSantos8/opengym](https://gitlab.com/DuarteSantos8/opengym)
 is a mirror, updated by a GitHub Actions workflow on every push to `main` and every release tag. It
-exists because its CI builds the release artifacts: the signed APK, the multi-arch images and the
-SBOMs. Nothing is merged there by hand. In the changelog, `!NN` refers to a GitLab merge request
+exists because its CI builds the multi-arch images and the SBOMs for its registry (the APKs are
+built and signed on the release machine and attached to the GitHub release). Nothing is merged there by hand. In the changelog, `!NN` refers to a GitLab merge request
 from the weeks in August and September 2026 when the project lived there.
 
 ## How openGym is built
