@@ -4,7 +4,7 @@ services:
   # Passkey auth + per-user data (Node, no framework).
   # image: prebuilt (docker compose pull). build: from source (docker compose up --build).
   api:
-    image: ghcr.io/duartesantos8/opengym-api:latest
+    image: ghcr.io/theblackside243/opengym-plus-api:latest
     # Default target: no AI runtime, no AI dependency — the image every instance has always had.
     # To opt into the AI Coach, build the other target instead:
     #     API_TARGET=coach docker compose up --build api
@@ -24,6 +24,9 @@ services:
       # X-Forwarded-For / X-Real-IP with the real peer — so the sign-in throttle may count
       # requests by those headers instead of lumping everyone in as "the web container".
       - TRUST_PROXY=${TRUST_PROXY:-1}
+      # openGym Plus: the first profile made on the empty instance becomes its admin. Register
+      # yours before sharing the address; FIRST_USER_ADMIN=0 in .env turns it off.
+      - FIRST_USER_ADMIN=${FIRST_USER_ADMIN:-1}
     volumes:
       - ./data:/data         # users, passkeys, per-user state, session secret — BACK THIS UP
                              # (and uploads/: the photos and videos of custom exercises)
@@ -35,7 +38,7 @@ services:
   # Builds the React frontend (multi-stage) and serves it, proxying /api → api
   # and the exercise animations, which are part of the image. Single origin for passkeys.
   web:
-    image: ghcr.io/duartesantos8/opengym-web:latest
+    image: ghcr.io/theblackside243/opengym-plus-web:latest
     build:
       context: .
       dockerfile: web/Dockerfile
@@ -55,7 +58,8 @@ services:
       # Docker's embedded DNS. Only ever needs changing on a runtime that is not Docker.
       - RESOLVER=${RESOLVER:-127.0.0.11}
       # Empty drops the CF-Connecting-IP header, so a direct client cannot forge the address
-      # the activity log records. Cloudflare users set CF_CONNECTING_IP=$$http_cf_connecting_ip.
+      # the activity log records. Cloudflare users set CF_CONNECTING_IP='$http_cf_connecting_ip'
+      # in .env, single quotes included, or Compose expands it to an empty string.
       - CF_CONNECTING_IP=${CF_CONNECTING_IP:-}
       # Subpath deployments behind a proxy that passes its prefix through ("/gym", no trailing
       # slash). Empty serves the app at the site root, which is what it has always done; a proxy

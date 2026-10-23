@@ -130,6 +130,9 @@ export function stateMediaRefs(state) {
     if (!isObj(w) || !Array.isArray(w.media)) continue
     for (const m of w.media) if (isObj(m)) out.push(m)
   }
+  // Progress photos filed under a day rather than a workout (lib/day-photos.js, #557).
+  if (isObj(state.dayPhotos)) for (const e of Object.values(state.dayPhotos)) if (isObj(e) && isObj(e.m)) out.push(e.m)
+  // The photo of the machine an exercise is done on (components/MachinePhoto.jsx).
   if (isObj(state.exPhotos)) for (const m of Object.values(state.exPhotos)) if (isObj(m)) out.push(m)
   return out
 }
