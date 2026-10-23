@@ -14,9 +14,9 @@ permissions:
 
 jobs:
   ipa:
-    # v1.4.2's code needs the iOS 26 SDK (Background Assets' AssetPackManager). macos-26 runners
-    # queue for long and get cancelled; macos-15 carries Xcode 26 too, picked below.
-    runs-on: macos-15
+    # v1.4.2's code needs a recent iOS 26 SDK (Background Assets' AssetPackManager.localStatus,
+    # missing from macos-15's Xcode 26.3), as upstream's ios.yml: macos-26, newest Xcode picked below.
+    runs-on: macos-26
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
