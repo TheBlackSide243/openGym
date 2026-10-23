@@ -951,6 +951,13 @@ body.has-music-dock #app{padding-bottom:calc(150px + var(--sab))}
 .exmedia:has(> video){background:#000}
 /* a catalogue animation: drawn on white, like the stills next to it */
 .exmedia video.catvid,.exmedia:has(> video.catvid){background:#fff}
+/* A short screen — a foldable closed (about 466×678), a small phone, a phone on its side: the
+   exercise's picture takes at most a third of the height, so its sets are on screen with it. */
+@media (max-height:760px){
+  .exmedia:not(.viewer):not(.compact):not(.mini) img,
+  .exmedia:not(.viewer):not(.compact):not(.mini) video,
+  .exmedia:not(.viewer):not(.compact):not(.mini) .exmedia-x{height:min(320px,32vh)}
+}
 
 /* the link to a video or a guide (#246): a quiet action tile under the picture, or in its place.
    A <button>, so the reset of the browser's button look comes first. */
