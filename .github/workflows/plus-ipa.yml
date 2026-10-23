@@ -14,8 +14,9 @@ permissions:
 
 jobs:
   ipa:
-    runs-on: macos-15
-    timeout-minutes: 45
+    # v1.4.2's code needs the iOS 26 SDK (Background Assets' AssetPackManager), as upstream's ios.yml.
+    runs-on: macos-26
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
 
@@ -30,6 +31,15 @@ jobs:
         run: |
           npm ci
           npm run build:mobile
+
+      # As upstream's ios.yml device-archive: the animation packs' downloader, the Apple Watch app and
+      # the widgets with the Live Activity are added to the project by these scripts, not committed.
+      - run: ruby ios/ci/add-asset-downloader.rb
+        working-directory: frontend
+      - run: ruby ios/ci/add-watch-app.rb
+        working-directory: frontend
+      - run: ruby ios/ci/add-widgets.rb
+        working-directory: frontend
 
       - name: Archive without signing
         working-directory: frontend/ios/App
@@ -46,9 +56,9 @@ jobs:
           set -eu
           rm -rf Payload && mkdir Payload
           cp -R build/App.xcarchive/Products/Applications/App.app Payload/
-          if [ -d Payload/App.app/Frameworks ]; then
-            for f in Payload/App.app/Frameworks/*; do codesign -f -s - "$f"; done
-          fi
+          # Innermost first: frameworks, the extensions (widgets, the downloader) and the watch app
+          # with what it holds, each ad hoc, so the tool that re-signs it finds every bundle signed.
+          find Payload/App.app -depth -mindepth 1 \( -name '*.framework' -o -name '*.appex' -o -name '*.app' -o -name '*.dylib' \)             -exec codesign -f -s - {} \;
           codesign -f -s - --entitlements App/App.entitlements Payload/App.app
           codesign -d --entitlements - Payload/App.app
           VER="$(node -p "require('../../package.json').version")"
