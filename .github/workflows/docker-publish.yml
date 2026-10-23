@@ -10,11 +10,10 @@ name: Publish Docker images
 # to follow main here, and a release run overwrote it as well, so thirteen releases
 # published at once left it pointing at whichever finished last.) Re-running the
 # workflow by hand on a `vX.Y.Z` ref republishes exactly that version's tags.
+# openGym Plus: this fork's images come from plus-images.yml; a release here publishes nothing.
 on:
   push:
     branches: [main]
-  release:
-    types: [published]
   workflow_dispatch:
 
 permissions:
