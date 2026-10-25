@@ -3107,4 +3107,12 @@ export default {
   'Just for this phone. Some home screens take a moment to catch up.': '只限這支手機。有些主畫面要過一下才會跟上。',
   'The icon could not be changed.': '無法更換圖示。',
   'Try the Halloween app icon': '試試萬聖節 App 圖示',
+  // --- workout: a likely typo asked about at the tick ---
+  'Is that right?': '這樣對嗎？',
+  'Weight: {0} is more than twice your heaviest, {1}.': '重量：{0} 超過你最大重量 {1} 的兩倍。',
+  'Reps: {0} is more than twice your most, {1}.': '次數：{0} 超過你最多次數 {1} 的兩倍。',
+  'Weight: {0} is under a third of last time’s {1}.': '重量：{0} 不到上次 {1} 的三分之一。',
+  'Reps: {0} is under a third of last time’s {1}.': '次數：{0} 不到上次 {1} 的三分之一。',
+  'Fix it': '修改',
+  'Log as typed': '按輸入記錄',
 }

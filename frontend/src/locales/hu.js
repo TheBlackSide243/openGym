@@ -3117,4 +3117,12 @@ export default {
   'Just for this phone. Some home screens take a moment to catch up.': 'Csak ezen a telefonon. Néhány kezdőképernyőnek kell egy pillanat, mire észreveszi.',
   'The icon could not be changed.': 'Nem sikerült megváltoztatni az ikont.',
   'Try the Halloween app icon': 'Próbáld ki a halloweeni alkalmazásikont',
+  // --- workout: a likely typo asked about at the tick ---
+  'Is that right?': 'Biztosan jó?',
+  'Weight: {0} is more than twice your heaviest, {1}.': 'Súly: {0} több mint kétszerese a csúcsodnak, {1}.',
+  'Reps: {0} is more than twice your most, {1}.': 'Ism.: {0} több mint kétszerese a csúcsodnak, {1}.',
+  'Weight: {0} is under a third of last time’s {1}.': 'Súly: {0} kevesebb, mint a legutóbbi {1} harmada.',
+  'Reps: {0} is under a third of last time’s {1}.': 'Ism.: {0} kevesebb, mint a legutóbbi {1} harmada.',
+  'Fix it': 'Javítás',
+  'Log as typed': 'Naplózás így',
 }

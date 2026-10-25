@@ -3114,4 +3114,12 @@ export default {
   'Just for this phone. Some home screens take a moment to catch up.': 'Yalnızca bu telefon için. Bazı ana ekranların fark etmesi biraz sürer.',
   'The icon could not be changed.': 'Simge değiştirilemedi.',
   'Try the Halloween app icon': 'Cadılar Bayramı uygulama simgesini dene',
+  // --- workout: a likely typo asked about at the tick ---
+  'Is that right?': 'Doğru mu?',
+  'Weight: {0} is more than twice your heaviest, {1}.': 'Ağırlık: {0}, en ağırının ({1}) iki katından fazla.',
+  'Reps: {0} is more than twice your most, {1}.': 'Tekrar: {0}, en yükseğinin ({1}) iki katından fazla.',
+  'Weight: {0} is under a third of last time’s {1}.': 'Ağırlık: {0}, geçen seferkinin ({1}) üçte birinden az.',
+  'Reps: {0} is under a third of last time’s {1}.': 'Tekrar: {0}, geçen seferkinin ({1}) üçte birinden az.',
+  'Fix it': 'Düzelt',
+  'Log as typed': 'Yazıldığı gibi kaydet',
 }

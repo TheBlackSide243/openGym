@@ -3114,4 +3114,12 @@ export default {
   'Just for this phone. Some home screens take a moment to catch up.': 'सिर्फ़ इस फ़ोन के लिए। कुछ होम स्क्रीन को समझने में थोड़ा समय लगता है।',
   'The icon could not be changed.': 'आइकन बदला नहीं जा सका।',
   'Try the Halloween app icon': 'हैलोवीन ऐप आइकन आज़माएँ',
+  // --- workout: a likely typo asked about at the tick ---
+  'Is that right?': 'क्या यह सही है?',
+  'Weight: {0} is more than twice your heaviest, {1}.': 'वज़न: {0} आपके सबसे भारी {1} से दोगुने से भी ज़्यादा है।',
+  'Reps: {0} is more than twice your most, {1}.': 'रेप्स: {0} आपके सबसे ज़्यादा {1} से दोगुने से भी ज़्यादा है।',
+  'Weight: {0} is under a third of last time’s {1}.': 'वज़न: {0} पिछली बार के {1} के एक-तिहाई से भी कम है।',
+  'Reps: {0} is under a third of last time’s {1}.': 'रेप्स: {0} पिछली बार के {1} के एक-तिहाई से भी कम है।',
+  'Fix it': 'ठीक करें',
+  'Log as typed': 'जैसा लिखा, वैसा दर्ज करें',
 }

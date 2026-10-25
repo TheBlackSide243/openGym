@@ -3114,4 +3114,12 @@ export default {
   'Just for this phone. Some home screens take a moment to catch up.': '이 휴대폰에만 적용돼요. 홈 화면에 따라 바뀌는 데 잠깐 걸릴 수 있어요.',
   'The icon could not be changed.': '아이콘을 바꾸지 못했어요.',
   'Try the Halloween app icon': '핼러윈 앱 아이콘 써 보기',
+  // --- workout: a likely typo asked about at the tick ---
+  'Is that right?': '맞나요?',
+  'Weight: {0} is more than twice your heaviest, {1}.': '무게: {0}은(는) 최고 기록 {1}의 두 배가 넘어요.',
+  'Reps: {0} is more than twice your most, {1}.': '횟수: {0}은(는) 최고 기록 {1}의 두 배가 넘어요.',
+  'Weight: {0} is under a third of last time’s {1}.': '무게: {0}은(는) 지난번 {1}의 3분의 1도 안 돼요.',
+  'Reps: {0} is under a third of last time’s {1}.': '횟수: {0}은(는) 지난번 {1}의 3분의 1도 안 돼요.',
+  'Fix it': '고치기',
+  'Log as typed': '입력한 대로 기록',
 }

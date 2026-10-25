@@ -3134,4 +3134,12 @@ export default {
   'Just for this phone. Some home screens take a moment to catch up.': 'Nur für dieses Handy. Manche Startbildschirme brauchen einen Moment, bis sie mitkommen.',
   'The icon could not be changed.': 'Das Icon ließ sich nicht ändern.',
   'Try the Halloween app icon': 'Probier das Halloween-App-Icon',
+  // --- workout: a likely typo asked about at the tick ---
+  'Is that right?': 'Stimmt das?',
+  'Weight: {0} is more than twice your heaviest, {1}.': 'Gewicht: {0} ist mehr als doppelt so viel wie dein Bestwert, {1}.',
+  'Reps: {0} is more than twice your most, {1}.': 'Wdh.: {0} ist mehr als doppelt so viel wie dein Bestwert, {1}.',
+  'Weight: {0} is under a third of last time’s {1}.': 'Gewicht: {0} ist weniger als ein Drittel vom letzten Mal, {1}.',
+  'Reps: {0} is under a third of last time’s {1}.': 'Wdh.: {0} ist weniger als ein Drittel vom letzten Mal, {1}.',
+  'Fix it': 'Korrigieren',
+  'Log as typed': 'So eintragen',
 }

@@ -3111,4 +3111,12 @@ export default {
   'Just for this phone. Some home screens take a moment to catch up.': 'Лише для цього телефона. Деяким домашнім екранам треба хвилинка, щоб помітити.',
   'The icon could not be changed.': 'Не вдалося змінити значок.',
   'Try the Halloween app icon': 'Спробуй гелловінський значок застосунку',
+  // --- workout: a likely typo asked about at the tick ---
+  'Is that right?': 'Усе правильно?',
+  'Weight: {0} is more than twice your heaviest, {1}.': 'Вага: {0} — більш ніж удвічі більше за ваш рекорд, {1}.',
+  'Reps: {0} is more than twice your most, {1}.': 'Повт.: {0} — більш ніж удвічі більше за ваш рекорд, {1}.',
+  'Weight: {0} is under a third of last time’s {1}.': 'Вага: {0} — менше третини від минулого разу, {1}.',
+  'Reps: {0} is under a third of last time’s {1}.': 'Повт.: {0} — менше третини від минулого разу, {1}.',
+  'Fix it': 'Виправити',
+  'Log as typed': 'Записати як є',
 }

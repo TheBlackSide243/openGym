@@ -3118,4 +3118,12 @@ export default {
   'Just for this phone. Some home screens take a moment to catch up.': 'Только для этого телефона. Некоторым рабочим столам нужна минутка, чтобы заметить.',
   'The icon could not be changed.': 'Не удалось сменить значок.',
   'Try the Halloween app icon': 'Попробуй хеллоуинский значок приложения',
+  // --- workout: a likely typo asked about at the tick ---
+  'Is that right?': 'Всё верно?',
+  'Weight: {0} is more than twice your heaviest, {1}.': 'Вес: {0} — больше чем вдвое выше вашего рекорда, {1}.',
+  'Reps: {0} is more than twice your most, {1}.': 'Повт.: {0} — больше чем вдвое выше вашего рекорда, {1}.',
+  'Weight: {0} is under a third of last time’s {1}.': 'Вес: {0} — меньше трети от прошлого раза, {1}.',
+  'Reps: {0} is under a third of last time’s {1}.': 'Повт.: {0} — меньше трети от прошлого раза, {1}.',
+  'Fix it': 'Исправить',
+  'Log as typed': 'Записать как есть',
 }

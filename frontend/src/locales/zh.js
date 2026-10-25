@@ -3114,4 +3114,12 @@ export default {
   'Just for this phone. Some home screens take a moment to catch up.': '仅限这部手机。有些主屏幕要过一会儿才会跟上。',
   'The icon could not be changed.': '无法更换图标。',
   'Try the Halloween app icon': '试试万圣节应用图标',
+  // --- workout: a likely typo asked about at the tick ---
+  'Is that right?': '这样对吗？',
+  'Weight: {0} is more than twice your heaviest, {1}.': '重量：{0} 超过你最大重量 {1} 的两倍。',
+  'Reps: {0} is more than twice your most, {1}.': '次数：{0} 超过你最多次数 {1} 的两倍。',
+  'Weight: {0} is under a third of last time’s {1}.': '重量：{0} 不到上次 {1} 的三分之一。',
+  'Reps: {0} is under a third of last time’s {1}.': '次数：{0} 不到上次 {1} 的三分之一。',
+  'Fix it': '修改',
+  'Log as typed': '按输入记录',
 }
