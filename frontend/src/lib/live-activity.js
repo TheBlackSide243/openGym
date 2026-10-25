@@ -25,6 +25,7 @@ import { EXIDX } from './exercises.js'
 import { t } from './i18n.js'
 import { exerciseNameText } from './format.js'
 import { setLabel, supersetUnits } from './history.js'
+import { viewRow, exUnitTag } from './ex-unit.js'
 import { isWarmupRow } from './workout-model.js'
 import { nextUnfinishedUnit, restSecFor } from './supersetFlow.js'
 import { speedUnitOf } from './speed.js'
@@ -79,7 +80,8 @@ function setView (S, A, { entryIdx, setIdx, restAfter, unit }) {
   const warmup = !!isWarmupRow(s)
   const n = warmup ? (e.sets || []).filter(isWarmupRow).indexOf(s) + 1 : work.indexOf(s) + 1
   let label = ''
-  try { label = setLabel(e.id, s, target, speedUnitOf(S)) } catch { label = '' }
+  // An exercise in a weight unit of its own (#657) reads in it, and says which.
+  try { label = setLabel(e.id, viewRow(S, e.id, s), target, speedUnitOf(S)) + exUnitTag(S, e.id) } catch { label = '' }
   return {
     exId: String(e.id),
     entryIdx,

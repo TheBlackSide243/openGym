@@ -29,6 +29,7 @@ import { todayISO, exerciseNameText } from './format.js'
 import { sanitizeHr } from './heart-rate.js'
 import { readWatchPrefs, settingsForWatch, writeWatchStatus, onWatchPrefs } from './watch-settings.js'
 import { plannedType } from './health-connect.js'
+import { exView, exConverted, exUnitOf, viewEntry, viewRow, shownWeight, storedWeight } from './ex-unit.js'
 
 export const SNAPSHOT_VERSION = 1
 const APPLIED_KEY = 'gym_watch_applied'
@@ -91,17 +92,24 @@ function watchSet (s) {
 
 // One exercise as the watch shows it. Only optional fields were added over time (bodyweight,
 // perSide, group, best, assisted), so an older watch app reads a newer phone's snapshot.
-function watchEntry (e, H, S) {
+// An exercise in a weight unit of its own (#657) goes to the watch in that unit, its weights, last
+// time, best and step converted and `unit` saying which; the watch's numbers come back in it too
+// (the workout screen's mutEntry and patchSetIn store them in the profile's unit).
+function watchEntry (stored, H, S) {
+  const e = S ? viewEntry(S, stored) : stored
   const ex = EXIDX[e.id]
   const target = e.target || {}
   const cfg = { ...target, id: e.id }
   const mode = modeOf(cfg)
+  const own = S && exConverted(S, e.id) ? exUnitOf(S, e.id) : null
   let last = null
   try {
     const l = H ? lastEntryFor(H, e.id, e.rid) : null
-    if (l && Array.isArray(l.sets) && l.sets.length) last = l.sets.map(s => setLabel(e.id, s, l.target)).join(', ')
+    if (l && Array.isArray(l.sets) && l.sets.length) last = l.sets.map(s => setLabel(e.id, own ? viewRow(S, e.id, s) : s, l.target)).join(', ')
   } catch { last = null }
-  const best = S ? bestFor(S, e.id, mode) : null
+  const stBest = S ? bestFor(S, e.id, mode) : null
+  const best = stBest && own && stBest.w != null ? { ...stBest, w: shownWeight(S, e.id, stBest.w) } : stBest
+  const V = own ? exView(S, e.id) : S
   return {
     // A string always: the watch reads the whole snapshot or nothing (WatchCore Model.swift), and
     // one id that came in as a number (an import) would leave it with nothing at all.
@@ -119,7 +127,8 @@ function watchEntry (e, H, S) {
     ...(best ? { best } : {}),
     ...(mode === 'reps' && isAssisted(e.id) ? { assisted: true } : {}),
     // the step the weight moves in, as on the phone (this exercise's own, else its plates' default)
-    ...(mode === 'reps' && stepOf(cfg, S) ? { step: stepOf(cfg, S) } : {}),
+    ...(mode === 'reps' && stepOf(cfg, V) ? { step: stepOf(cfg, V) } : {}),
+    ...(own ? { unit: own } : {}),
   }
 }
 
@@ -600,7 +609,9 @@ export function _resetWatchSync () { startedOnWatch.clear(); handlers = null; ap
 export function patchSetIn (s, { wid, exId, entryIdx, setIdx, side = null }, fields, stamp, { ifNewer = null, recount = null } = {}) {
   // One side of a per-side set: that side takes the numbers and the tick, the row's own w/r/done
   // follow from both sides (lib/workout-model.js syncSideAggregate).
-  const write = (set, f) => {
+  const write = (set, given) => {
+    // A weight from the watch is in the exercise's own unit (#657), the one it was sent in.
+    const f = given.w != null ? { ...given, w: storedWeight(s, exId, given.w, side && isSideSet(set) ? set.sides[side]?.w : set.w) } : given
     if (side && isSideSet(set)) {
       const { w, r, done, rpe, rir, ...rest } = f
       const one = { ...set.sides[side] }

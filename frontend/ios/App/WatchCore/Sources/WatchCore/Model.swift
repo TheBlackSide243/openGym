@@ -73,10 +73,21 @@ struct Entry: Codable, Equatable {
     var assisted: Bool?
     /// The weight step this exercise moves in on the phone (its plates or machine stack).
     var step: Double?
+    /// Its own weight unit, "kg" or "lb", when it is not the workout's (#657): its weights, last
+    /// time, best and step are in it, and so is what the watch sends back. None: the workout's.
+    var unit: String?
 
     var isTimed: Bool { mode == "time" }
     var isCardio: Bool { mode == "cardio" }
     var isBodyweight: Bool { bodyweight == true }
+    /// The unit this exercise's weights are shown and typed in.
+    func weightUnit(_ workoutUnit: String) -> String { unit ?? workoutUnit }
+    /// What one of its kilos or pounds is in `workoutUnit`, for a total that mixes exercises.
+    func factor(to workoutUnit: String) -> Double {
+        let own = weightUnit(workoutUnit)
+        if own == workoutUnit { return 1 }
+        return own == "lb" ? 0.45359237 : 1 / 0.45359237
+    }
 }
 
 struct BestSet: Codable, Equatable {

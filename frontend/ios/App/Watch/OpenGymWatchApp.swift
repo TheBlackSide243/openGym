@@ -384,7 +384,7 @@ struct ExercisePage: View {
                         ValueTile(value: formatNumber(current ? store.seconds : (row.sec ?? 0)), unit: "s", label: Text("Hold"),
                                   tint: .white, large: true) { if current { editing = .seconds } }
                     } else {
-                        numbers(entry, row, unit: w.unit, current: current)
+                        numbers(entry, row, unit: entry.weightUnit(w.unit), current: current)
                     }
                     if store.show.showLast, let last = entry.last, !last.isEmpty {
                         Text("Last time: \(last)")
@@ -423,7 +423,7 @@ struct ExercisePage: View {
                 if current, SessionStore.demoScreen == "edit-reps" { editing = .reps }
             }
             .sheet(item: $editing) { field in
-                ValueEditor(field: field, entry: entry, unit: w.unit)
+                ValueEditor(field: field, entry: entry, unit: entry.weightUnit(w.unit))
             }
             .confirmationDialog(Text("Skip this set?"), isPresented: $confirmSkip) {
                 Button("Skip set") { store.skipSet() }
@@ -668,7 +668,7 @@ struct ValueEditor: View {
     private var kind: String { store.effortKind ?? "rpe" }
     private var step: Double {
         switch field {
-        case .weight: return entry.step.flatMap { $0 > 0 ? $0 : nil } ?? store.weightStep
+        case .weight: return entry.step.flatMap { $0 > 0 ? $0 : nil } ?? (unit == "lb" ? 5 : 2.5)
         case .reps, .effort: return 1
         case .seconds: return 5
         }

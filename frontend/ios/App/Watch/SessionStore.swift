@@ -285,8 +285,8 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
                 let added = s.w ?? 0
                 let numbers: String = e.isTimed ? "\(formatNumber(s.sec ?? 0)) s"
                     : e.isCardio ? ""
-                    : e.isBodyweight ? (added > 0 ? "+\(formatNumber(added)) \(w.unit) × \(formatNumber(s.r ?? 0))" : "× \(formatNumber(s.r ?? 0))")
-                    : "\(formatNumber(s.w ?? 0)) \(w.unit) × \(formatNumber(s.r ?? 0))"
+                    : e.isBodyweight ? (added > 0 ? "+\(formatNumber(added)) \(e.weightUnit(w.unit)) × \(formatNumber(s.r ?? 0))" : "× \(formatNumber(s.r ?? 0))")
+                    : "\(formatNumber(s.w ?? 0)) \(e.weightUnit(w.unit)) × \(formatNumber(s.r ?? 0))"
                 let work = e.sets.filter { !$0.warmup }.count
                 return WidgetState(mode: "set", title: e.name, detail: numbers, restEndsAt: nil, done: p.done, total: p.total,
                                    setLabel: "\(min(si + 1, max(1, work)))/\(max(1, work))")

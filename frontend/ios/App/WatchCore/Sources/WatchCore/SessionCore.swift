@@ -336,13 +336,15 @@ enum SessionCore {
         var prs: [String] = []
         for e in w.entries {
             let work = e.sets.filter { !$0.warmup }
+            // An exercise in a unit of its own (#657) counts in the workout's unit.
+            let f = e.factor(to: w.unit)
             for row in work {
                 if let sides = row.sides {
-                    for one in [sides.L, sides.R] where one.done { volume += (one.w ?? 0) * (one.r ?? 0) }
+                    for one in [sides.L, sides.R] where one.done { volume += (one.w ?? 0) * (one.r ?? 0) * f }
                     if row.done { sets += 1 }
                 } else if row.done {
                     sets += 1
-                    if !e.isTimed && !e.isCardio { volume += (row.w ?? 0) * (row.r ?? 0) }
+                    if !e.isTimed && !e.isCardio { volume += (row.w ?? 0) * (row.r ?? 0) * f }
                 }
             }
             if let best = e.best, beatsBest(e, work.filter { $0.done }, best) { prs.append(e.name) }
