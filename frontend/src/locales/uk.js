@@ -3119,4 +3119,8 @@ export default {
   'Reps: {0} is under a third of last time’s {1}.': 'Повт.: {0} — менше третини від минулого разу, {1}.',
   'Fix it': 'Виправити',
   'Log as typed': 'Записати як є',
+  // --- stats: time per exercise ---
+  'Time per exercise': 'Час на вправу',
+  'Average time a session, counted from when its sets were ticked.': 'Середній час за тренування, за часом позначення підходів.',
+  'No timed sets in this period.': 'У цей період немає підходів із часом.',
 }

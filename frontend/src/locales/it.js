@@ -3122,4 +3122,8 @@ export default {
   'Reps: {0} is under a third of last time’s {1}.': 'Rip.: {0} è meno di un terzo dell’ultima volta, {1}.',
   'Fix it': 'Correggi',
   'Log as typed': 'Registra così',
+  // --- stats: time per exercise ---
+  'Time per exercise': 'Tempo per esercizio',
+  'Average time a session, counted from when its sets were ticked.': 'Tempo medio per sessione, contato da quando sono state spuntate le serie.',
+  'No timed sets in this period.': 'Nessuna serie con tempo in questo periodo.',
 }

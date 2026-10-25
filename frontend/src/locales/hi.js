@@ -3122,4 +3122,8 @@ export default {
   'Reps: {0} is under a third of last time’s {1}.': 'रेप्स: {0} पिछली बार के {1} के एक-तिहाई से भी कम है।',
   'Fix it': 'ठीक करें',
   'Log as typed': 'जैसा लिखा, वैसा दर्ज करें',
+  // --- stats: time per exercise ---
+  'Time per exercise': 'प्रति व्यायाम समय',
+  'Average time a session, counted from when its sets were ticked.': 'प्रति सत्र औसत समय, सेट्स पर टिक लगाने के समय से गिना गया।',
+  'No timed sets in this period.': 'इस अवधि में समय वाले कोई सेट नहीं।',
 }

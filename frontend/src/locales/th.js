@@ -3133,4 +3133,8 @@ export default {
   'Reps: {0} is under a third of last time’s {1}.': 'ครั้ง: {0} น้อยกว่าหนึ่งในสามของครั้งก่อน {1}',
   'Fix it': 'แก้ไข',
   'Log as typed': 'บันทึกตามที่พิมพ์',
+  // --- stats: time per exercise ---
+  'Time per exercise': 'เวลาต่อท่า',
+  'Average time a session, counted from when its sets were ticked.': 'เวลาเฉลี่ยต่อครั้ง นับจากเวลาที่ติ๊กเซต',
+  'No timed sets in this period.': 'ไม่มีเซตที่มีเวลาในช่วงนี้',
 }

@@ -3122,4 +3122,8 @@ export default {
   'Reps: {0} is under a third of last time’s {1}.': 'Tekrar: {0}, geçen seferkinin ({1}) üçte birinden az.',
   'Fix it': 'Düzelt',
   'Log as typed': 'Yazıldığı gibi kaydet',
+  // --- stats: time per exercise ---
+  'Time per exercise': 'Egzersiz başına süre',
+  'Average time a session, counted from when its sets were ticked.': 'Setlerin işaretlendiği zamanlardan hesaplanan, antrenman başına ortalama süre.',
+  'No timed sets in this period.': 'Bu dönemde süresi olan set yok.',
 }

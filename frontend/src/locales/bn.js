@@ -3201,4 +3201,8 @@ export default {
   'Reps: {0} is under a third of last time’s {1}.': 'রেপ: {0} গতবারের {1}-এর এক-তৃতীয়াংশেরও কম।',
   'Fix it': 'ঠিক করুন',
   'Log as typed': 'যেমন লেখা তেমন লগ করুন',
+  // --- stats: time per exercise ---
+  'Time per exercise': 'প্রতি ব্যায়ামের সময়',
+  'Average time a session, counted from when its sets were ticked.': 'প্রতি সেশনে গড় সময়, সেটগুলো যখন টিক দেওয়া হয়েছিল তা থেকে গণনা করা।',
+  'No timed sets in this period.': 'এই সময়ে কোনো সময়-চিহ্নিত সেট নেই।',
 }

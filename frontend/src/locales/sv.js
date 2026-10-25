@@ -3169,4 +3169,8 @@ export default {
   'Reps: {0} is under a third of last time’s {1}.': 'Reps: {0} är under en tredjedel av förra gångens {1}.',
   'Fix it': 'Rätta',
   'Log as typed': 'Logga som skrivet',
+  // --- stats: time per exercise ---
+  'Time per exercise': 'Tid per övning',
+  'Average time a session, counted from when its sets were ticked.': 'Genomsnittlig tid per pass, räknat från när dess set bockades av.',
+  'No timed sets in this period.': 'Inga tidsatta set under den här perioden.',
 }

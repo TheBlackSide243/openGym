@@ -3115,4 +3115,8 @@ export default {
   'Reps: {0} is under a third of last time’s {1}.': '次數：{0} 不到上次 {1} 的三分之一。',
   'Fix it': '修改',
   'Log as typed': '按輸入記錄',
+  // --- stats: time per exercise ---
+  'Time per exercise': '每個動作的用時',
+  'Average time a session, counted from when its sets were ticked.': '每次訓練的平均用時，依勾選各組的時間計算。',
+  'No timed sets in this period.': '這段時間內沒有帶時間的組。',
 }

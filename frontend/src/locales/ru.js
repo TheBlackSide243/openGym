@@ -3126,4 +3126,8 @@ export default {
   'Reps: {0} is under a third of last time’s {1}.': 'Повт.: {0} — меньше трети от прошлого раза, {1}.',
   'Fix it': 'Исправить',
   'Log as typed': 'Записать как есть',
+  // --- stats: time per exercise ---
+  'Time per exercise': 'Время на упражнение',
+  'Average time a session, counted from when its sets were ticked.': 'Среднее время за тренировку, по времени отметки подходов.',
+  'No timed sets in this period.': 'В этот период нет подходов со временем.',
 }

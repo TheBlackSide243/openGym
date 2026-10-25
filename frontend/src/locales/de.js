@@ -3142,4 +3142,8 @@ export default {
   'Reps: {0} is under a third of last time’s {1}.': 'Wdh.: {0} ist weniger als ein Drittel vom letzten Mal, {1}.',
   'Fix it': 'Korrigieren',
   'Log as typed': 'So eintragen',
+  // --- stats: time per exercise ---
+  'Time per exercise': 'Zeit pro Übung',
+  'Average time a session, counted from when its sets were ticked.': 'Durchschnittliche Zeit pro Training, gezählt ab dem Abhaken der Sätze.',
+  'No timed sets in this period.': 'Keine Sätze mit Zeit in diesem Zeitraum.',
 }

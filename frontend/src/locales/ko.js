@@ -3122,4 +3122,8 @@ export default {
   'Reps: {0} is under a third of last time’s {1}.': '횟수: {0}은(는) 지난번 {1}의 3분의 1도 안 돼요.',
   'Fix it': '고치기',
   'Log as typed': '입력한 대로 기록',
+  // --- stats: time per exercise ---
+  'Time per exercise': '운동별 시간',
+  'Average time a session, counted from when its sets were ticked.': '세트를 체크한 시각으로 계산한 세션당 평균 시간입니다.',
+  'No timed sets in this period.': '이 기간에는 시간이 기록된 세트가 없어요.',
 }

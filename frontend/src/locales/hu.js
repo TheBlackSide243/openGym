@@ -3125,4 +3125,8 @@ export default {
   'Reps: {0} is under a third of last time’s {1}.': 'Ism.: {0} kevesebb, mint a legutóbbi {1} harmada.',
   'Fix it': 'Javítás',
   'Log as typed': 'Naplózás így',
+  // --- stats: time per exercise ---
+  'Time per exercise': 'Idő gyakorlatonként',
+  'Average time a session, counted from when its sets were ticked.': 'Átlagos idő edzésenként, a sorozatok kipipálásától számolva.',
+  'No timed sets in this period.': 'Ebben az időszakban nincs időzített sorozat.',
 }

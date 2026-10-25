@@ -3177,4 +3177,8 @@ export default {
   'Reps: {0} is under a third of last time’s {1}.': 'التكرارات: {0} أقل من ثلث عدد المرة السابقة، {1}.',
   'Fix it': 'صحّحه',
   'Log as typed': 'سجّل كما كُتب',
+  // --- stats: time per exercise ---
+  'Time per exercise': 'الوقت لكل تمرين',
+  'Average time a session, counted from when its sets were ticked.': 'متوسط الوقت في الجلسة، محسوبًا من أوقات تسجيل مجموعاته.',
+  'No timed sets in this period.': 'لا توجد مجموعات مُوقّتة في هذه الفترة.',
 }
