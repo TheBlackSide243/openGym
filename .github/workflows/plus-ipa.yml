@@ -17,8 +17,9 @@ permissions:
 jobs:
   ipa:
     # v1.4.2's code needs a recent iOS 26 SDK (Background Assets' AssetPackManager.localStatus,
-    # missing from macos-15's Xcode 26.3), as upstream's ios.yml: macos-26, newest Xcode picked below.
-    runs-on: macos-26
+    # missing from macos-15's Xcode 26.3). macos-27 has Xcode 27: iOS 27.1 is the SDK that knows the
+    # iPhone Duo, whose screens an app built with an older one gets boxed on (black bars).
+    runs-on: macos-27
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
@@ -28,7 +29,8 @@ jobs:
       - name: Newest Xcode (at least 26, the iOS 26 SDK)
         run: |
           ls -d /Applications/Xcode*.app
-          XC=$(ls -d /Applications/Xcode_[0-9]*.app 2>/dev/null | grep -viE 'beta|rc' | sort -V | tail -1)
+          # A release candidate counts (macos-27 has 27.1 only as one); a beta does not.
+          XC=$(ls -d /Applications/Xcode_[0-9]*.app 2>/dev/null | grep -vi 'beta' | sort -V | tail -1)
           case "$XC" in */Xcode_2[6-9]*|*/Xcode_[3-9][0-9]*) ;; *) echo "no Xcode 26 or newer on this runner"; exit 1;; esac
           sudo xcode-select -s "$XC"
           xcodebuild -version
