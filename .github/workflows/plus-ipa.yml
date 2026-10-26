@@ -7,8 +7,8 @@ name: Plus iOS IPA
 on:
   push:
     branches: [plus]
-    # The Feather source (feather/) changes after a release; it builds nothing.
-    paths-ignore: ['feather/**']
+    # The Feather source (feather/) changes after a release, and a README line: neither builds anything.
+    paths-ignore: ['feather/**', '*.md']
   workflow_dispatch:
 
 permissions:
@@ -17,9 +17,9 @@ permissions:
 jobs:
   ipa:
     # v1.4.2's code needs a recent iOS 26 SDK (Background Assets' AssetPackManager.localStatus,
-    # missing from macos-15's Xcode 26.3). macos-27 has Xcode 27: iOS 27.1 is the SDK that knows the
+    # missing from macos-15's Xcode 26.3). The xcode-27 runner (GitHub's preview image) has Xcode 27: iOS 27.1 is the SDK that knows the
     # iPhone Duo, whose screens an app built with an older one gets boxed on (black bars).
-    runs-on: macos-27
+    runs-on: xcode-27
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
@@ -29,7 +29,7 @@ jobs:
       - name: Newest Xcode (at least 26, the iOS 26 SDK)
         run: |
           ls -d /Applications/Xcode*.app
-          # A release candidate counts (macos-27 has 27.1 only as one); a beta does not.
+          # A release candidate counts (xcode-27 has 27.1 only as one); a beta does not.
           XC=$(ls -d /Applications/Xcode_[0-9]*.app 2>/dev/null | grep -vi 'beta' | sort -V | tail -1)
           case "$XC" in */Xcode_2[6-9]*|*/Xcode_[3-9][0-9]*) ;; *) echo "no Xcode 26 or newer on this runner"; exit 1;; esac
           sudo xcode-select -s "$XC"
