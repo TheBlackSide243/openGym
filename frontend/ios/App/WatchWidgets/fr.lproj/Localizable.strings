@@ -38,6 +38,7 @@
 "None" = "Aucun";
 "Planned" = "Prévu";
 "Waiting to sync" = "En attente de synchronisation";
+"Up next" = "À suivre";
 "Last time: %@" = "La dernière fois: %@";
 "Exercises" = "Exercices";
 "No workout running" = "Aucune séance en cours";
@@ -46,7 +47,6 @@
 "Start one on your iPhone and it shows up here." = "Lance-en une sur ton iPhone et elle apparaît ici.";
 "All sets done" = "Toutes les séries faites";
 "measuring" = "mesure …";
-"Next: %@, set %lld" = "Ensuite : %@, série %lld";
 "%@, set %lld" = "%@, série %lld";
 "Calories" = "Calories";
 "Heart rate" = "Pouls";

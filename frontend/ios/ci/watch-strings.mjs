@@ -59,6 +59,7 @@ const FROM_APP = {
   'None': 'None',
   'Planned': 'Planned',
   'Waiting to sync': 'Waiting to sync',
+  'Up next': 'Up next',
 }
 // Built from an app word: "Last time: %@".
 const COMPOSED = { 'Last time: %@': ['Last time', w => `${w}: %@`] }
@@ -128,13 +129,6 @@ const OWN = {
     de: 'misst …', fr: 'mesure …', es: 'midiendo …', it: 'misuro …', 'pt-PT': 'a medir …', 'pt-BR': 'medindo …', pl: 'mierzę …',
     hu: 'mérés …', tr: 'ölçülüyor …', ru: 'измеряю …', uk: 'вимірюю …', ar: 'جارٍ القياس …', hi: 'माप रहा है …', bn: 'মাপা হচ্ছে …',
     th: 'กำลังวัด …', ko: '측정 중 …', 'zh-Hans': '测量中 …', 'zh-Hant': '測量中 …',
-  },
-  'Next: %@, set %lld': {
-    de: 'Als Nächstes: %@, Satz %lld', fr: 'Ensuite : %@, série %lld', es: 'Siguiente: %@, serie %lld', it: 'Poi: %@, serie %lld',
-    'pt-PT': 'A seguir: %@, série %lld', 'pt-BR': 'A seguir: %@, série %lld', pl: 'Dalej: %@, seria %lld', hu: 'Következik: %@, %lld. sorozat',
-    tr: 'Sıradaki: %@, set %lld', ru: 'Далее: %@, подход %lld', uk: 'Далі: %@, підхід %lld', ar: 'التالي: %@، المجموعة %lld',
-    hi: 'अगला: %@, सेट %lld', bn: 'এরপর: %@, সেট %lld', th: 'ถัดไป: %@ เซ็ต %lld', ko: '다음: %@, %lld세트',
-    'zh-Hans': '下一个：%@，第 %lld 组', 'zh-Hant': '下一個：%@，第 %lld 組',
   },
   '%@, set %lld': {
     de: '%@, Satz %lld', fr: '%@, série %lld', es: '%@, serie %lld', it: '%@, serie %lld', 'pt-PT': '%@, série %lld', 'pt-BR': '%@, série %lld',

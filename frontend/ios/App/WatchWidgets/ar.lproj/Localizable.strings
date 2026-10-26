@@ -38,6 +38,7 @@
 "None" = "بدون";
 "Planned" = "مُخطط";
 "Waiting to sync" = "بانتظار المزامنة";
+"Up next" = "التالي";
 "Last time: %@" = "المرة السابقة: %@";
 "Exercises" = "التمارين";
 "No workout running" = "لا يوجد تمرين جارٍ";
@@ -46,7 +47,6 @@
 "Start one on your iPhone and it shows up here." = "ابدأ تمرينًا على iPhone وسيظهر هنا.";
 "All sets done" = "اكتملت كل المجموعات";
 "measuring" = "جارٍ القياس …";
-"Next: %@, set %lld" = "التالي: %@، المجموعة %lld";
 "%@, set %lld" = "%@، المجموعة %lld";
 "Calories" = "السعرات";
 "Heart rate" = "النبض";
