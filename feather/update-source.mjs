@@ -6,7 +6,8 @@
 //
 // Only the fields Feather's own source has: Feather on the iPhone refused this source while it
 // also carried build numbers, minimum iOS, permissions and a category. The newest version goes
-// first; the last ten are kept. The .ipa is read only for its size.
+// first; the last ten are kept. The .ipa is read only for its size. It writes apps.json and
+// source.json, the same bytes: never remove or rename either, a Feather that added one keeps it.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -29,5 +30,9 @@ const entry = {
 app.versions = [entry, ...(app.versions || []).filter(v => v.version !== version)].slice(0, 10);
 // The same, on the app itself, for readers that look there.
 Object.assign(app, { version: entry.version, versionDate: entry.date, size: entry.size, downloadURL: entry.downloadURL });
-fs.writeFileSync(file, JSON.stringify(src, null, 2) + '\n');
+// Written at both addresses the source has had, the same bytes: a Feather keeps the address it
+// added the source from and spins forever if that one goes. Neither file is ever removed.
+for (const name of ['apps.json', 'source.json']) {
+  fs.writeFileSync(path.join(path.dirname(file), name), JSON.stringify(src, null, 2) + '\n');
+}
 console.log(`feather/apps.json: ${version}, ${entry.size} bytes`);
