@@ -96,7 +96,10 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
     @Published private(set) var holdEndsAt: Date?
     @Published private(set) var holdStartedAt: Date?
     /// The end of the last workout, on one screen, until the lifter is done looking at it.
-    @Published private(set) var summary: WorkoutSummary?
+    @Published private(set) var summary: WorkoutSummary? {
+        // The page arrives by itself (finish, or the phone ended it): a thumb still over Done must not close it unseen.
+        didSet { if oldValue == nil, summary != nil { touchLock.lock(at: Date()) } }
+    }
     /// Whether the phone is in reach now, and how many of this watch's events still wait for it.
     @Published private(set) var reachable = true
     @Published private(set) var queued = 0
@@ -574,6 +577,7 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
     }
 
     func closeSummary() {
+        guard touchAllowed else { return }
         summary = nil
         touchLock.lock(at: Date())  // the thumb that hit Done is still over the screen's Start
     }
@@ -1079,9 +1083,9 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
             }
             if screen == "countdown", let today = self.ready?.today { self.start(today) }
             if screen == "hold" { self.startHold() }
-            if screen == "offline" || screen == "rest-offline" { self.reachable = false; self.queued = 3 }
+            if screen == "offline" || screen == "rest-offline" || screen == "summary-offline" { self.reachable = false; self.queued = 3 }
             if screen == "finish-auto" { DispatchQueue.main.asyncAfter(deadline: .now() + 2) { self.showFinish() } }
-            if screen == "summary" || screen == "summary-end" || screen == "ended" {
+            if ["summary", "summary-end", "summary-offline", "ended"].contains(screen) {
                 self.summary = WorkoutSummary(name: "Push day", unit: "kg", duration: 52 * 60 + 13, sets: 17, volume: 4320,
                                               prs: ["Bench Press", "Plank"], hrAvg: 118, hrMax: 156, calories: 312,
                                               endedOnPhone: screen == "ended")
@@ -1089,6 +1093,10 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
             // The widest band: 1:02:34 on the clock and a heart rate and calories (CI shows no sensor).
             self.workoutSeenAt = Date(timeIntervalSinceNow: -3754)
             self.health.demoReadings(hr: 142, kcal: 187)
+            // The emptiest real summary: Health off, bodyweight only, no start time.
+            if screen == "summary-bare" {
+                self.summary = WorkoutSummary(name: "Plank day", unit: "kg", duration: nil, sets: 6, volume: 0, prs: [], endedOnPhone: false)
+            }
             if let path = SessionStore.demoClip, let frames = SessionStore.frames(of: URL(fileURLWithPath: path)) {
                 self.clips["0025"] = frames
                 self.clips["split"] = frames        // a two-line name with the animation before it
