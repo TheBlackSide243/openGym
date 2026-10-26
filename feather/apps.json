@@ -14,6 +14,12 @@
       "tintColor": "30D158",
       "versions": [
         {
+          "version": "1.4.3.3",
+          "date": "2026-10-26T18:18:29Z",
+          "size": 213804292,
+          "downloadURL": "https://github.com/TheBlackSide243/openGym/releases/download/plus-1.4.3.3/openGym-plus-unsigned.ipa"
+        },
+        {
           "version": "1.4.3.2",
           "date": "2026-10-26T16:20:07Z",
           "size": 213804414,
@@ -45,10 +51,10 @@
         }
       ],
       "appPermissions": {},
-      "version": "1.4.3.2",
-      "versionDate": "2026-10-26T16:20:07Z",
-      "size": 213804414,
-      "downloadURL": "https://github.com/TheBlackSide243/openGym/releases/download/plus-1.4.3.2/openGym-plus-unsigned.ipa"
+      "version": "1.4.3.3",
+      "versionDate": "2026-10-26T18:18:29Z",
+      "size": 213804292,
+      "downloadURL": "https://github.com/TheBlackSide243/openGym/releases/download/plus-1.4.3.3/openGym-plus-unsigned.ipa"
     }
   ],
   "news": []
