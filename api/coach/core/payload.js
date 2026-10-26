@@ -11,7 +11,7 @@
  * and appearance settings, and every other profile's everything.
  */
 import { glyphStr } from './glyphs.js';
-import { LIBRARY, LIB_BY_ID, libraryHas, libraryName, librarySlice, isStretch, MAX_LIBRARY } from './library.js';
+import { LIBRARY, LIB_BY_ID, libraryHas, libraryName, librarySlice, isStretch, MAX_LIBRARY, ownsNoDumbbells } from './library.js';
 
 export const CONTRACT = 1;
 // Bounds from FR-22. A review reads a training block, not a training career: more history
@@ -593,6 +593,12 @@ export function build(S, opts = {}) {
   // are filtering the app with is the better answer than "everything".
   if (p.coachProfile && !p.coachProfile.equipment.length) {
     p.coachProfile.equipment = cleanProfile({ equipment: activeEquipment(S) }).equipment;
+  }
+  // Owning no dumbbells (the app's switch) wins over an equipment answer that lists them: they go
+  // from what the model is told it has, and the validator turns a dumbbell lift away (noDumbbells).
+  if (ownsNoDumbbells(S)) {
+    p.noDumbbells = true;
+    if (p.coachProfile) p.coachProfile.equipment = p.coachProfile.equipment.filter(e => e.toLowerCase() !== 'dumbbell');
   }
 
   // What the user already turned down, so the Coach does not re-propose it without new

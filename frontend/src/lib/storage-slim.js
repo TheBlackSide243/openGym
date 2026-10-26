@@ -23,14 +23,15 @@ export function slimForStorage(S, days, today = isoOf(new Date())) {
 
 /**
  * Writes the copy with `write(text)`: whole if it fits, otherwise the slimmer copies of SLIM_DAYS
- * in turn. Answers the days kept (null for the whole copy); throws what the last attempt threw
- * when not even a copy without readings fits.
+ * in turn, each made text by `stringify` (lib/state-json.js in the store). Answers the days kept
+ * (null for the whole copy); throws what the last attempt threw when not even a copy without
+ * readings fits.
  */
-export function writeFitting(S, write, today) {
-  try { write(JSON.stringify(S)); return null } catch (e) { if (!Array.isArray(S?.health) || !S.health.length) throw e }
+export function writeFitting(S, write, today, stringify = JSON.stringify) {
+  try { write(stringify(S)); return null } catch (e) { if (!Array.isArray(S?.health) || !S.health.length) throw e }
   let last
   for (const days of SLIM_DAYS) {
-    try { write(JSON.stringify(slimForStorage(S, days, today))); return days } catch (e) { last = e }
+    try { write(stringify(slimForStorage(S, days, today))); return days } catch (e) { last = e }
   }
   throw last
 }
