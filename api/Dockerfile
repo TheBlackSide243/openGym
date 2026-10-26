@@ -63,7 +63,11 @@ ENV PORT=3000
 EXPOSE 3000
 CMD ["node", "server.js"]
 
+# Every 5 s while it starts (up to a minute), then every 5 min: without the start interval the
+# first probe waited the whole 5 min, and the container (TrueNAS: "Deploying") showed as starting.
 HEALTHCHECK --interval=5m \
+            --start-period=60s \
+            --start-interval=5s \
             --timeout=5s \
             --retries=3 \
             CMD wget --spider -q "http://127.0.0.1:${PORT}/api/health" || exit 1

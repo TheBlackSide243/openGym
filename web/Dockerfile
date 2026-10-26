@@ -114,7 +114,11 @@ ENV CONTENT_SECURITY_POLICY="default-src 'self'; script-src 'self' 'sha256-xUZtZ
 # hardcoded http://localhost/ breaks on any instance that changed it), and address it as
 # 127.0.0.1: envsubst rewrites the conf after the image's IPv6 script, so nginx ends up
 # listening on IPv4 only while "localhost" resolves to ::1 first.
+# Every 5 s while it starts (up to a minute), then every 5 min: without the start interval the
+# first probe waited the whole 5 min, and the container (TrueNAS: "Deploying") showed as starting.
 HEALTHCHECK --interval=5m \
+            --start-period=60s \
+            --start-interval=5s \
             --timeout=5s \
             --retries=3 \
             CMD wget --spider -q "http://127.0.0.1:${NGINX_PORT}/" || exit 1
