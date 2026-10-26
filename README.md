@@ -5,7 +5,7 @@
 
 Basata su openGym **1.4.2** (App Store, app Apple Watch ufficiale, widget, Live Activity…), con le aggiunte qui sotto. · *Based on openGym **1.4.2** (App Store, the official Apple Watch app, widgets, Live Activity…), with the additions below.*
 
-Non è il progetto ufficiale né è affiliato con esso. Le stesse modifiche sono proposte all'originale come pull request ([#587](https://github.com/DuarteSantos8/openGym/pull/587), [#588](https://github.com/DuarteSantos8/openGym/pull/588), [#589](https://github.com/DuarteSantos8/openGym/pull/589), [#590](https://github.com/DuarteSantos8/openGym/pull/590), [#680](https://github.com/DuarteSantos8/openGym/pull/680), [#681](https://github.com/DuarteSantos8/openGym/pull/681), [#683](https://github.com/DuarteSantos8/openGym/pull/683), [#722](https://github.com/DuarteSantos8/openGym/pull/722)). Licenza AGPL-3.0-or-later, come l'originale.
+Non è il progetto ufficiale né è affiliato con esso. Le stesse modifiche sono proposte all'originale come pull request ([#587](https://github.com/DuarteSantos8/openGym/pull/587), [#588](https://github.com/DuarteSantos8/openGym/pull/588), [#589](https://github.com/DuarteSantos8/openGym/pull/589), [#590](https://github.com/DuarteSantos8/openGym/pull/590), [#680](https://github.com/DuarteSantos8/openGym/pull/680), [#681](https://github.com/DuarteSantos8/openGym/pull/681), [#683](https://github.com/DuarteSantos8/openGym/pull/683), [#722](https://github.com/DuarteSantos8/openGym/pull/722), [#830](https://github.com/DuarteSantos8/openGym/pull/830)). Licenza AGPL-3.0-or-later, come l'originale.
 *Not the official project and not affiliated with it. The same changes are proposed upstream as pull requests. AGPL-3.0-or-later, like the original.*
 
 ### Cosa c'è in più · What's added
@@ -17,7 +17,7 @@ Non è il progetto ufficiale né è affiliato con esso. Le stesse modifiche sono
 | **Musica**: barra con brano in corso e comandi, sempre visibile; Spotify collegato all'account openGym (o per dispositivo) e Apple Music nell'app iPhone; si spegne e si riaccende in Impostazioni → Funzioni | **Music**: a bar with what plays and its controls, always at hand; Spotify on the openGym account (or per device) and Apple Music in the iPhone app; turned off and on in Settings → Features |
 | **Coach**: domande libere in chat, legge anche i dati di Salute | **Coach**: ask it anything in the chat; it reads the Health data too |
 | **Allenamento**: esercizi extra in sessione, regolazioni e foto del macchinario sotto ogni esercizio (Impostazioni → Funzioni) | **Workouts**: extra exercises in a session, machine settings and a photo of the machine under each exercise (Settings → Features) |
-| **Interfaccia**: Home con widget Salute, Impostazioni nella barra in basso, voce Coach per l'admin | **Interface**: Home with Health widgets, Settings in the tab bar, a Coach row for admins |
+| **Interfaccia**: Home con widget Salute, Impostazioni nella barra delle schede, barra a destra su schermi larghi (iPhone in orizzontale, pieghevoli) o quando vuoi, voce Coach per l'admin | **Interface**: Home with Health widgets, Settings in the tab bar, the tab bar on the right on wide screens (a phone on its side, foldables) or whenever you like, a Coach row for admins |
 | **Primo utente = amministratore** (disattivabile con `FIRST_USER_ADMIN=0`) | **First profile = admin** (`FIRST_USER_ADMIN=0` turns it off) |
 
 ### Provala con Docker · Try it with Docker
