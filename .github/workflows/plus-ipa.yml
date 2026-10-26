@@ -60,9 +60,15 @@ jobs:
         working-directory: frontend/ios/App
         run: |
           set -o pipefail
+          # The Plus version on the iPhone, 1.4.2-4 written 1.4.2.4: Feather and Settings show the
+          # app's own version, which stayed openGym's 1.4.2 for every Plus release. Given on the
+          # command line, it is every target's, so the watch app and the widgets still match the app.
+          IOS_VERSION=$(node -p "require('../../package.json').version.replace(/-/g, '.')")
+          echo "version $IOS_VERSION"
           xcodebuild -workspace App.xcworkspace -scheme App -configuration Release \
             -destination 'generic/platform=iOS' -archivePath "$PWD/build/App.xcarchive" \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            MARKETING_VERSION="$IOS_VERSION" \
             archive | tail -80
 
       - name: Package the .ipa, entitlements embedded
