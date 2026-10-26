@@ -653,16 +653,22 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
     /// With Apple Health on, a 3-2-1 first: the workout session is prepared meanwhile, so the heart
     /// rate sensor is warm by set 1. Without it there is nothing to wait for.
     private func countIn(_ session: ReadySession, bw: Double?) {
-        guard health.enabled, !isDemo else { begin(session, bw: bw); return }
+        // The "countdown" demo screen (-OpenGymWatchScreen countdown) runs it for real, without Apple Health.
+        guard (health.enabled && !isDemo) || SessionStore.demoScreen == "countdown" else { begin(session, bw: bw); return }
         countdownFor = (session, bw)
         let from = Date()
         countdownFrom = from
-        health.prepare(type: session.healthType)
+        if !isDemo { health.prepare(type: session.healthType) }
         Haptics.count()
         countdownTimer?.invalidate()
-        countdownTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+        // On the second marks of `from` (not a second after the timer was made, which prepare() may
+        // have held up), so each click lands as the number changes.
+        let t = Timer(fire: from.addingTimeInterval(1), interval: 1, repeats: true) { [weak self] _ in
             if Countdown.number(at: Date().timeIntervalSince(from) + 0.05) == 0 { self?.startNow() } else { Haptics.count() }
         }
+        t.tolerance = 0.01
+        RunLoop.main.add(t, forMode: .common)
+        countdownTimer = t
     }
 
     /// The countdown ran out, or a tap on it: the workout starts.
@@ -1030,7 +1036,7 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
         let screen = SessionStore.demoScreen ?? "set"
         switch screen {
         case "empty", "empty-heard": break
-        case "idle", "idle-end": apply(json: SessionStore.demoReadyJSON)
+        case "idle", "idle-end", "countdown": apply(json: SessionStore.demoReadyJSON)
         case "idle-rest": apply(json: SessionStore.demoReadyRestJSON)
         default: apply(json: SessionStore.demoJSON)
         }
@@ -1071,6 +1077,7 @@ final class SessionStore: NSObject, ObservableObject, WCSessionDelegate, UNUserN
                 self.startRest(until: Date().addingTimeInterval(20), notify: false)
                 self.restStartedAt = Date().addingTimeInterval(-60)
             }
+            if screen == "countdown", let today = self.ready?.today { self.start(today) }
             if screen == "hold" { self.startHold() }
             if screen == "offline" || screen == "rest-offline" { self.reachable = false; self.queued = 3 }
             if screen == "finish-auto" { DispatchQueue.main.asyncAfter(deadline: .now() + 2) { self.showFinish() } }
