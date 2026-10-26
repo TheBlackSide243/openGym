@@ -3,7 +3,7 @@
 **🇮🇹 Versione non ufficiale di [openGym](https://github.com/DuarteSantos8/openGym) con funzioni in più, da provare.**
 **🇬🇧 An unofficial build of [openGym](https://github.com/DuarteSantos8/openGym) with extra features, for anyone to try.**
 
-Basata su openGym **1.4.2** (App Store, app Apple Watch ufficiale, widget, Live Activity…), con le aggiunte qui sotto. · *Based on openGym **1.4.2** (App Store, the official Apple Watch app, widgets, Live Activity…), with the additions below.*
+Basata su openGym **1.4.3** (tema di Halloween, promemoria della palestra, battito e pesate da Salute, app Apple Watch ufficiale, widget…), con le aggiunte qui sotto. · *Based on openGym **1.4.3** (the Halloween theme, the gym reminder, heart rate and weigh-ins from Health, the official Apple Watch app, widgets, Live Activity…), with the additions below.*
 
 Non è il progetto ufficiale né è affiliato con esso. Le stesse modifiche sono proposte all'originale come pull request ([#587](https://github.com/DuarteSantos8/openGym/pull/587), [#588](https://github.com/DuarteSantos8/openGym/pull/588), [#589](https://github.com/DuarteSantos8/openGym/pull/589), [#590](https://github.com/DuarteSantos8/openGym/pull/590), [#680](https://github.com/DuarteSantos8/openGym/pull/680), [#681](https://github.com/DuarteSantos8/openGym/pull/681), [#683](https://github.com/DuarteSantos8/openGym/pull/683), [#722](https://github.com/DuarteSantos8/openGym/pull/722), [#830](https://github.com/DuarteSantos8/openGym/pull/830)). Licenza AGPL-3.0-or-later, come l'originale.
 *Not the official project and not affiliated with it. The same changes are proposed upstream as pull requests. AGPL-3.0-or-later, like the original.*
