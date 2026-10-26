@@ -321,7 +321,7 @@ npx @capacitor/assets generate --iconBackgroundColor '#0c0e12' --splashBackgroun
 ## Distribution
 
 The signed APK stays the way to get openGym on Android without a store, and it updates itself.
-The App Store app (public TestFlight beta: https://testflight.apple.com/join/RKATb61k) and the
+The [App Store app](https://apps.apple.com/app/id6822275400) and the
 Google Play build come from the same code; how they are built and uploaded is in
 [APP_STORES.md](APP_STORES.md).
 
@@ -368,8 +368,7 @@ apksigner sign --ks my.keystore --ks-key-alias opengym --out openGym.apk aligned
 
 > The App Store and Google Play builds, and how a release gets there: [APP_STORES.md](APP_STORES.md).
 
-The App Store app, or before it is out the public TestFlight beta
-(https://testflight.apple.com/join/RKATb61k), is the easy way. Apple does not allow installing
+The [App Store app](https://apps.apple.com/app/id6822275400) is the easy way. Apple does not allow installing
 apps outside the App Store, so there is no `.ipa` download that would simply install. Without the
 store, your free options:
 

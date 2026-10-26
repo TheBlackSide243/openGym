@@ -72,10 +72,12 @@ on your phone, synced across your devices, behind your own passkey login.
 [![Coverage](https://gitlab.com/DuarteSantos8/opengym/badges/main/coverage.svg?job=test:frontend&style=flat-square)](https://gitlab.com/DuarteSantos8/opengym/-/pipelines?ref=main)
 [![License: AGPL v3](https://img.shields.io/badge/license-AGPL--3.0-a3e635?style=flat-square)](LICENSE)
 
+<a href="https://apps.apple.com/app/id6822275400"><img src="website/app-store-badge.svg" alt="Download on the App Store" height="44"></a>
+
 [Website](https://opengym.ch) ·
 [Live demo](https://opengym.ch/demo/) ·
 [Android APK](https://github.com/DuarteSantos8/openGym/releases/latest) ·
-[iPhone beta (TestFlight)](https://testflight.apple.com/join/RKATb61k) ·
+[App Store](https://apps.apple.com/app/id6822275400) ·
 [Self-hosting guide](docs/SELF_HOSTING.md) ·
 [Roadmap](ROADMAP.md) ·
 [Changelog](CHANGELOG.md)
@@ -245,9 +247,8 @@ on the phone, with native reminders and a rest countdown in the notification sha
   315 MB), Plus (`openGym-Plus-X.Y.Z.apk`, 240 px, about 424 MB) or HD (`openGym-HD-X.Y.Z.apk`,
   360 px, about 760 MB). Each sits next to its `.sha256`,
   checks for updates itself and stays the kind you picked. A Google Play version is on its way.
-- **iPhone and Apple Watch:** the App Store app, with a public
-  [TestFlight beta](https://testflight.apple.com/join/RKATb61k) until it is out. Or self-host and
-  add the PWA to your home screen from Safari.
+- **iPhone and Apple Watch:** the [App Store app](https://apps.apple.com/app/id6822275400), in
+  every App Store country. Or self-host and add the PWA to your home screen from Safari.
 
 Details and build instructions: [docs/MOBILE.md](docs/MOBILE.md).
 
