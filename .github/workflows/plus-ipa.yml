@@ -7,8 +7,8 @@ name: Plus iOS IPA
 on:
   push:
     branches: [plus]
-    # The Feather source (feather/) changes after a release; it builds nothing.
-    paths-ignore: ['feather/**']
+    # The Feather source (feather/) changes after a release, and a README line: neither builds anything.
+    paths-ignore: ['feather/**', '*.md']
   workflow_dispatch:
 
 permissions:
