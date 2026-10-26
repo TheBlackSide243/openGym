@@ -5,7 +5,7 @@
 
 Basata su openGym **1.4.2** (App Store, app Apple Watch ufficiale, widget, Live Activity…), con le aggiunte qui sotto. · *Based on openGym **1.4.2** (App Store, the official Apple Watch app, widgets, Live Activity…), with the additions below.*
 
-Non è il progetto ufficiale né è affiliato con esso. Le stesse modifiche sono proposte all'originale come pull request ([#587](https://github.com/DuarteSantos8/openGym/pull/587), [#588](https://github.com/DuarteSantos8/openGym/pull/588), [#589](https://github.com/DuarteSantos8/openGym/pull/589), [#590](https://github.com/DuarteSantos8/openGym/pull/590), [#680](https://github.com/DuarteSantos8/openGym/pull/680), [#681](https://github.com/DuarteSantos8/openGym/pull/681), [#683](https://github.com/DuarteSantos8/openGym/pull/683), [#722](https://github.com/DuarteSantos8/openGym/pull/722)). Licenza AGPL-3.0-or-later, come l'originale.
+Non è il progetto ufficiale né è affiliato con esso. Le stesse modifiche sono proposte all'originale come pull request ([#587](https://github.com/DuarteSantos8/openGym/pull/587), [#588](https://github.com/DuarteSantos8/openGym/pull/588), [#589](https://github.com/DuarteSantos8/openGym/pull/589), [#590](https://github.com/DuarteSantos8/openGym/pull/590), [#680](https://github.com/DuarteSantos8/openGym/pull/680), [#681](https://github.com/DuarteSantos8/openGym/pull/681), [#683](https://github.com/DuarteSantos8/openGym/pull/683), [#722](https://github.com/DuarteSantos8/openGym/pull/722), [#830](https://github.com/DuarteSantos8/openGym/pull/830)). Licenza AGPL-3.0-or-later, come l'originale.
 *Not the official project and not affiliated with it. The same changes are proposed upstream as pull requests. AGPL-3.0-or-later, like the original.*
 
 ### Cosa c'è in più · What's added
@@ -17,7 +17,7 @@ Non è il progetto ufficiale né è affiliato con esso. Le stesse modifiche sono
 | **Musica**: barra con brano in corso e comandi, sempre visibile; Spotify collegato all'account openGym (o per dispositivo) e Apple Music nell'app iPhone; si spegne e si riaccende in Impostazioni → Funzioni | **Music**: a bar with what plays and its controls, always at hand; Spotify on the openGym account (or per device) and Apple Music in the iPhone app; turned off and on in Settings → Features |
 | **Coach**: domande libere in chat, legge anche i dati di Salute | **Coach**: ask it anything in the chat; it reads the Health data too |
 | **Allenamento**: esercizi extra in sessione, regolazioni e foto del macchinario sotto ogni esercizio (Impostazioni → Funzioni) | **Workouts**: extra exercises in a session, machine settings and a photo of the machine under each exercise (Settings → Features) |
-| **Interfaccia**: Home con widget Salute, Impostazioni nella barra in basso, voce Coach per l'admin | **Interface**: Home with Health widgets, Settings in the tab bar, a Coach row for admins |
+| **Interfaccia**: Home con widget Salute, Impostazioni nella barra delle schede, barra a destra su schermi larghi (iPhone in orizzontale, pieghevoli) o quando vuoi, voce Coach per l'admin | **Interface**: Home with Health widgets, Settings in the tab bar, the tab bar on the right on wide screens (a phone on its side, foldables) or whenever you like, a Coach row for admins |
 | **Primo utente = amministratore** (disattivabile con `FIRST_USER_ADMIN=0`) | **First profile = admin** (`FIRST_USER_ADMIN=0` turns it off) |
 
 ### Provala con Docker · Try it with Docker
@@ -41,6 +41,9 @@ Opzionali in `.env` · optional in `.env`: `SPOTIFY_CLIENT_ID` (Spotify sull'acc
 
 Nelle [Release](https://github.com/TheBlackSide243/openGym/releases) c'è l'`.ipa` non firmata: installala con Sideloadly o AltStore. Per HealthKit serve un account sviluppatore Apple con la capacità HealthKit sull'App ID.
 *The [Releases](https://github.com/TheBlackSide243/openGym/releases) have the unsigned `.ipa`: install it with Sideloadly or AltStore. HealthKit needs an Apple developer account with the HealthKit capability on the App ID.*
+
+**Feather / AltStore**: aggiungi la sorgente `https://raw.githubusercontent.com/TheBlackSide243/openGym/plus/feather/apps.json` (in Feather: Sorgenti → +), e ogni nuova versione si installa da lì.
+*Add the source `https://raw.githubusercontent.com/TheBlackSide243/openGym/plus/feather/apps.json` (in Feather: Sources → +), and every new version installs from there.*
 
 > RENPHO non ha un'API pubblica: openGym usa quella della sua app e potrebbe smettere di funzionare se RENPHO la cambia. · *RENPHO has no public API: openGym uses its app's, which may stop working if RENPHO changes it.*
 
@@ -69,10 +72,12 @@ on your phone, synced across your devices, behind your own passkey login.
 [![Coverage](https://gitlab.com/DuarteSantos8/opengym/badges/main/coverage.svg?job=test:frontend&style=flat-square)](https://gitlab.com/DuarteSantos8/opengym/-/pipelines?ref=main)
 [![License: AGPL v3](https://img.shields.io/badge/license-AGPL--3.0-a3e635?style=flat-square)](LICENSE)
 
+<a href="https://apps.apple.com/app/id6822275400"><img src="website/app-store-badge.svg" alt="Download on the App Store" height="44"></a>
+
 [Website](https://opengym.ch) ·
 [Live demo](https://opengym.ch/demo/) ·
 [Android APK](https://github.com/DuarteSantos8/openGym/releases/latest) ·
-[iPhone beta (TestFlight)](https://testflight.apple.com/join/RKATb61k) ·
+[App Store](https://apps.apple.com/app/id6822275400) ·
 [Self-hosting guide](docs/SELF_HOSTING.md) ·
 [Roadmap](ROADMAP.md) ·
 [Changelog](CHANGELOG.md)
@@ -242,9 +247,8 @@ on the phone, with native reminders and a rest countdown in the notification sha
   315 MB), Plus (`openGym-Plus-X.Y.Z.apk`, 240 px, about 424 MB) or HD (`openGym-HD-X.Y.Z.apk`,
   360 px, about 760 MB). Each sits next to its `.sha256`,
   checks for updates itself and stays the kind you picked. A Google Play version is on its way.
-- **iPhone and Apple Watch:** the App Store app, with a public
-  [TestFlight beta](https://testflight.apple.com/join/RKATb61k) until it is out. Or self-host and
-  add the PWA to your home screen from Safari.
+- **iPhone and Apple Watch:** the [App Store app](https://apps.apple.com/app/id6822275400), in
+  every App Store country. Or self-host and add the PWA to your home screen from Safari.
 
 Details and build instructions: [docs/MOBILE.md](docs/MOBILE.md).
 

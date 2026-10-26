@@ -5,6 +5,8 @@ name: Plus images
 on:
   push:
     branches: [plus]
+    # The Feather source (feather/) changes after a release; it builds nothing.
+    paths-ignore: ['feather/**']
   workflow_dispatch:
 
 permissions:
