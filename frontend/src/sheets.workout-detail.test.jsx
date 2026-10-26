@@ -181,7 +181,7 @@ describe('export as .fit', () => {
 })
 
 describe('workout detail: time per exercise', () => {
-  const T0 = Date.UTC(2026, 8, 15, 17)
+  const T0 = new Date(2026, 8, 15, 17).getTime()   // the start workout() gives, in local time
   const at = min => T0 + min * 60000
   it('shows how long each exercise took, from its ticks', () => {
     workoutDetailSheet(workout([
