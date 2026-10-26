@@ -37,6 +37,7 @@
 "Effort" = "পরিশ্রম";
 "None" = "কিছু না";
 "Planned" = "পরিকল্পিত";
+"Waiting to sync" = "সিঙ্কের অপেক্ষায়";
 "Last time: %@" = "গতবার: %@";
 "Exercises" = "ব্যায়াম";
 "No workout running" = "কোনো ওয়ার্কআউট চলছে না";

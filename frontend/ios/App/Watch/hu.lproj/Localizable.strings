@@ -37,6 +37,7 @@
 "Effort" = "Megerőltetés";
 "None" = "Nincs";
 "Planned" = "Tervezett";
+"Waiting to sync" = "Szinkronizálásra vár";
 "Last time: %@" = "Legutóbb: %@";
 "Exercises" = "Gyakorlatok";
 "No workout running" = "Nincs folyamatban edzés";

@@ -37,6 +37,7 @@
 "Effort" = "Esforço";
 "None" = "Nenhum";
 "Planned" = "Planejado";
+"Waiting to sync" = "Aguardando sincronização";
 "Last time: %@" = "Da última vez: %@";
 "Exercises" = "Exercícios";
 "No workout running" = "Nenhum treino em andamento";

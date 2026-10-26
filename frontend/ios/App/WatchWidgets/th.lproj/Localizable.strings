@@ -37,6 +37,7 @@
 "Effort" = "ความหนัก";
 "None" = "ไม่มี";
 "Planned" = "วางแผนไว้";
+"Waiting to sync" = "รอซิงค์";
 "Last time: %@" = "ครั้งก่อน: %@";
 "Exercises" = "ท่าออกกำลังกาย";
 "No workout running" = "ไม่มีการฝึกที่กำลังทำอยู่";

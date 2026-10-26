@@ -37,6 +37,7 @@
 "Effort" = "الجهد";
 "None" = "بدون";
 "Planned" = "مُخطط";
+"Waiting to sync" = "بانتظار المزامنة";
 "Last time: %@" = "المرة السابقة: %@";
 "Exercises" = "التمارين";
 "No workout running" = "لا يوجد تمرين جارٍ";

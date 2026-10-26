@@ -37,6 +37,7 @@
 "Effort" = "Усилие";
 "None" = "Нет";
 "Planned" = "Запланировано";
+"Waiting to sync" = "Ожидает синхронизации";
 "Last time: %@" = "В прошлый раз: %@";
 "Exercises" = "Упражнения";
 "No workout running" = "Тренировка не идёт";
