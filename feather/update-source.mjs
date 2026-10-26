@@ -21,7 +21,7 @@ const app = src.apps[0];
 const entry = {
   version,
   buildVersion: app.versions?.[0]?.buildVersion || '1',
-  date: new Date().toISOString().slice(0, 10),
+  date: new Date().toISOString().replace(/\.\d+Z$/, 'Z'),
   localizedDescription: notes,
   downloadURL: `https://github.com/${REPO}/releases/download/plus-${version}/openGym-plus-unsigned.ipa`,
   size: fs.statSync(ipa).size,

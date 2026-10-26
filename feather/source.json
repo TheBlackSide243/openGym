@@ -5,7 +5,7 @@
   "description": "openGym Plus: an unofficial build of openGym (github.com/DuarteSantos8/openGym) with extra features, not affiliated with the original project. AGPL-3.0-or-later.",
   "iconURL": "https://raw.githubusercontent.com/TheBlackSide243/openGym/plus/frontend/public/icon-512.png",
   "website": "https://github.com/TheBlackSide243/openGym/releases",
-  "tintColor": "#30D158",
+  "tintColor": "30D158",
   "apps": [
     {
       "name": "openGym Plus",
@@ -14,13 +14,13 @@
       "subtitle": "Self-hosted gym and body-weight tracker",
       "localizedDescription": "An unofficial build of openGym with extra features: a Health area with Apple Health and RENPHO, a music bar, machine settings and photos per exercise, health widgets on Home, Settings as a tab. Not affiliated with the original project. AGPL-3.0-or-later; source at github.com/TheBlackSide243/openGym.",
       "iconURL": "https://raw.githubusercontent.com/TheBlackSide243/openGym/plus/frontend/public/icon-512.png",
-      "tintColor": "#30D158",
+      "tintColor": "30D158",
       "category": "lifestyle",
       "versions": [
         {
           "version": "1.4.2-2",
           "buildVersion": "39",
-          "date": "2026-10-25",
+          "date": "2026-10-25T13:57:49Z",
           "localizedDescription": "RENPHO: sign-in fixed (RENPHO changed it in October), and an optional second account so the RENPHO app stays signed in. · RENPHO: accesso di nuovo funzionante e secondo account facoltativo.",
           "downloadURL": "https://github.com/TheBlackSide243/openGym/releases/download/plus-1.4.2-2/openGym-plus-unsigned.ipa",
           "size": 212796383,
@@ -29,7 +29,7 @@
         {
           "version": "1.4.2-1",
           "buildVersion": "39",
-          "date": "2026-10-23",
+          "date": "2026-10-23T16:54:39Z",
           "localizedDescription": "",
           "downloadURL": "https://github.com/TheBlackSide243/openGym/releases/download/plus-1.4.2-1/openGym-plus-unsigned.ipa",
           "size": 212787639,
@@ -49,7 +49,7 @@
         }
       },
       "version": "1.4.2-2",
-      "versionDate": "2026-10-25",
+      "versionDate": "2026-10-25T13:57:49Z",
       "versionDescription": "RENPHO: sign-in fixed (RENPHO changed it in October), and an optional second account so the RENPHO app stays signed in. · RENPHO: accesso di nuovo funzionante e secondo account facoltativo.",
       "downloadURL": "https://github.com/TheBlackSide243/openGym/releases/download/plus-1.4.2-2/openGym-plus-unsigned.ipa",
       "size": 212796383
