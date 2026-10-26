@@ -8,7 +8,7 @@ import { setWeightDecimals } from './lib/format.js'
 import { accentValue, applyAccent } from './lib/accent.js'
 import { seasonAccent } from './lib/seasonal.js'
 import { t, setLang, useLang, baseLang } from './lib/i18n.js'
-import { tabbarOnSide, useWideScreen } from './lib/tabbar-side.js'
+import { tabbarOnSide, useWideScreen, statusColumn, useRightInset } from './lib/tabbar-side.js'
 import { effectiveLang } from './lib/default-lang.js'
 import { setPlayOnSilent, setVibrate, setAlarmBuzzer, setNativeBuzzer } from './lib/sound.js'
 import { buzzAsAlarm } from './lib/rest-alert.js'
@@ -296,6 +296,13 @@ function Shell() {
     document.body.classList.toggle('tabbar-side', sideTabs)
     return () => document.body.classList.remove('tabbar-side')
   }, [sideTabs])
+  // On a screen whose right edge is the system's status column, the bar is that column.
+  const rightInset = useRightInset()
+  const inStatusColumn = sideTabs && statusColumn(rightInset)
+  useEffect(() => {
+    document.body.classList.toggle('tabbar-status', inStatusColumn)
+    return () => document.body.classList.remove('tabbar-status')
+  }, [inStatusColumn])
   // The boot screen in index.html covers the start; it goes once there is something to show.
   useEffect(() => { if (ready || authed) hideBoot() }, [ready, authed])
   if (!ready && !authed) return (
