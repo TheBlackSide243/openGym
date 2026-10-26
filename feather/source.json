@@ -1,0 +1,43 @@
+{
+  "name": "openGym Plus",
+  "identifier": "io.github.theblackside243.opengym-plus",
+  "iconURL": "https://raw.githubusercontent.com/TheBlackSide243/openGym/plus/frontend/public/icon-512.png",
+  "website": "https://github.com/TheBlackSide243/openGym/releases",
+  "apps": [
+    {
+      "name": "openGym Plus",
+      "bundleIdentifier": "ch.opengym.app",
+      "developerName": "TheBlackSide243 (based on openGym)",
+      "iconURL": "https://raw.githubusercontent.com/TheBlackSide243/openGym/plus/frontend/public/icon-512.png",
+      "localizedDescription": "An unofficial build of openGym with extra features: a Health area with Apple Health and RENPHO, a music bar, machine settings and photos per exercise, health widgets on Home, Settings as a tab. Not affiliated with the original project. AGPL-3.0-or-later; source at github.com/TheBlackSide243/openGym.",
+      "subtitle": "Self-hosted gym and body-weight tracker",
+      "tintColor": "30D158",
+      "versions": [
+        {
+          "version": "1.4.2-3",
+          "date": "2026-10-26T12:12:46Z",
+          "size": 212798960,
+          "downloadURL": "https://github.com/TheBlackSide243/openGym/releases/download/plus-1.4.2-3/openGym-plus-unsigned.ipa"
+        },
+        {
+          "version": "1.4.2-2",
+          "date": "2026-10-25T13:57:49Z",
+          "size": 212796383,
+          "downloadURL": "https://github.com/TheBlackSide243/openGym/releases/download/plus-1.4.2-2/openGym-plus-unsigned.ipa"
+        },
+        {
+          "version": "1.4.2-1",
+          "date": "2026-10-23T16:54:39Z",
+          "size": 212787639,
+          "downloadURL": "https://github.com/TheBlackSide243/openGym/releases/download/plus-1.4.2-1/openGym-plus-unsigned.ipa"
+        }
+      ],
+      "appPermissions": {},
+      "version": "1.4.2-3",
+      "versionDate": "2026-10-26T12:12:46Z",
+      "size": 212798960,
+      "downloadURL": "https://github.com/TheBlackSide243/openGym/releases/download/plus-1.4.2-3/openGym-plus-unsigned.ipa"
+    }
+  ],
+  "news": []
+}
