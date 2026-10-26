@@ -1,0 +1,59 @@
+{
+  "name": "openGym Plus",
+  "identifier": "io.github.theblackside243.opengym-plus",
+  "subtitle": "An unofficial build of openGym with extra features",
+  "description": "openGym Plus: an unofficial build of openGym (github.com/DuarteSantos8/openGym) with extra features, not affiliated with the original project. AGPL-3.0-or-later.",
+  "iconURL": "https://raw.githubusercontent.com/TheBlackSide243/openGym/plus/frontend/public/icon-512.png",
+  "website": "https://github.com/TheBlackSide243/openGym/releases",
+  "tintColor": "#30D158",
+  "apps": [
+    {
+      "name": "openGym Plus",
+      "bundleIdentifier": "ch.opengym.app",
+      "developerName": "TheBlackSide243 (based on openGym)",
+      "subtitle": "Self-hosted gym and body-weight tracker",
+      "localizedDescription": "An unofficial build of openGym with extra features: a Health area with Apple Health and RENPHO, a music bar, machine settings and photos per exercise, health widgets on Home, Settings as a tab. Not affiliated with the original project. AGPL-3.0-or-later; source at github.com/TheBlackSide243/openGym.",
+      "iconURL": "https://raw.githubusercontent.com/TheBlackSide243/openGym/plus/frontend/public/icon-512.png",
+      "tintColor": "#30D158",
+      "category": "lifestyle",
+      "versions": [
+        {
+          "version": "1.4.2-2",
+          "buildVersion": "39",
+          "date": "2026-10-25",
+          "localizedDescription": "RENPHO: sign-in fixed (RENPHO changed it in October), and an optional second account so the RENPHO app stays signed in. · RENPHO: accesso di nuovo funzionante e secondo account facoltativo.",
+          "downloadURL": "https://github.com/TheBlackSide243/openGym/releases/download/plus-1.4.2-2/openGym-plus-unsigned.ipa",
+          "size": 212796383,
+          "minOSVersion": "15.5"
+        },
+        {
+          "version": "1.4.2-1",
+          "buildVersion": "39",
+          "date": "2026-10-23",
+          "localizedDescription": "",
+          "downloadURL": "https://github.com/TheBlackSide243/openGym/releases/download/plus-1.4.2-1/openGym-plus-unsigned.ipa",
+          "size": 212787639,
+          "minOSVersion": "15.5"
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {
+          "NSAppleMusicUsageDescription": "Used to show the song the Music app is playing at the top of a workout, with buttons to pause it or skip to the next one.",
+          "NSCameraUsageDescription": "Used to scan your gym membership QR code, and to take a photo or video of an exercise you add yourself.",
+          "NSFaceIDUsageDescription": "Used to make sure it’s really you before your account is deleted.",
+          "NSHealthShareUsageDescription": "Used to show your heart rate on your Apple Watch while you train, next to each set, and the Health data you choose in openGym's Health section.",
+          "NSHealthUpdateUsageDescription": "Used to save your finished workouts and weigh-ins to Apple Health, when you switch it on.",
+          "NSLocalNetworkUsageDescription": "Used to reach your own openGym server or AI model on your home network, when you connect one.",
+          "NSMicrophoneUsageDescription": "Used to record the sound of a video you take of an exercise you add yourself."
+        }
+      },
+      "version": "1.4.2-2",
+      "versionDate": "2026-10-25",
+      "versionDescription": "RENPHO: sign-in fixed (RENPHO changed it in October), and an optional second account so the RENPHO app stays signed in. · RENPHO: accesso di nuovo funzionante e secondo account facoltativo.",
+      "downloadURL": "https://github.com/TheBlackSide243/openGym/releases/download/plus-1.4.2-2/openGym-plus-unsigned.ipa",
+      "size": 212796383
+    }
+  ],
+  "news": []
+}
