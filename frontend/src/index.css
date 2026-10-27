@@ -2438,17 +2438,18 @@ body.tabbar-side.has-music-dock #app{padding-bottom:calc(84px + var(--sab))}
    closed, body.tabbar-status from App.jsx): the bar is that column, as wide as it, with the tabs
    below the status block instead of beside it, and the page gets the width back. */
 body.tabbar-side.tabbar-status{--rail:max(84px,var(--sar))}
-/* The tabs sit at the bottom of the column, close together: the status block grows down a long
-   way while the island is taller (a Live Activity, the screen recording, a call; about 250px
-   with the time and the battery under it) and iOS tells the app nothing of it, so the room above
-   is left to it whatever its height. Where the app does learn the block's height (--status-block,
-   ios MainViewController), the tabs also stay below it. */
 body.tabbar-side.tabbar-status #tabbar{
-  justify-content:flex-end;gap:0;
-  padding:max(calc(var(--sat) + 8px),160px,calc(var(--status-block,0px) + 12px)) 4px calc(var(--sab) + 10px) 4px;
+  justify-content:flex-start;
+  padding:max(calc(var(--sat) + 8px),160px) 4px calc(var(--sab) + 8px) 4px;
+  transition:padding-top .3s ease;
 }
-body.tabbar-side.tabbar-status #tabbar button{padding:3px 0}
-body.tabbar-side.tabbar-status #tabbar button.start{margin:4px 0}
+/* While the screen records or a call goes on, the island is taller and the time and the battery
+   move down to about 250px (ios MainViewController puts island-tall on the root): the icons go
+   below them, close together so all of them still fit. What another app shows in the island iOS
+   does not tell, and the icons stay up then. */
+html.island-tall body.tabbar-side.tabbar-status #tabbar{gap:0;padding-top:max(calc(var(--sat) + 8px),264px)}
+html.island-tall body.tabbar-side.tabbar-status #tabbar button{padding:3px 0}
+html.island-tall body.tabbar-side.tabbar-status #tabbar button.start{margin:4px 0}
 /* A phone on its side is short: the icons alone, so every tab fits the height. */
 @media (max-height:480px){
   body.tabbar-side #tabbar{gap:0}
