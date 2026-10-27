@@ -1,9 +1,8 @@
 // The "That's the whole workout!" sheet (sheets.jsx WorkoutComplete), when the last set of a live
-// session is ticked: a line that cheers you on to one more exercise, and the exercises you most
-// often add to your routines' sessions on top of the plan (lib/session-extras.js), one tap from
+// session is ticked, and the header's Finish: a line that cheers you on to one more exercise, and
+// the exercises you most often add to your routines' sessions on top of the plan, one tap from
 // joining this one. Finish and Continue stay as they were.
 import { t } from './i18n.js'
-import { isExtra } from './session-extras.js'
 import { isWarmupRow } from './workout-model.js'
 
 /** The lines, one picked each time the sheet opens. A function so they follow the language. */
@@ -119,19 +118,36 @@ export function keepGoingLine(r = Math.random()) {
 const workedOn = entry => (Array.isArray(entry?.sets) ? entry.sets : []).some(s => s && s.done === true && !isWarmupRow(s))
 const when = w => Number(w?.end) || Number(w?.start) || 0
 
+// A saved workout's routines, by id: `routineIds`, or the older single `routineId`.
+const routineIdsOf = w => (Array.isArray(w?.routineIds) && w.routineIds.length ? w.routineIds : w?.routineId != null ? [w.routineId] : [])
+
 /**
- * The exercises you add most often as extras, most sessions first, then the most recent: each
- * saved workout counts an exercise once, and only when it was an extra (`extra: true`) with a work
- * set done. Those already in `active` are left out, as is anything `keep` (an id → boolean) turns
- * down. At most `n` ids.
+ * Whether a saved workout's entry was done on top of its plan: marked so (`extra: true`, where the
+ * app keeps the mark), or, in a session built from routines, an exercise none of them has. The
+ * routines are read as they are now, so one since added to its routine counts no more. A freestyle
+ * session has no plan to be extra to.
  */
-export function frequentExtras(workouts, active, { n = 3, keep = () => true } = {}) {
+export function extraIn(w, entry, routinesById = new Map()) {
+  if (entry?.extra === true) return true
+  const ids = routineIdsOf(w)
+  if (!ids.length || entry?.id == null) return false
+  const routines = ids.map(id => routinesById.get(id)).filter(r => Array.isArray(r?.ex))
+  return routines.length > 0 && !routines.some(r => r.ex.some(x => x?.id === entry.id))
+}
+
+/**
+ * The exercises you add most often as extras (extraIn), most sessions first, then the most recent:
+ * each saved workout counts an exercise once, and only with a work set done. Those already in
+ * `active` are left out, as is anything `keep` (an id → boolean) turns down. At most `n` ids.
+ */
+export function frequentExtras(workouts, active, { n = 3, keep = () => true, routines = [] } = {}) {
   const here = new Set((Array.isArray(active?.entries) ? active.entries : []).map(e => e?.id))
+  const byId = new Map((Array.isArray(routines) ? routines : []).filter(r => r?.id != null).map(r => [r.id, r]))
   const tally = new Map()
   for (const w of Array.isArray(workouts) ? workouts : []) {
     const seen = new Set()
     for (const e of Array.isArray(w?.entries) ? w.entries : []) {
-      if (!isExtra(e) || e.id == null || seen.has(e.id) || here.has(e.id) || !workedOn(e)) continue
+      if (e?.id == null || seen.has(e.id) || here.has(e.id) || !extraIn(w, e, byId) || !workedOn(e)) continue
       seen.add(e.id)
       const c = tally.get(e.id) || { id: e.id, times: 0, last: 0 }
       c.times++

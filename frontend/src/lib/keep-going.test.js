@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { frequentExtras, keepGoingLine, keepGoingLines } from './keep-going.js'
+import { extraIn, frequentExtras, keepGoingLine, keepGoingLines } from './keep-going.js'
 
 const set = (extra = {}) => ({ done: true, w: 20, r: 10, ...extra })
 const entry = (id, { extra = true, sets = [set()] } = {}) => ({ id, sets, ...(extra ? { extra: true } : {}) })
@@ -32,6 +32,21 @@ describe('the extras you add most often', () => {
     const ws = [workout(1, [entry('a'), entry('b'), entry('c'), entry('d'), entry('e')])]
     const active = { entries: [{ id: 'b', sets: [] }] }
     expect(frequentExtras(ws, active, { n: 2, keep: id => id !== 'a' }).map(c => c.id)).toEqual(['c', 'd'])
+  })
+
+  it('without the mark, an exercise its routine does not have is an extra; freestyle never is', () => {
+    const routines = [{ id: 'r1', ex: [{ id: 'bench' }, { id: 'dips' }] }, { id: 'r2', ex: [{ id: 'squat' }] }]
+    const plain = (id, sets = [set()]) => ({ id, sets })
+    const ws = [
+      { end: 1, routineIds: ['r1'], entries: [plain('bench'), plain('curl'), plain('plank')] },
+      { end: 2, routineId: 'r1', entries: [plain('curl')] },                       // the older single id
+      { end: 3, routineIds: ['r1', 'r2'], entries: [plain('squat'), plain('curl')] }, // squat is r2's
+      { end: 4, entries: [plain('row')] },                                          // freestyle
+      { end: 5, routineIds: ['gone'], entries: [plain('fly')] },                    // routine deleted
+    ]
+    expect(frequentExtras(ws, null, { routines })).toEqual([{ id: 'curl', times: 3 }, { id: 'plank', times: 1 }])
+    expect(extraIn(ws[0], plain('bench'), new Map(routines.map(r => [r.id, r])))).toBe(false)
+    expect(extraIn({}, { id: 'x', extra: true })).toBe(true)
   })
 
   it('a profile with no history, or odd data, suggests nothing', () => {

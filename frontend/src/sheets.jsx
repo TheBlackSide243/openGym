@@ -3608,7 +3608,7 @@ export const supersetSheet = (meta, onSave) => ui().openSheet(close => <Superset
 // (`onAdd`, the workout screen's add) it also cheers you on to one more, and offers the exercises
 // you most often add on top of your routines (lib/keep-going.js): a tap adds one to this workout
 // the way the picker's "+" does. A workout logged into the past only finishes.
-const extraPicks = () => frequentExtras(S().workouts, S().active, { keep: id => !!EXIDX[id] && !EXIDX[id].missing })
+const extraPicks = () => frequentExtras(S().workouts, S().active, { routines: S().routines, keep: id => !!EXIDX[id] && !EXIDX[id].missing })
 function WorkoutComplete({ close, onAdd }) {
   const [line] = useState(() => keepGoingLine())
   const [picks] = useState(() => (onAdd ? extraPicks() : []))
