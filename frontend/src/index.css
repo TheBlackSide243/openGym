@@ -163,6 +163,10 @@ a{color:var(--acc);text-decoration:none}
 :focus-visible{outline:2.5px solid var(--acc);outline-offset:2px;border-radius:6px}
 button,.chip,.tile,.item,.wday,.cal-d,.swatch,.hm-c,.lrow,.seg button,.stp button,.sld
 {-webkit-user-select:none;user-select:none}
+/* A text field inside one of those (a settings row's Spotify Client ID, RENPHO's e-mail) takes its
+   text again: iOS WebKit carries -webkit-user-select:none down to the field, which then never
+   gets the keyboard or a paste. */
+.lrow input,.lrow textarea,.item input,.item textarea{-webkit-user-select:text;user-select:text}
 
 /* icons inherit colour and optical size from their context */
 .icn{
