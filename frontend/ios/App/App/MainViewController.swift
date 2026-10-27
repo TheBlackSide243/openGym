@@ -43,6 +43,39 @@ class MainViewController: CAPBridgeViewController {
     }
 
     /**
+     * The iPhone Duo closed writes the time and the battery in a block at the top of its right
+     * column, and that block grows while the screen records or a call goes on (the island taller).
+     * The page cannot see it (no safe-area inset says how tall it is), so its height goes to the
+     * page as --status-block, and the tab bar's icons in that column start below it
+     * (index.css body.tabbar-status). 0 where the status bar is no block on the right.
+     */
+    private var statusWatch: Timer?
+    private var statusBlock: CGFloat = -1
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        reportStatusBlock()
+        // iOS posts nothing when the status bar changes size now: a look a second, a property read.
+        statusWatch?.invalidate()
+        statusWatch = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in self?.reportStatusBlock() }
+    }
+
+    override func viewSafeAreaInsetsDidChange() {
+        super.viewSafeAreaInsetsDidChange()
+        reportStatusBlock()
+    }
+
+    private func reportStatusBlock() {
+        guard let web = webView, let frame = view.window?.windowScene?.statusBarManager?.statusBarFrame else { return }
+        let bounds = view.window?.bounds ?? view.bounds
+        let onRight = frame.width > 0 && frame.minX >= bounds.width / 2 && frame.height < bounds.height
+        let h = onRight ? frame.maxY.rounded(.up) : 0
+        guard h != statusBlock else { return }
+        statusBlock = h
+        web.evaluateJavaScript("document.documentElement.style.setProperty('--status-block','\(Int(h))px')")
+    }
+
+    /**
      * For the UI tests only (ios/App/AppUITests): launched with this argument, the app shows the
      * ids of the local notifications iOS holds for it, as a tiny label a test can read. A UI test
      * runs in its own process and cannot ask UNUserNotificationCenter about another app, and this

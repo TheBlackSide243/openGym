@@ -2440,7 +2440,10 @@ body.tabbar-side.has-music-dock #app{padding-bottom:calc(84px + var(--sab))}
 body.tabbar-side.tabbar-status{--rail:max(84px,var(--sar))}
 body.tabbar-side.tabbar-status #tabbar{
   justify-content:flex-start;
-  padding:max(calc(var(--sat) + 8px),160px) 4px calc(var(--sab) + 8px) 4px;
+  /* Below the status block, also while it is taller (recording the screen, a call): the app
+     measures it, --status-block (ios MainViewController). */
+  padding:max(calc(var(--sat) + 8px),160px,calc(var(--status-block,0px) + 12px)) 4px calc(var(--sab) + 8px) 4px;
+  transition:padding-top .25s ease;
 }
 /* A phone on its side is short: the icons alone, so every tab fits the height. */
 @media (max-height:480px){
