@@ -70,7 +70,8 @@ export const WORKS_WITH = [
   { name: 'Samsung Health', glyph: 'watch', reads: 'both' },
   { name: 'Oura', glyph: 'ring', reads: 'hr' },
   { name: 'Withings', glyph: 'scale', reads: 'weight' },
-  { name: 'Renpho', glyph: 'scale', reads: 'weight' },
+  // RENPHO also has a line of its own to the server (api/providers/renpho, Settings → Health).
+  { name: 'Renpho', glyph: 'scale', reads: 'weight', direct: 'renpho' },
 ]
 
 // The status pill, in the words the card shows.

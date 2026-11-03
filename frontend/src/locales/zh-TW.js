@@ -4280,4 +4280,6 @@ export default {
   "Your webhooks stop sending while Integrations is off. They stay set up.": "「整合」關閉期間，你的 Webhook 不會傳送。設定仍會保留。",
   "{0} of {1} modules on.": "已開啟 {0}/{1} 個模組。",
   "{0} stops syncing while Health is off. Nothing is disconnected, and it catches up once Health is back.": "「健康」關閉期間，{0} 會停止同步。不會中斷任何連線，「健康」重新開啟後會自動補上。",
+  // --- Integrations: RENPHO's own line ---
+  'RENPHO also connects straight to your openGym server, with every reading of the scale.': 'RENPHO 也可以直接連接到你的 openGym 伺服器，帶上體重計的每一次測量。',
 }

@@ -216,9 +216,11 @@ const READS = {
 
 function worksWithSheet(w, platform, nav) {
   const store = platform === 'ios' ? 'apple-health' : platform === 'android' ? 'health-connect' : null
+  const direct = w.direct === 'renpho' && !!useStore.getState().user
   sheet(close => <>
     <SheetHead icon={w.glyph} title={w.name} />
-    <p className="intg-lead">{t('{0} has no direct line to openGym, and it does not need one.', w.name)}</p>
+    {direct && <p className="intg-lead">{t('RENPHO also connects straight to your openGym server, with every reading of the scale.')}</p>}
+    {!direct && <p className="intg-lead">{t('{0} has no direct line to openGym, and it does not need one.', w.name)}</p>}
     {/* Three facts, not three settings: plain rows, no tinted tile on each (Integrations pass, I6). */}
     <Section className="intg-facts">
       <Row title={t('How it gets here')}
@@ -226,9 +228,13 @@ function worksWithSheet(w, platform, nav) {
       <Row title={t('What openGym reads')} subtitle={t(READS[w.reads])} />
       <Row title={t('What it does not do')} subtitle={t('Workouts logged in openGym go to the health store, not back into {0} itself.', w.name)} />
     </Section>
+    {/* RENPHO on a signed-in profile: the server reads the scale itself (Settings → Health), every
+        reading, the ones RENPHO keeps from the health store too. */}
+    {direct && <Button variant="primary" onClick={() => { close(); nav('/settings/health') }}>{t('Connect RENPHO')}</Button>}
+    {direct && store && <div style={{ height: 8 }} />}
     {store
-      ? <Button variant="primary" onClick={() => { close(); nav('/settings/' + store) }}>{t('Set up {0}', CARD[store].name)}</Button>
-      : <p className="intg-note">{t('Install the openGym app on your phone to use this.')}</p>}
+      ? <Button variant={direct ? 'tinted' : 'primary'} onClick={() => { close(); nav('/settings/' + store) }}>{t('Set up {0}', CARD[store].name)}</Button>
+      : !direct && <p className="intg-note">{t('Install the openGym app on your phone to use this.')}</p>}
   </>)
 }
 

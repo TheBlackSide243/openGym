@@ -3072,6 +3072,8 @@ export const PT_BR_OVERRIDES = {
   'One last push. You’ll thank yourself.': 'Um último esforço. Você vai se agradecer.',
   'You often add': 'Você costuma adicionar',
   '{0}× as an extra': '{0}× como extra',
+  // --- Integrations: RENPHO's own line ---
+  'RENPHO also connects straight to your openGym server, with every reading of the scale.': 'O RENPHO também se conecta direto ao seu servidor openGym, com cada medição da balança.',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

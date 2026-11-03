@@ -4284,4 +4284,6 @@ export default {
   "Your webhooks stop sending while Integrations is off. They stay set up.": "Поки «Інтеграції» вимкнено, твої вебхуки нічого не надсилають. Вони лишаються налаштованими.",
   "{0} of {1} modules on.": "Увімкнено модулів: {0} з {1}.",
   "{0} stops syncing while Health is off. Nothing is disconnected, and it catches up once Health is back.": "Поки «Здоров'я» вимкнено, {0} не синхронізується. Нічого не від’єднується, і все наздожене, щойно «Здоров'я» повернеться.",
+  // --- Integrations: RENPHO's own line ---
+  'RENPHO also connects straight to your openGym server, with every reading of the scale.': 'RENPHO також підключається напряму до твого сервера openGym, з усіма вимірюваннями ваг.',
 }

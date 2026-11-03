@@ -54,6 +54,8 @@ describe('the directory', () => {
   it('every card says what it does, and the "works with" list has no Connect of its own', () => {
     for (const c of CARDS) { expect(c.desc).toBeTruthy(); expect(c.syncs.length).toBeGreaterThan(0) }
     expect(WORKS_WITH.map(w => w.name)).toEqual(['Garmin', 'COROS', 'Polar', 'Fitbit', 'Samsung Health', 'Oura', 'Withings', 'Renpho'])
+    // RENPHO alone also has a line of its own to the server (Settings → Health).
+    expect(WORKS_WITH.filter(w => w.direct).map(w => [w.name, w.direct])).toEqual([['Renpho', 'renpho']])
     expect(WORKS_WITH.every(w => ['hr', 'weight', 'both'].includes(w.reads))).toBe(true)
     expect(Object.keys(PILL)).toEqual(['connected', 'off', 'attention', 'device', 'server'])
   })

@@ -4287,4 +4287,6 @@ export default {
   "Your webhooks stop sending while Integrations is off. They stay set up.": "'연동'이 꺼져 있는 동안 웹훅이 전송되지 않아요. 설정은 그대로예요.",
   "{0} of {1} modules on.": "모듈 {1}개 중 {0}개 켜짐.",
   "{0} stops syncing while Health is off. Nothing is disconnected, and it catches up once Health is back.": "'건강'이 꺼져 있는 동안 {0} 동기화가 멈춰요. 연결은 끊기지 않고, '건강'을 다시 켜면 밀린 걸 따라잡아요.",
+  // --- Integrations: RENPHO's own line ---
+  'RENPHO also connects straight to your openGym server, with every reading of the scale.': 'RENPHO는 체중계의 모든 측정값과 함께 openGym 서버에 직접 연결할 수도 있어요.',
 }
