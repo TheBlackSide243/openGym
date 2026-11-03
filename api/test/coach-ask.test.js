@@ -49,7 +49,8 @@ test('ask payload: health readings travel only for a question about the body', (
   const plain = payloadLib.build(S, { handle: 'h'.repeat(16), kind: 'ask', note: 'Meglio squat o pressa?' });
   assert.equal(plain.health, undefined);
   assert.equal(plain.bodyweight, undefined);
-  const body = payloadLib.build(S, { handle: 'h'.repeat(16), kind: 'ask', note: 'Il mio grasso corporeo sta scendendo?' });
+  // A fixed clock: "about a month" is counted from the job's day, not from whenever the test runs.
+  const body = payloadLib.build(S, { handle: 'h'.repeat(16), kind: 'ask', now: Date.parse('2026-10-20T12:00:00Z'), note: 'Il mio grasso corporeo sta scendendo?' });
   assert.deepEqual(body.health.bodyFat, { latest: 17, on: '2026-10-10', monthAgo: 18, since: '2026-09-01' });
   assert.equal(body.health.steps.avgLast7, 9000);
   assert.ok(!JSON.stringify(body.health).includes('apple-health'), 'no source, no record ids');

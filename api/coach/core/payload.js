@@ -775,9 +775,10 @@ export function build(S, opts = {}) {
     const today = cleanToday(opts.today);
     if (today) p.today = today;
     if (asksAboutBody(question)) {
-      const health = healthSummary(S);
+      // By the job's clock, like the rest of the payload: the same question builds the same payload.
+      const health = healthSummary(S, iso(new Date(now)));
       if (Object.keys(health).length) p.health = health;
-      const since = new Date();
+      const since = new Date(now);
       since.setDate(since.getDate() - 56);
       p.bodyweight = { goal: num(S.targetW) ?? null, series: weighIns(S, iso(since), null) };
     }
