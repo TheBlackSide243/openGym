@@ -86,7 +86,9 @@ for (const dir of ['resources', ...readdirSync(here).filter(d => d.startsWith('r
 
 const manifest = readFileSync(join(here, 'manifest.xml'), 'utf8')
 const products = [...manifest.matchAll(/<iq:product id="([a-z0-9_]+)"\/>/g)].map(m => m[1])
-const appVersion = JSON.parse(readFileSync(join(here, '..', 'package.json'), 'utf8')).version
+// A plus build is the openGym version and a "-N" (1.4.4-1): Connect IQ takes x.y.z only, so the
+// manifest carries the openGym version it is built on.
+const appVersion = JSON.parse(readFileSync(join(here, '..', 'package.json'), 'utf8')).version.replace(/-\d+$/, '')
 const ciqVersion = (manifest.match(/<iq:application [^>]*version="([^"]+)"/) || [])[1]
 if (ciqVersion !== appVersion) bad('manifest.xml', `version ${ciqVersion} is not the app's ${appVersion} (frontend/package.json)`)
 const sdk = process.argv[2] || process.env.CIQ_SDK
