@@ -216,17 +216,19 @@ struct RootView: View {
                 WeighInView()
             } else if let summary = store.summary {
                 SummaryView(summary: summary)
-            } else if store.workout == nil, let from = store.countdownFrom {
+            } else if let from = store.countdownFrom, store.workout == nil || store.goAt != nil {
                 CountdownView(from: from).transition(reduceMotion || dimmed ? .opacity : .countdownExit)
             } else if store.workout == nil {
                 IdleView()
+            } else if let from = store.holdCountFrom {
+                CountdownView(from: from, label: Text("Start hold"), start: { store.startHold(auto: true) }, cancel: { store.stopHoldCount() })
             } else if let end = store.holdEndsAt {
                 HoldView(end: end)
             } else {
                 SessionScreen()
             }
         }
-        // The 3-2-1 fades in and swells and blurs out into the workout (the transition has to sit at the call site, not in CountdownView); with the wrist down, cuts.
+        // The 3-2-1, then GO!, fades in and swells and blurs out into the workout (the transition has to sit at the call site, not in CountdownView); with the wrist down, cuts.
         .animation(dimmed ? nil : .easeOut(duration: 0.3), value: store.countdownFrom == nil)
         // The app's language, as the phone sends it, not the watch's own (SwiftUI looks every
         // Text's words up by this locale).
@@ -322,43 +324,110 @@ struct LockButton: View {
     }
 }
 
-/// The 3-2-1 before a workout started here: big numbers in a ring that empties once. A tap
-/// starts at once; the small button cancels (nothing starts, nothing is logged).
+/// The 3-2-1 before a workout started here: big numbers in a ring that empties once, then GO!
+/// (the workout has begun, and runs under it). A tap starts at once; the small button cancels
+/// (nothing starts, nothing is logged).
 struct CountdownView: View {
     @EnvironmentObject var store: SessionStore
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.isLuminanceReduced) private var dimmed
     let from: Date
+    /// The same 3-2-1 before a hold that starts by itself (the phone's setting): its own words and actions.
+    var label: Text? = nil
+    var start: (() -> Void)? = nil
+    var cancel: (() -> Void)? = nil
 
     var body: some View {
+        let going = start == nil && store.goAt != nil   // GO! is the workout's; a hold's count-in just ends in the hold
         VStack(spacing: 2) {
             TimelineView(.periodic(from: from, by: 1)) { ctx in
-                let n = max(1, Countdown.number(at: ctx.date.timeIntervalSince(from)))
-                Button { store.startNow() } label: {
+                let face = Countdown.face(at: ctx.date.timeIntervalSince(from), going: going)
+                // Reduce Motion: the ring cross-fades with GO!'s; otherwise the swap is instant (same track).
+                let swap: AnyTransition = reduceMotion ? .opacity : .identity
+                Button { if let start = start { start() } else { store.startNow() } } label: {
                     ZStack {
-                        CountdownRing(start: from, end: from.addingTimeInterval(Double(Countdown.seconds)), gradient: true)
-                        // A new view each second: the last number leaves as the next one lands.
-                        Text(verbatim: "\(n)")
-                            .font(.system(size: 64, weight: .bold, design: .rounded).monospacedDigit())
-                            .foregroundStyle(Theme.accent)
-                            .id(n)
-                            .transition(reduceMotion ? .opacity : .countdownDigit)
+                        if case .number = face {
+                            CountdownRing(start: from, end: from.addingTimeInterval(Double(Countdown.seconds)), gradient: true).transition(swap)
+                        } else if let at = store.goAt {
+                            GoRing(at: at).transition(swap)
+                        }
+                        // A new view each second: the last face leaves as the next one lands.
+                        faceText(face)
+                            .id(face)
+                            .transition(reduceMotion ? .opacity : face == .go ? .countdownGo : .countdownDigit)
                     }
-                    .animation(dimmed ? nil : reduceMotion ? .easeOut(duration: 0.25) : .spring(response: 0.4, dampingFraction: 0.62), value: n)
+                    .animation(dimmed ? nil : reduceMotion ? .easeOut(duration: 0.25)
+                               : face == .go ? .spring(response: 0.36, dampingFraction: 0.5)
+                               : .spring(response: 0.4, dampingFraction: 0.62), value: face)
                     .aspectRatio(1, contentMode: .fit)
                     .contentShape(Circle())
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel(Text("Start workout"))
-                .accessibilityValue(Text(verbatim: "\(n)"))
+                .accessibilityLabel(face == .go ? Text("Go!") : label ?? Text("Start workout"))
+                .accessibilityValue(Text(verbatim: { if case .number(let n) = face { return "\(n)" } else { return "" } }()))
+                .accessibilityRemoveTraits(face == .go ? .isButton : [])   // GO! is not a control
             }
             .padding(.horizontal, 6)
             HStack {
-                EdgeButton(systemImage: "xmark", label: Text("Cancel")) { store.cancelCountdown() }
+                // Keeps its slot on GO! so the ring does not grow.
+                EdgeButton(systemImage: "xmark", label: Text("Cancel")) { if let cancel = cancel { cancel() } else { store.cancelCountdown() } }
+                    .opacity(going ? 0 : 1)
+                    .disabled(going)
+                    .accessibilityHidden(going)
+                    .animation(dimmed ? nil : .easeOut(duration: 0.15), value: going)
                 Spacer()
             }
         }
         .ignoresSafeArea(edges: .bottom)
+        .onChange(of: store.goAt != nil) { going in
+            if going && start == nil { AccessibilityNotification.Announcement(store.L("Go!")).post() }
+        }
+    }
+
+    @ViewBuilder private func faceText(_ face: Countdown.Face) -> some View {
+        let ink = dimmed ? Theme.accent.opacity(0.75) : Theme.accent   // the digits too, so 1 and GO! match when dimmed
+        switch face {
+        case .number(let n):
+            Text(verbatim: "\(n)")
+                .font(.system(size: 64, weight: .bold, design: .rounded).monospacedDigit())
+                .foregroundStyle(ink)
+        case .go:
+            Text("Go!")
+                .font(.system(size: 52, weight: .heavy, design: .rounded))
+                .textCase(.uppercase)          // "GO!", "LOS!", "¡YA!"; scripts without case are unaffected
+                .lineLimit(1).minimumScaleFactor(0.4)   // the longest words (ru/uk/tr/pl) shrink to fit the ring
+                .padding(.horizontal, 8)      // keeps it inside the ring's inner chord
+                .foregroundStyle(ink)
+        }
+    }
+}
+
+/// The ring on GO!: lights up round again, then a faint copy swells off it (Countdown.goRing).
+/// Still when dimmed or with Reduce Motion.
+private struct GoRing: View {
+    let at: Date
+    @Environment(\.isLuminanceReduced) private var dimmed
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    var body: some View {
+        Group {
+            if dimmed || reduceMotion { ring(Countdown.goRing(at: .infinity)) }
+            else { TimelineView(.animation) { ring(Countdown.goRing(at: $0.date.timeIntervalSince(at))) } }
+        }
+        .accessibilityHidden(true)
+    }
+
+    private func ring(_ r: (sweep: Double, wave: Double?)) -> some View {
+        ZStack {
+            Circle().stroke(Theme.dim, lineWidth: 7)
+            Circle().trim(from: 0, to: r.sweep)
+                .stroke(Theme.accent.opacity(dimmed ? 0.6 : 1), style: StrokeStyle(lineWidth: 7, lineCap: .round))
+                .rotationEffect(.degrees(-90))
+            if let w = r.wave {
+                Circle().stroke(Theme.accent, lineWidth: 7)
+                    .scaleEffect(1 + 0.15 * w).opacity(0.5 * (1 - w))
+            }
+        }
     }
 }
 
@@ -368,11 +437,13 @@ private struct Blurred: ViewModifier {
 }
 
 extension AnyTransition {
-    private static func countdownEdge(scale: CGFloat) -> AnyTransition {
-        .scale(scale: scale).combined(with: .opacity).combined(with: .modifier(active: Blurred(radius: 8), identity: Blurred(radius: 0)))
+    private static func countdownEdge(scale: CGFloat, blur: CGFloat = 8) -> AnyTransition {
+        .scale(scale: scale).combined(with: .opacity).combined(with: .modifier(active: Blurred(radius: blur), identity: Blurred(radius: 0)))
     }
     /// Lands from small and blurred; the last one swells past and blurs out.
     static var countdownDigit: AnyTransition { .asymmetric(insertion: countdownEdge(scale: 0.5), removal: countdownEdge(scale: 1.6)) }
+    /// GO!: lands from smaller and blurrier than a digit, with the spring's overshoot; leaves with the whole screen (countdownExit).
+    static var countdownGo: AnyTransition { .asymmetric(insertion: countdownEdge(scale: 0.35, blur: 12), removal: .opacity) }
     /// The workout starts (or Cancel): the 3-2-1 swells and dissolves into what comes next.
     static var countdownExit: AnyTransition { .asymmetric(insertion: .opacity, removal: countdownEdge(scale: 1.4).animation(.easeIn(duration: 0.2))) }
 }
@@ -1753,7 +1824,7 @@ struct HoldView: View {
                 CountdownRing(start: store.holdStartedAt ?? end, end: end, color: .cyan)
                 VStack(spacing: 1) {
                     Text(store.entry?.name ?? "").font(.caption2.weight(.semibold)).foregroundStyle(.secondary).lineLimit(1)
-                    Text(timerInterval: Date()...end, countsDown: true)
+                    Text(timerInterval: min(Date(), end)...end, countsDown: true)
                         .font(.system(size: countdownSize, weight: .semibold, design: .rounded).monospacedDigit())
                         .minimumScaleFactor(0.5)
                         .lineLimit(1)

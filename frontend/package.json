@@ -1,7 +1,7 @@
 {
   "name": "opengym-frontend",
   "private": true,
-  "version": "1.4.3-8",
+  "version": "1.4.4-1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -23,8 +23,7 @@
     "@capacitor/local-notifications": "^8.0.0",
     "@capacitor/share": "^8.0.0",
     "@capacitor/splash-screen": "^8.0.2",
-    "@zxing/library": "^0.21.3",
-    "jsbarcode": "^3.12.3",
+    "jsqr": "^1.4.0",
     "leaflet": "^1.9.4",
     "lean-qr": "^2.7.4",
     "react": "^19.3.1",

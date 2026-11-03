@@ -133,5 +133,8 @@ export function buildCompletedWorkout(active, { end = Date.now(), prs = [], snap
     ...(allNoProg ? { excludeFromProgression: true } : {}),
     ...(planEx != null ? { planEx } : {}),
     ...(sessionNote ? { note: sessionNote } : {}),
+    // The gym it was done at (#808, lib/gym-inventory.js): { id, name }, so editing it later loads
+    // that gym's plates and the history can say where. Only when there are gyms.
+    ...(active.gym && typeof active.gym === 'object' && active.gym.id != null ? { gym: { id: active.gym.id, name: String(active.gym.name || '') } } : {}),
   }
 }

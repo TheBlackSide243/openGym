@@ -210,6 +210,10 @@ const OWN = {
     hi: 'समाप्त करने के लिए दबाए रखें', bn: 'শেষ করতে চেপে ধরে রাখুন', th: 'กดค้างเพื่อจบ', ko: '길게 눌러 마치기',
     'zh-Hans': '长按结束', 'zh-Hant': '長按結束',
   },
+  // The 3-2-1 ends with it (the phone app has no such word; "Los" is its Start button in German).
+  'Go!': {
+    de: 'Los!', fr: 'Go\u00a0!', es: '¡Ya!', it: 'Via!', 'pt-PT': 'Já!', 'pt-BR': 'Vai!', pl: 'Start!', hu: 'Rajt!', tr: 'Başla!', ru: 'Старт!', uk: 'Старт!', ar: 'هيا!', hi: 'चलो!', bn: 'চলো!', th: 'ลุย!', ko: '시작!', 'zh-Hans': '开始！', 'zh-Hant': '開始！',
+  },
 }
 
 // Info.plist's own (the Apple Health permission prompts), into InfoPlist.strings.
