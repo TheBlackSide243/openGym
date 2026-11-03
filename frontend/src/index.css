@@ -317,7 +317,7 @@ body.no-tabbar.resting #app{padding-bottom:calc(96px + var(--sab))}
 #app > .page.vpop{animation:viewpop .34s cubic-bezier(.32,.72,0,1)}
 [dir="rtl"] #app > .page.vpush{animation-name:viewpush-rtl}
 [dir="rtl"] #app > .page.vpop{animation-name:viewpop-rtl}
-@keyframes viewpush-rtl{from{transform:translateX(-100%);box-shadow:12px 0 28px rgba(0,0,0,.18)}to{transform:none;box-shadow:12px 0 28px transparent}}
+@keyframes viewpush-rtl{from{transform:translateX(-100%)}to{transform:none}}
 @keyframes viewpop-rtl{from{transform:translateX(28%);opacity:.7}to{transform:none;opacity:1}}
 #app:has(> .page.vpush),#app:has(> .page.vpop){overflow-x:clip}
 /* The page an edge swipe back returns to (App.jsx Page `under`, lib/edge-swipe-back.js): laid
@@ -944,7 +944,6 @@ body.chips-dragging *{cursor:inherit}
 .measure-select{margin-bottom:10px;background:var(--surface-2)}
 .measure-preview{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:11px;padding-top:10px;border-top:1px solid var(--sep);font-size:var(--fs-caption);color:var(--label-2)}
 .measure-preview b{color:var(--label);font-weight:500}
-.measure-home-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 /* Health area (views/Health.jsx): a metric per card, two to a row; a card and a measurement open on tap. */
 .health-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
 .health-grid .card{margin:0}
@@ -954,11 +953,6 @@ body.chips-dragging *{cursor:inherit}
 .health-card .l{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--label-2);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .health-card .v{font-size:22px;font-weight:600;letter-spacing:-.02em;margin:6px 0 2px;line-height:1.15}
 .health-spark{margin-top:6px;pointer-events:none}
-.measure-home-grid button{background:var(--surface-2);border-radius:10px;padding:10px;text-align:left;min-width:0}
-.measure-home-grid span,.measure-home-grid i{display:block;font-size:11px;color:var(--label-2);font-style:normal;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.measure-home-grid b{display:block;font-size:16px;margin:3px 0;white-space:nowrap}
-.measure-empty{width:100%;display:flex;align-items:center;justify-content:space-between;text-align:left;color:var(--label-2);font-size:13px;gap:10px}
-.measure-empty .icn{flex:none}
 .exnote{
   background:var(--surface);border-radius:var(--r);padding:13px 15px;
   line-height:1.45;white-space:pre-wrap;font-size:var(--fs-subhead);margin-bottom:10px;color:var(--label-2);
@@ -2806,7 +2800,7 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 }
 
 /* ------------------------------------------------------- gym check-in -- */
-/* Gym check-in (views/CheckIn.jsx): saved QR codes and barcodes, swiped
+/* Mobile-only feature (views/CheckIn.jsx): saved membership codes shown as QR, swiped
    through horizontally. The rail is a scroll-snap track — one card per viewport, no JS
    carousel — with a trailing "+" card to add another. */
 .ci-rail{
@@ -2835,7 +2829,7 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 /* The QR itself: lean-qr paints 1 module per pixel, so scale it up with the browser's
    nearest-neighbour so every module stays a crisp square instead of a blurred blob. White
    quiet-zone padding is baked in by the renderer; the plate underneath just frames it. */
-.ci-qr-plate{background:#fff;border-radius:var(--r-lg);padding:16px;max-width:100%;box-sizing:border-box}
+.ci-qr-plate{background:#fff;border-radius:var(--r-lg);padding:16px}
 .qr-canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;transition:opacity var(--fast)}
 /* the trailing add card — a big + on a dashed outline, same footprint as a real card */
 .ci-add{

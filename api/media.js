@@ -85,10 +85,10 @@ export function mediaLimits(env = process.env) {
 // `days: true`: it keeps the files of progress photos filed under a day (`dayPhotos`, a photo for
 // a day without a workout, #557) too. An older server would sweep those, so the app files a photo
 // under a day only where this says so.
- * Every blob a state refers to: customEx[].media.hash and .poster.hash, and the same two of every
- * entry of workouts[].media (the photos and videos of a logged workout), of every set's own
- * media list, workouts[].entries[].sets[].media (a form video filmed for that set), and of every
- * exPhotos value (the photo of the machine an exercise is done on). Deliberately loose —
+// `sets: true`: it keeps the form videos filmed for one set too (workouts[].entries[].sets[].media,
+// v1.4.4). An older server would sweep those, so there the app keeps a set's video on the phone
+// that filmed it and never uploads it. `machinePhotos: true`: it keeps exPhotos too.
+export const mediaConfig = l => ({ imageMB: l.imageMB, gifMB: l.gifMB, videoMB: l.videoMB, videoSec: l.videoSec, quotaMB: l.quotaMB, workouts: true, days: true, sets: true, machinePhotos: true });
 
 /* ---------------------------------------------------------------- errors */
 
@@ -284,10 +284,10 @@ export function mp4Info(fd, size) {
 /* ---------------------------------------------------------------- references */
 
 /**
-// `sets: true`: it keeps the form videos filmed for one set too (workouts[].entries[].sets[].media,
-// v1.4.4). An older server would sweep those, so there the app keeps a set's video on the phone
-// that filmed it and never uploads it. `machinePhotos: true`: it keeps exPhotos too.
-export const mediaConfig = l => ({ imageMB: l.imageMB, gifMB: l.gifMB, videoMB: l.videoMB, videoSec: l.videoSec, quotaMB: l.quotaMB, workouts: true, days: true, sets: true, machinePhotos: true });
+ * Every blob a state refers to: customEx[].media.hash and .poster.hash, and the same two of every
+ * entry of workouts[].media (the photos and videos of a logged workout), of every set's own
+ * media list, workouts[].entries[].sets[].media (a form video filmed for that set), and of every
+ * exPhotos value (the photo of the machine an exercise is done on). Deliberately loose —
  * each field counts on its own as long as it is a well-formed hash, even when the rest of the ref
  * would not pass the client's normalizeMediaRef, and a workout's list counts past the client's
  * cap of six. This set decides what is KEPT, so erring towards more is the safe direction.
