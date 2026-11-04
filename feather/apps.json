@@ -6,7 +6,7 @@
   "apps": [
     {
       "name": "openGym Plus",
-      "bundleIdentifier": "ch.opengym.app",
+      "bundleIdentifier": "ch.opengym.plus",
       "developerName": "TheBlackSide243 (based on openGym)",
       "iconURL": "https://raw.githubusercontent.com/TheBlackSide243/openGym/plus/frontend/public/icon-512.png",
       "localizedDescription": "An unofficial build of openGym with extra features: a Health area with Apple Health and RENPHO, a music bar, machine settings and photos per exercise, health widgets on Home, Settings as a tab. Not affiliated with the original project. AGPL-3.0-or-later; source at github.com/TheBlackSide243/openGym.",
@@ -14,71 +14,17 @@
       "tintColor": "30D158",
       "versions": [
         {
-          "version": "1.4.4.2",
-          "date": "2026-11-03T18:07:34Z",
-          "size": 215834885,
-          "downloadURL": "https://github.com/TheBlackSide243/openGym/releases/download/plus-1.4.4.2/openGym-plus-unsigned.ipa"
-        },
-        {
-          "version": "1.4.4.1",
-          "date": "2026-11-03T14:26:17Z",
-          "size": 215833406,
-          "downloadURL": "https://github.com/TheBlackSide243/openGym/releases/download/plus-1.4.4.1/openGym-plus-unsigned.ipa"
-        },
-        {
-          "version": "1.4.3.8",
-          "date": "2026-10-27T22:47:18Z",
-          "size": 214281237,
-          "downloadURL": "https://github.com/TheBlackSide243/openGym/releases/download/plus-1.4.3.8/openGym-plus-unsigned.ipa"
-        },
-        {
-          "version": "1.4.3.7",
-          "date": "2026-10-27T22:03:09Z",
-          "size": 214280464,
-          "downloadURL": "https://github.com/TheBlackSide243/openGym/releases/download/plus-1.4.3.7/openGym-plus-unsigned.ipa"
-        },
-        {
-          "version": "1.4.3.6",
-          "date": "2026-10-27T18:36:05Z",
-          "size": 214271658,
-          "downloadURL": "https://github.com/TheBlackSide243/openGym/releases/download/plus-1.4.3.6/openGym-plus-unsigned.ipa"
-        },
-        {
-          "version": "1.4.3.5",
-          "date": "2026-10-26T22:40:48Z",
-          "size": 214180554,
-          "downloadURL": "https://github.com/TheBlackSide243/openGym/releases/download/plus-1.4.3.5/openGym-plus-unsigned.ipa"
-        },
-        {
-          "version": "1.4.3.4",
-          "date": "2026-10-26T20:45:35Z",
-          "size": 214133138,
-          "downloadURL": "https://github.com/TheBlackSide243/openGym/releases/download/plus-1.4.3.4/openGym-plus-unsigned.ipa"
-        },
-        {
-          "version": "1.4.3.3",
-          "date": "2026-10-26T18:18:29Z",
-          "size": 213804292,
-          "downloadURL": "https://github.com/TheBlackSide243/openGym/releases/download/plus-1.4.3.3/openGym-plus-unsigned.ipa"
-        },
-        {
-          "version": "1.4.3.2",
-          "date": "2026-10-26T16:20:07Z",
-          "size": 213804414,
-          "downloadURL": "https://github.com/TheBlackSide243/openGym/releases/download/plus-1.4.3.2/openGym-plus-unsigned.ipa"
-        },
-        {
-          "version": "1.4.3.1",
-          "date": "2026-10-26T15:51:14Z",
-          "size": 213804189,
-          "downloadURL": "https://github.com/TheBlackSide243/openGym/releases/download/plus-1.4.3.1/openGym-plus-unsigned.ipa"
+          "version": "1.4.4.3",
+          "date": "2026-11-04T11:12:29Z",
+          "size": 215835100,
+          "downloadURL": "https://github.com/TheBlackSide243/openGym/releases/download/plus-1.4.4.3/openGym-plus-unsigned.ipa"
         }
       ],
       "appPermissions": {},
-      "version": "1.4.4.2",
-      "versionDate": "2026-11-03T18:07:34Z",
-      "size": 215834885,
-      "downloadURL": "https://github.com/TheBlackSide243/openGym/releases/download/plus-1.4.4.2/openGym-plus-unsigned.ipa"
+      "version": "1.4.4.3",
+      "versionDate": "2026-11-04T11:12:29Z",
+      "size": 215835100,
+      "downloadURL": "https://github.com/TheBlackSide243/openGym/releases/download/plus-1.4.4.3/openGym-plus-unsigned.ipa"
     }
   ],
   "news": []
