@@ -55,6 +55,10 @@ jobs:
         working-directory: frontend
       - run: ruby ios/ci/add-widgets.rb
         working-directory: frontend
+      # Plus's own bundle ids and App Group, after the scripts above wrote theirs: installed beside
+      # openGym, never over it.
+      - run: sh ios/ci/plus-ids.sh
+        working-directory: frontend
 
       - name: Archive without signing
         working-directory: frontend/ios/App
@@ -82,6 +86,12 @@ jobs:
           find Payload/App.app -depth -mindepth 1 \( -name '*.framework' -o -name '*.appex' -o -name '*.app' -o -name '*.dylib' \)             -exec codesign -f -s - {} \;
           codesign -f -s - --entitlements App/App.entitlements Payload/App.app
           codesign -d --entitlements - Payload/App.app
+          # Plus's ids, not openGym's, on the app and on every app and extension inside it.
+          for p in $(find Payload/App.app \( -path '*.app/Info.plist' -o -path '*.appex/Info.plist' \)); do
+            id=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$p")
+            echo "$p  $id"
+            case "$id" in ch.opengym.plus|ch.opengym.plus.*) ;; *) echo "not a Plus id"; exit 1;; esac
+          done
           VER="$(node -p "require('../../package.json').version")"
           zip -qry "$GITHUB_WORKSPACE/openGym-$VER-unsigned.ipa" Payload
           ls -la "$GITHUB_WORKSPACE"/*.ipa

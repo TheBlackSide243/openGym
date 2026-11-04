@@ -42,6 +42,9 @@ Opzionali in `.env` · optional in `.env`: `SPOTIFY_CLIENT_ID` (Spotify sull'acc
 Nelle [Release](https://github.com/TheBlackSide243/openGym/releases) c'è l'`.ipa` non firmata: installala con Sideloadly o AltStore. Per HealthKit serve un account sviluppatore Apple con la capacità HealthKit sull'App ID.
 *The [Releases](https://github.com/TheBlackSide243/openGym/releases) have the unsigned `.ipa`: install it with Sideloadly or AltStore. HealthKit needs an Apple developer account with the HealthKit capability on the App ID.*
 
+Dalla 1.4.4.3 l'app si chiama **openGym Plus** con l'ID `ch.opengym.plus` (Watch, widget e App Group compresi): si installa accanto all'openGym ufficiale, senza sostituirlo.
+*Since 1.4.4.3 the app is **openGym Plus**, bundle id `ch.opengym.plus` (watch app, widgets and App Group included): it installs beside the official openGym, never over it.*
+
 **Feather / AltStore**: aggiungi la sorgente `https://raw.githubusercontent.com/TheBlackSide243/feather-repo/main/apps.json` (in Feather: Sorgenti → +), e ogni nuova versione si installa da lì.
 *Add the source `https://raw.githubusercontent.com/TheBlackSide243/feather-repo/main/apps.json` (in Feather: Sources → +), and every new version installs from there.*
 
