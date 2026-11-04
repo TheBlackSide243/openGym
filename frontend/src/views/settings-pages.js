@@ -23,8 +23,6 @@ export const PAGES = {
   look: { title: 'Look & Home', icon: 'palette', tint: 'var(--purple)' },
   features: { title: 'Features', icon: 'slider', tint: 'var(--pink)' },
   coach: { title: 'AI Coach', icon: 'sparkles', tint: 'var(--green)', mod: 'coach' },
-  // The health area's sources (RENPHO, an Apple Health export, the Shortcut), with the Health module.
-  health: { title: 'Health', icon: 'heart', tint: 'var(--red)', mod: 'health' },
   watch: { title: 'Apple Watch', icon: 'watch', tint: 'var(--grey)', mod: 'watch' },
   // Settings → Integrations (v1.4.4): the directory of what openGym talks to (views/Integrations.jsx).
   integrations: { title: 'Integrations', icon: 'plug', tint: 'var(--indigo)', kw: 'integrations connect apps services webhook webhooks home assistant n8n ntfy node-red zapier automation garmin fitbit strava sync api mcp' },
@@ -43,12 +41,15 @@ export const PAGES = {
   // The phone's health store, one page per platform (until 1.4.4 a section of Data & backup).
   'apple-health': { title: 'Apple Health', icon: 'heart', tint: 'var(--red)', parent: 'integrations', mod: 'health', kw: 'apple health healthkit heart rate weight scale watch sync workouts' },
   'health-connect': { title: 'Health Connect', icon: 'heart', tint: 'var(--red)', parent: 'integrations', mod: 'health', kw: 'health connect google fit samsung fitbit garmin heart rate weight scale watch sync workouts' },
+  // Plus: RENPHO read by the server (components/RenphoSource.jsx), a card in Integrations. The Health
+  // area's sources live in Integrations since 1.4.4.4; /settings/health goes there (SettingsRoute).
+  renpho: { title: 'RENPHO Health', icon: 'scale', tint: 'var(--teal)', parent: 'integrations', mod: 'health', kw: 'renpho scale weight body composition fat muscle segmental' },
 }
 export const PAGE_IDS = Object.keys(PAGES)
 
 // The root, top to bottom. Whether a row shows is pageVisible's call.
 // Modules first, on its own: what the app shows at all comes before how each part behaves.
-export const ROOT_GROUPS = [['modules'], ['workout', 'alerts', 'reminders'], ['plan', 'units', 'equipment'], ['look', 'features', 'health', 'coach', 'watch', 'zepp'], ['integrations', 'data', 'about']]
+export const ROOT_GROUPS = [['modules'], ['workout', 'alerts', 'reminders'], ['plan', 'units', 'equipment'], ['look', 'features', 'coach', 'watch', 'zepp'], ['integrations', 'data', 'about']]
 
 /**
  * Whether a page exists for this device and profile. Reminders need a push server (signed in) or
@@ -67,7 +68,10 @@ export function pageVisible(page, ctx) {
   // The phone app only: a browser cannot watch where you are with the page closed.
   if (page === 'gym' || page === 'gym-find' || page === 'gym-edit') return !!ctx.mobile && ctx.gymReminder !== false
   // The health store of the phone this runs on (unknown counts as yes, as for the watch).
-  if (page === 'apple-health') return !!ctx.ios
+  // Plus: in a browser too, for the Health area (an Apple Health export, the Shortcut).
+  if (page === 'apple-health') return !!ctx.ios || !ctx.mobile
+  // The server reads RENPHO: a profile signed in to one.
+  if (page === 'renpho') return !!ctx.user && !ctx.demo
   if (page === 'health-connect') return !!ctx.mobile && !!ctx.android
   return page in PAGES
 }
@@ -196,7 +200,6 @@ export const SEARCH = [
   { page: 'features', title: 'Machine settings', icon: 'wrench', tint: 'var(--orange)', kw: 'machine settings seat height pin position backrest adjustments setup gym equipment notes' },
   { page: 'features', title: 'Music player', icon: 'music', tint: 'var(--pink)', kw: 'music spotify apple music song songs playlist player track skip next pause', when: c => c.musicBar },
   // Data & backup
-  { page: 'health', title: 'Open Health', icon: 'heart', tint: 'var(--red)', kw: 'health body composition bia scale fat muscle water steps heart rate sleep apple health healthkit' },
   { page: 'data', title: 'Export backup (JSON)', icon: 'share', tint: 'var(--blue)', kw: 'export backup json download save' },
   { page: 'data', title: 'Export with photos & videos (.zip)', icon: 'share', tint: 'var(--blue)', kw: 'zip media export backup', when: c => c.hasMedia },
   { page: 'data', title: 'Performance report (PDF)', icon: 'note', tint: 'var(--green)', kw: 'pdf print report performance progress summary charts export paper' },
@@ -216,6 +219,7 @@ export const SEARCH = [
   { page: 'integrations', title: 'Import a file', icon: 'download', tint: 'var(--teal)', kw: 'import strong fitnotes hevy csv gymmane apple health export file' },
   { page: 'integrations', title: 'Spreadsheet (CSV)', icon: 'share', tint: 'var(--green)', kw: 'csv spreadsheet excel export' },
   { page: 'integrations', title: 'MCP server', icon: 'plug', tint: 'var(--purple)', mod: 'integrations', kw: 'mcp claude desktop cursor llm agent ai model context protocol api' },
+  { page: 'integrations', mod: 'health', title: 'RENPHO Health', icon: 'scale', tint: 'var(--teal)', kw: 'renpho scale weight body composition fat muscle segmental', when: c => !!c.user && !c.demo },
   { page: 'integrations', mod: 'health', title: 'Garmin', icon: 'watch', tint: 'var(--grey)', kw: 'garmin fenix forerunner venu watch heart rate' },
   { page: 'integrations', mod: 'health', title: 'COROS', icon: 'watch', tint: 'var(--grey)', kw: 'coros watch heart rate' },
   { page: 'integrations', mod: 'health', title: 'Polar', icon: 'watch', tint: 'var(--grey)', kw: 'polar watch heart rate strap' },

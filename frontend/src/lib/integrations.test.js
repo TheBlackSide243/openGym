@@ -7,7 +7,8 @@ const ids = ctx => directory(ctx).flatMap(c => c.cards.map(x => x.id))
 
 describe('the directory', () => {
   it('a guest in a browser sees the phone-only stores as such, and webhooks as needing a server', () => {
-    expect(cardState('apple-health', web)).toEqual({ status: 'device', action: null })
+    // Plus: Apple Health opens its export and the Shortcut in a browser; Health Connect stays phone-only.
+    expect(cardState('apple-health', web)).toEqual({ status: null, action: 'open' })
     expect(cardState('health-connect', web)).toEqual({ status: 'device', action: null })
     expect(cardState('webhook', web)).toEqual({ status: 'server', action: null })
     expect(cardState('mcp', web)).toEqual({ status: 'server', action: null })
@@ -30,6 +31,24 @@ describe('the directory', () => {
     expect(cardState('webhook', ios).status).toBe('server')
     expect(cardState('coach', { ...ios, coachMode: 'byok' })).toEqual({ status: 'connected', action: 'manage' })
     expect(cardState('coach', ios)).toEqual({ status: 'off', action: 'connect' })
+  })
+
+  it('Plus: Apple Health counts as connected when the Health area reads it, with the store’s switches off', () => {
+    const ios = { ...web, mobile: true, platform: 'ios', health: { status: 'available', on: false } }
+    expect(cardState('apple-health', ios)).toEqual({ status: 'off', action: 'connect' })
+    expect(cardState('apple-health', { ...ios, reads: { 'apple-health': true } })).toEqual({ status: 'connected', action: 'manage' })
+  })
+
+  it('Plus: RENPHO, read by the server, shows only to a profile signed in to one', () => {
+    expect(cardState('renpho', web)).toBeNull()
+    expect(cardState('renpho', { ...web, demo: true, user: { id: 'u' } })).toBeNull()
+    const user = { ...web, user: { id: 'u' } }
+    expect(cardState('renpho', { ...user, renpho: false })).toBeNull()
+    expect(cardState('renpho', user)).toEqual({ status: 'off', action: 'connect' })
+    expect(cardState('renpho', { ...user, renpho: { connected: false } })).toEqual({ status: 'off', action: 'connect' })
+    expect(cardState('renpho', { ...user, renpho: { connected: true } })).toEqual({ status: 'connected', action: 'manage' })
+    expect(cardState('renpho', { ...user, renpho: { connected: true, error: 'auth' } })).toEqual({ status: 'attention', action: 'manage' })
+    expect(directory({ ...user, mod: id => id !== 'health' }).flatMap(c => c.cards.map(x => x.id))).not.toContain('renpho')
   })
 
   it('webhooks: hidden where the server does not offer them, except to its admin', () => {

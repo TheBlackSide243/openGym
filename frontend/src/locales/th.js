@@ -2352,7 +2352,7 @@ export default {
   'Health': 'สุขภาพ',
   'Heart': 'หัวใจ',
   'Last read {0}': 'อ่านล่าสุด {0}',
-  'Log a body composition measurement, or connect a source in Settings → Health, and your readings show up here with their trends.': 'บันทึกการวัดองค์ประกอบร่างกาย หรือเชื่อมต่อแหล่งข้อมูลใน ตั้งค่า → สุขภาพ แล้วค่าของคุณจะแสดงที่นี่พร้อมแนวโน้ม',
+  'Log a body composition measurement, or connect a source in Settings → Integrations, and your readings show up here with their trends.': 'บันทึกการวัดองค์ประกอบร่างกาย หรือเชื่อมต่อแหล่งข้อมูลใน ตั้งค่า → การเชื่อมต่อ แล้วค่าของคุณจะแสดงที่นี่พร้อมแนวโน้ม',
   'Manage permissions': 'จัดการสิทธิ์',
   'Measurement deleted': 'ลบการวัดแล้ว',
   'Measurement saved': 'บันทึกการวัดแล้ว',
@@ -4300,4 +4300,10 @@ export default {
   "{0} stops syncing while Health is off. Nothing is disconnected, and it catches up once Health is back.": "{0} จะหยุดซิงก์ระหว่างที่ \"สุขภาพ\" ปิดอยู่ ไม่มีอะไรถูกตัดการเชื่อมต่อ และจะตามทันเมื่อเปิด \"สุขภาพ\" อีกครั้ง",
   // --- Integrations: RENPHO's own line ---
   'RENPHO also connects straight to your openGym server, with every reading of the scale.': 'RENPHO เชื่อมต่อกับเซิร์ฟเวอร์ openGym ของคุณได้โดยตรงด้วย พร้อมทุกค่าที่เครื่องชั่งวัดได้',
+  // --- Integrations: the Health area's sources ---
+  'Body composition, activity, heart and sleep come into Health.': 'องค์ประกอบร่างกาย กิจกรรม หัวใจ และการนอน เข้ามาใน สุขภาพ',
+  'RENPHO Health': 'RENPHO Health',
+  'Every reading of your scale, straight to your server.': 'ทุกค่าที่เครื่องชั่งของคุณวัดได้ ส่งตรงถึงเซิร์ฟเวอร์ของคุณ',
+  'Your server signs in to your RENPHO account and keeps the sign-in encrypted.': 'เซิร์ฟเวอร์ของคุณลงชื่อเข้าใช้บัญชี RENPHO ของคุณ และเก็บข้อมูลการลงชื่อเข้าใช้แบบเข้ารหัส',
+  'Every reading comes in every few hours, segmental values included.': 'ทุกค่าที่วัดได้จะเข้ามาทุกไม่กี่ชั่วโมง รวมถึงค่าแยกส่วนของร่างกาย',
 }

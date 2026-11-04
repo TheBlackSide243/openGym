@@ -1432,7 +1432,7 @@ export const PT_BR_OVERRIDES = {
   'Health': 'Saúde',
   'Heart': 'Coração',
   'Last read {0}': 'Última leitura {0}',
-  'Log a body composition measurement, or connect a source in Settings → Health, and your readings show up here with their trends.': 'Salve uma medição de composição corporal, ou conecte uma fonte em Configurações → Saúde, e seus valores aparecem aqui com a evolução.',
+  'Log a body composition measurement, or connect a source in Settings → Integrations, and your readings show up here with their trends.': 'Salve uma medição de composição corporal, ou conecte uma fonte em Configurações → Integrações, e seus valores aparecem aqui com a evolução.',
   'Manage permissions': 'Gerenciar permissões',
   'Measurement deleted': 'Medição excluída',
   'Measurement saved': 'Medição salva',
@@ -3074,6 +3074,12 @@ export const PT_BR_OVERRIDES = {
   '{0}× as an extra': '{0}× como extra',
   // --- Integrations: RENPHO's own line ---
   'RENPHO also connects straight to your openGym server, with every reading of the scale.': 'O RENPHO também se conecta direto ao seu servidor openGym, com cada medição da balança.',
+  // --- Integrations: the Health area's sources ---
+  'Body composition, activity, heart and sleep come into Health.': 'Composição corporal, atividade, coração e sono chegam em Saúde.',
+  'RENPHO Health': 'RENPHO Health',
+  'Every reading of your scale, straight to your server.': 'Cada medição da sua balança, direto no seu servidor.',
+  'Your server signs in to your RENPHO account and keeps the sign-in encrypted.': 'Seu servidor entra na sua conta RENPHO e guarda o acesso criptografado.',
+  'Every reading comes in every few hours, segmental values included.': 'Cada medição chega a cada poucas horas, com os valores segmentares.',
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

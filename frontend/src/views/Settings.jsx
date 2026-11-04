@@ -111,6 +111,8 @@ export function SettingsRoute() {
   // The modules (lib/modules.js): a page of a module that is off goes back to the root too.
   const modules = useStore(s => s.S.modules), checkIn = useStore(s => s.S.checkIn)
   const ctx = { user: useStore(s => s.user), mobile: MOBILE, ios: MOBILE && platformNow() !== 'android', android: MOBILE && platformNow() !== 'ios', mod: id => isOn({ modules, checkIn }, id) }
+  // Plus until 1.4.4.3: the Health area's sources had a page of their own, now in Integrations.
+  if (page === 'health') return <Navigate to="/settings/integrations" replace />
   if (page && (!PAGES[page] || !pageVisible(PAGES[page].parent || page, ctx) || !pageVisible(page, ctx))) return <Navigate to="/settings" replace />
   if (page === 'coach') return <Navigate to="/coach/setup" replace />
   return <Settings key={page || 'root'} page={page || null} find={loc.state?.find || null} via={loc.state?.via || null} entryKey={loc.key} />
@@ -500,7 +502,6 @@ export default function Settings({ page = null, find = null, via = null, entryKe
     features: () => (musicBarOn(S) && musicSource(S) ? { spotify: 'Spotify', apple: 'Apple Music' }[musicSource(S)] : t('Off')),
     coach: () => (coachLocal?.mode === 'server' ? t('Your server') : coachLocal?.mode === 'byok' ? t('Your API key') : t('Off')),
     data: () => '',
-    health: () => '',
     integrations: () => '',
     about: () => 'v' + __APP_VERSION__,
     watch: () => '',
@@ -1144,16 +1145,8 @@ export default function Settings({ page = null, find = null, via = null, entryKe
         onChange={ev => { const f = ev.target.files[0]; if (f) importFromApp(f); ev.target.value = '' }} />
     </>,
 
-    // Health: the area itself, and on the iPhone app the sources it can read from (Apple Health).
-    health: () => <>
-      <Section>
-        <Row icon="heart" iconTint="var(--red)" title={t('Open Health')}
-          subtitle={t('Body composition, activity, heart and sleep')} accessory="chevron" onClick={() => nav('/health')} />
-      </Section>
-      {MOBILE && <HealthSources />}
-      <RenphoSource />
-      {!MOBILE && <AppleHealthWeb />}
-    </>,
+    // Plus: RENPHO read by the server, a card in Integrations.
+    renpho: () => <RenphoSource />,
 
     about: () => <>
       {/* Updates. On Android the row is always there: it checks on demand and installs when a
@@ -1903,10 +1896,13 @@ const HEALTH_COPY = {
 
 // Settings → Integrations → Apple Health / Health Connect. On a phone without the store, a line
 // that says so instead of an empty page.
+// Plus: below it, the Health area's own reading of the store (HealthSources), and in a browser the
+// Health app's export and the Shortcut (AppleHealthWeb) instead of the line.
 function HealthPage({ S, toast, android }) {
-  if (!MOBILE) return <Section><Row icon="info" iconTint="var(--grey)" title={t('This lives in the openGym phone app.')} /></Section>
+  if (!MOBILE) return android ? <Section><Row icon="info" iconTint="var(--grey)" title={t('This lives in the openGym phone app.')} /></Section> : <AppleHealthWeb />
   return <>
     <HealthConnectCard S={S} toast={toast} android={android} page />
+    <HealthSources />
     <p className="sect-f">{t('Your watch or scale writes here too? Garmin, COROS, Fitbit, Withings, Oura and friends reach openGym this way.')}</p>
   </>
 }

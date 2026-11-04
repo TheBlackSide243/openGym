@@ -2948,7 +2948,7 @@ export default {
   'From a body composition scale or analyser. Fill only what it measured.': 'Från en våg eller analysator för kroppssammansättning. Fyll bara i det den mätte.',
   'Heart': 'Hjärta',
   'Last read {0}': 'Senast läst {0}',
-  'Log a body composition measurement, or connect a source in Settings → Health, and your readings show up here with their trends.': 'Logga en mätning av kroppssammansättningen, eller anslut en källa under Inställningar → Hälsa, så visas dina värden här med sina trender.',
+  'Log a body composition measurement, or connect a source in Settings → Integrations, and your readings show up here with their trends.': 'Logga en mätning av kroppssammansättningen, eller anslut en källa under Inställningar → Integrationer, så visas dina värden här med sina trender.',
   'Manage permissions': 'Hantera behörigheter',
   'Measurement deleted': 'Mätningen togs bort',
   'Measurement saved': 'Mätningen sparades',
@@ -4326,4 +4326,10 @@ export default {
   "{0} stops syncing while Health is off. Nothing is disconnected, and it catches up once Health is back.": "{0} slutar synka medan ”Hälsa” är av. Inget kopplas bort, och allt kommer ikapp när ”Hälsa” är tillbaka.",
   // --- Integrations: RENPHO's own line ---
   'RENPHO also connects straight to your openGym server, with every reading of the scale.': 'RENPHO ansluter också direkt till din openGym-server, med varje mätning från vågen.',
+  // --- Integrations: the Health area's sources ---
+  'Body composition, activity, heart and sleep come into Health.': 'Kroppssammansättning, aktivitet, hjärta och sömn kommer in i Hälsa.',
+  'RENPHO Health': 'RENPHO Health',
+  'Every reading of your scale, straight to your server.': 'Varje mätning från din våg, direkt till din server.',
+  'Your server signs in to your RENPHO account and keeps the sign-in encrypted.': 'Din server loggar in på ditt RENPHO-konto och sparar inloggningen krypterad.',
+  'Every reading comes in every few hours, segmental values included.': 'Varje mätning kommer in med några timmars mellanrum, segmentvärden inräknade.',
 }

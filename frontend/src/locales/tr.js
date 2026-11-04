@@ -2341,7 +2341,7 @@ export default {
   'Health': 'Sağlık',
   'Heart': 'Kalp',
   'Last read {0}': 'Son okuma {0}',
-  'Log a body composition measurement, or connect a source in Settings → Health, and your readings show up here with their trends.': 'Bir vücut kompozisyonu ölçümü kaydet ya da Ayarlar → Sağlık bölümünden bir kaynak bağla; değerlerin burada eğilimleriyle görünür.',
+  'Log a body composition measurement, or connect a source in Settings → Integrations, and your readings show up here with their trends.': 'Bir vücut kompozisyonu ölçümü kaydet ya da Ayarlar → Entegrasyonlar bölümünden bir kaynak bağla; değerlerin burada eğilimleriyle görünür.',
   'Manage permissions': 'İzinleri yönet',
   'Measurement deleted': 'Ölçüm silindi',
   'Measurement saved': 'Ölçüm kaydedildi',
@@ -4289,4 +4289,10 @@ export default {
   "{0} stops syncing while Health is off. Nothing is disconnected, and it catches up once Health is back.": "“Sağlık” kapalıyken {0} eşitlemeyi durdurur. Hiçbir bağlantı kesilmez, “Sağlık” geri gelince her şeyi yakalar.",
   // --- Integrations: RENPHO's own line ---
   'RENPHO also connects straight to your openGym server, with every reading of the scale.': 'RENPHO, tartının her ölçümüyle doğrudan openGym sunucuna da bağlanır.',
+  // --- Integrations: the Health area's sources ---
+  'Body composition, activity, heart and sleep come into Health.': 'Vücut kompozisyonu, aktivite, kalp ve uyku Sağlık bölümüne gelir.',
+  'RENPHO Health': 'RENPHO Health',
+  'Every reading of your scale, straight to your server.': 'Tartının her ölçümü, doğrudan sunucuna.',
+  'Your server signs in to your RENPHO account and keeps the sign-in encrypted.': 'Sunucun RENPHO hesabına giriş yapar ve girişi şifreli olarak saklar.',
+  'Every reading comes in every few hours, segmental values included.': 'Her ölçüm birkaç saatte bir gelir, bölgesel değerler dahil.',
 }

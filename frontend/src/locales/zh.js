@@ -2341,7 +2341,7 @@ export default {
   'Health': '健康',
   'Heart': '心脏',
   'Last read {0}': '上次读取 {0}',
-  'Log a body composition measurement, or connect a source in Settings → Health, and your readings show up here with their trends.': '记录一次身体成分测量，或在 设置 → 健康 中连接数据源，你的读数会和趋势一起显示在这里。',
+  'Log a body composition measurement, or connect a source in Settings → Integrations, and your readings show up here with their trends.': '记录一次身体成分测量，或在 设置 → 集成 中连接数据源，你的读数会和趋势一起显示在这里。',
   'Manage permissions': '管理权限',
   'Measurement deleted': '测量已删除',
   'Measurement saved': '测量已保存',
@@ -4289,4 +4289,10 @@ export default {
   "{0} stops syncing while Health is off. Nothing is disconnected, and it catches up once Health is back.": "“健康”关闭期间，{0} 会停止同步。不会断开任何连接，“健康”重新开启后会自动补上。",
   // --- Integrations: RENPHO's own line ---
   'RENPHO also connects straight to your openGym server, with every reading of the scale.': 'RENPHO 也可以直接连接到你的 openGym 服务器，带上体重秤的每一次测量。',
+  // --- Integrations: the Health area's sources ---
+  'Body composition, activity, heart and sleep come into Health.': '身体成分、活动、心脏和睡眠数据会进入健康。',
+  'RENPHO Health': 'RENPHO Health',
+  'Every reading of your scale, straight to your server.': '体重秤的每一次测量，直接进入你的服务器。',
+  'Your server signs in to your RENPHO account and keeps the sign-in encrypted.': '你的服务器登录你的 RENPHO 账户，并加密保存登录信息。',
+  'Every reading comes in every few hours, segmental values included.': '每次测量每隔几小时传入一次，包括分段数值。',
 }
