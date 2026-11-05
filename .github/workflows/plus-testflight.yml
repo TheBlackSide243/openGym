@@ -2,9 +2,10 @@
 # as plus-ipa.yml builds, signed by Xcode for App Store Connect and uploaded there. It runs when a
 # plus-* release is published, or by hand.
 #
-# Signing is Xcode's own automatic signing, driven by an App Store Connect API key: it registers
-# the app's ids, the App Group and the capabilities, and signs with a cloud-managed certificate, so
-# no certificate or profile lives in this repository or in a secret. The repository's secrets:
+# The archive is unsigned; the export signs it with Xcode's automatic signing, driven by an App
+# Store Connect API key: it registers the app's ids, the App Group and the capabilities, and signs
+# with a cloud-managed distribution certificate, so no certificate or profile lives in this
+# repository or in a secret, and no device has to be registered. The repository's secrets:
 #   ASC_KEY_ID      the API key's id
 #   ASC_ISSUER_ID   the issuer id shown above the team keys
 #   ASC_KEY_P8      the whole AuthKey_<id>.p8 file, BEGIN and END lines included
@@ -103,17 +104,40 @@ jobs:
           echo "BUILD=$PLUS.$GITHUB_RUN_NUMBER" >> "$GITHUB_ENV"
           echo "Plus $V → version $BASE, build $PLUS.$GITHUB_RUN_NUMBER"
 
-      - name: Archive, signed by Xcode
+      # Unsigned, as TrackLap's TestFlight does it: signing the archive for development would need an
+      # iPhone registered on the team. The export below signs it for the App Store instead.
+      - name: Archive, unsigned
         working-directory: frontend/ios/App
         run: |
           set -o pipefail
           xcodebuild -workspace App.xcworkspace -scheme App -configuration Release \
             -destination 'generic/platform=iOS' -archivePath "$PWD/build/App.xcarchive" \
-            -allowProvisioningUpdates \
-            -authenticationKeyPath "$ASC_KEY_PATH" -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
             DEVELOPMENT_TEAM="$APPLE_TEAM_ID" CODE_SIGN_STYLE=Automatic \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
             MARKETING_VERSION="$MARKETING" CURRENT_PROJECT_VERSION="$BUILD" \
             archive | tail -120
+          test -d build/App.xcarchive/Products/Applications/App.app
+
+      # An unsigned archive carries no entitlements, and the export would sign it without them
+      # (no HealthKit, no App Group). A signature of their own on each bundle, innermost first, gives
+      # the export each one's entitlements to keep when it signs for the App Store.
+      - name: Entitlements on every bundle
+        working-directory: frontend/ios/App
+        run: |
+          set -eu
+          APP=build/App.xcarchive/Products/Applications/App.app
+          sign() { codesign --force --sign - --timestamp=none ${2:+--entitlements "$2"} "$1"; }
+          find "$APP" -depth -mindepth 1 \( -name '*.framework' -o -name '*.dylib' \) | while read -r f; do sign "$f"; done
+          sign "$APP/Watch/OpenGymWatch.app/PlugIns/OpenGymWatchWidgets.appex" WatchWidgets/OpenGymWatchWidgets.entitlements
+          sign "$APP/Watch/OpenGymWatch.app" Watch/OpenGymWatch.entitlements
+          sign "$APP/PlugIns/OpenGymWidgets.appex" OpenGymWidgets/OpenGymWidgets.entitlements
+          sign "$APP/Extensions/AnimationPacksDownloader.appex" AnimationPacksDownloader/AnimationPacksDownloader.entitlements
+          sign "$APP" App/App.entitlements
+          for b in "$APP" "$APP/Watch/OpenGymWatch.app" "$APP/PlugIns/OpenGymWidgets.appex"; do
+            echo "== $b"; codesign -d --entitlements - --xml "$b" 2>/dev/null | plutil -p - || true
+          done
+          codesign -d --entitlements - --xml "$APP" 2>/dev/null | grep -q 'group.ch.opengym.plus'
+          codesign -d --entitlements - --xml "$APP" 2>/dev/null | grep -q 'com.apple.developer.healthkit'
 
       - name: Every bundle carries a Plus id
         working-directory: frontend/ios/App
