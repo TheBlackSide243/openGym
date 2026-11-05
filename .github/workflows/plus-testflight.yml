@@ -19,6 +19,11 @@ name: Plus TestFlight
 on:
   release:
     types: [published]
+  # A change to this workflow uploads a build too: the fork's default branch is main, where this
+  # file is not, so GitHub offers no "Run workflow" button for it.
+  push:
+    branches: [plus]
+    paths: ['.github/workflows/plus-testflight.yml']
   workflow_dispatch:
 
 permissions:
@@ -30,7 +35,7 @@ concurrency:
 
 jobs:
   testflight:
-    if: github.event_name == 'workflow_dispatch' || startsWith(github.event.release.tag_name, 'plus-')
+    if: github.event_name != 'release' || startsWith(github.event.release.tag_name, 'plus-')
     runs-on: xcode-27
     timeout-minutes: 75
     env:
