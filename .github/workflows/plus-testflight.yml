@@ -1,4 +1,4 @@
-# openGym Plus (this fork's `plus` branch) on TestFlight, for internal testers only: the same app
+# openGym Plus (this fork's `plus` branch) on TestFlight, for internal and external testers: the same app
 # as plus-ipa.yml builds, signed by Xcode for App Store Connect and uploaded there. It runs when a
 # plus-* release is published, or by hand.
 #
@@ -120,7 +120,7 @@ jobs:
             case "$id" in ch.opengym.plus|ch.opengym.plus.*) ;; *) echo "not a Plus id"; exit 1;; esac
           done
 
-      - name: Export and upload to App Store Connect (internal testing only)
+      - name: Export and upload to App Store Connect
         working-directory: frontend/ios/App
         run: |
           set -o pipefail
@@ -133,7 +133,7 @@ jobs:
             <key>teamID</key><string>$APPLE_TEAM_ID</string>
             <key>signingStyle</key><string>automatic</string>
             <key>manageAppVersionAndBuildNumber</key><false/>
-            <key>testFlightInternalTestingOnly</key><true/>
+            <key>testFlightInternalTestingOnly</key><false/>
             <key>uploadSymbols</key><true/>
           </dict></plist>
           EOF
@@ -142,7 +142,7 @@ jobs:
             -allowProvisioningUpdates \
             -authenticationKeyPath "$ASC_KEY_PATH" -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
             | tail -80
-          echo "Uploaded: version $MARKETING ($BUILD). App Store Connect processes it, then TestFlight offers it to the internal group."
+          echo "Uploaded: version $MARKETING ($BUILD). App Store Connect processes it, then TestFlight offers it to the groups (an external group after Beta App Review)."
 
       - name: Remove the key
         if: always()
