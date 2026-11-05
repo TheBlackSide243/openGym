@@ -1,0 +1,149 @@
+# openGym Plus (this fork's `plus` branch) on TestFlight, for internal testers only: the same app
+# as plus-ipa.yml builds, signed by Xcode for App Store Connect and uploaded there. It runs when a
+# plus-* release is published, or by hand.
+#
+# Signing is Xcode's own automatic signing, driven by an App Store Connect API key: it registers
+# the app's ids, the App Group and the capabilities, and signs with a cloud-managed certificate, so
+# no certificate or profile lives in this repository or in a secret. The repository's secrets:
+#   ASC_KEY_ID      the API key's id
+#   ASC_ISSUER_ID   the issuer id shown above the team keys
+#   ASC_KEY_P8      the whole AuthKey_<id>.p8 file, BEGIN and END lines included
+#   APPLE_TEAM_ID   the developer team's id
+# The key needs the Admin role: creating certificates and app ids is an admin's job.
+#
+# App Store Connect takes a version of at most three numbers, so Plus 1.4.4-4 goes up as version
+# 1.4.4 (openGym's) with build 4.<run>: the Plus number first, then this workflow's run, which
+# only grows. Inside the app, Settings → About still says 1.4.4-4.
+name: Plus TestFlight
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: plus-testflight
+  cancel-in-progress: false
+
+jobs:
+  testflight:
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.event.release.tag_name, 'plus-')
+    runs-on: xcode-27
+    timeout-minutes: 75
+    env:
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+    steps:
+      - name: The four secrets are set
+        run: |
+          missing=""
+          for v in ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_P8 APPLE_TEAM_ID; do
+            [ -n "$(printenv "$v")" ] || missing="$missing $v"
+          done
+          if [ -n "$missing" ]; then echo "missing secrets:$missing (see the top of this workflow)"; exit 1; fi
+
+      - uses: actions/checkout@v4
+
+      - name: Newest Xcode (at least 26, the iOS 26 SDK)
+        run: |
+          XC=$(ls -d /Applications/Xcode_[0-9]*.app 2>/dev/null | grep -vi 'beta' | sort -V | tail -1)
+          case "$XC" in */Xcode_2[6-9]*|*/Xcode_[3-9][0-9]*) ;; *) echo "no Xcode 26 or newer on this runner"; exit 1;; esac
+          sudo xcode-select -s "$XC"
+          xcodebuild -version
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Mobile bundle, synced into ios/ (cap sync runs pod install)
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run build:mobile
+
+      - run: ruby ios/ci/add-asset-downloader.rb
+        working-directory: frontend
+      - run: ruby ios/ci/add-watch-app.rb
+        working-directory: frontend
+      - run: ruby ios/ci/add-widgets.rb
+        working-directory: frontend
+      - run: sh ios/ci/plus-ids.sh
+        working-directory: frontend
+
+      # openGym's universal links belong to openGym's domain and team: Plus could never claim them,
+      # and its app id should not ask for them.
+      - name: No associated domains for Plus
+        working-directory: frontend/ios/App
+        run: /usr/libexec/PlistBuddy -c 'Delete :com.apple.developer.associated-domains' App/App.entitlements || true
+
+      - name: The API key, for xcodebuild
+        run: |
+          mkdir -p "$RUNNER_TEMP/asc"
+          printf '%s\n' "$ASC_KEY_P8" > "$RUNNER_TEMP/asc/AuthKey.p8"
+          echo "ASC_KEY_PATH=$RUNNER_TEMP/asc/AuthKey.p8" >> "$GITHUB_ENV"
+
+      - name: Version and build number
+        run: |
+          V=$(node -p "require('./frontend/package.json').version")
+          BASE=${V%%-*}
+          PLUS=${V#*-}; [ "$PLUS" != "$V" ] || PLUS=0
+          echo "MARKETING=$BASE" >> "$GITHUB_ENV"
+          echo "BUILD=$PLUS.$GITHUB_RUN_NUMBER" >> "$GITHUB_ENV"
+          echo "Plus $V → version $BASE, build $PLUS.$GITHUB_RUN_NUMBER"
+
+      - name: Archive, signed by Xcode
+        working-directory: frontend/ios/App
+        run: |
+          set -o pipefail
+          xcodebuild -workspace App.xcworkspace -scheme App -configuration Release \
+            -destination 'generic/platform=iOS' -archivePath "$PWD/build/App.xcarchive" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_KEY_PATH" -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            DEVELOPMENT_TEAM="$APPLE_TEAM_ID" CODE_SIGN_STYLE=Automatic \
+            MARKETING_VERSION="$MARKETING" CURRENT_PROJECT_VERSION="$BUILD" \
+            archive | tail -120
+
+      - name: Every bundle carries a Plus id
+        working-directory: frontend/ios/App
+        run: |
+          set -eu
+          for p in $(find build/App.xcarchive/Products/Applications/App.app \( -path '*.app/Info.plist' -o -path '*.appex/Info.plist' \)); do
+            id=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$p")
+            echo "$p  $id"
+            case "$id" in ch.opengym.plus|ch.opengym.plus.*) ;; *) echo "not a Plus id"; exit 1;; esac
+          done
+
+      - name: Export and upload to App Store Connect (internal testing only)
+        working-directory: frontend/ios/App
+        run: |
+          set -o pipefail
+          cat > "$RUNNER_TEMP/export.plist" <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>destination</key><string>upload</string>
+            <key>teamID</key><string>$APPLE_TEAM_ID</string>
+            <key>signingStyle</key><string>automatic</string>
+            <key>manageAppVersionAndBuildNumber</key><false/>
+            <key>testFlightInternalTestingOnly</key><true/>
+            <key>uploadSymbols</key><true/>
+          </dict></plist>
+          EOF
+          xcodebuild -exportArchive -archivePath "$PWD/build/App.xcarchive" \
+            -exportOptionsPlist "$RUNNER_TEMP/export.plist" -exportPath "$PWD/build/export" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_KEY_PATH" -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            | tail -80
+          echo "Uploaded: version $MARKETING ($BUILD). App Store Connect processes it, then TestFlight offers it to the internal group."
+
+      - name: Remove the key
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/asc"
