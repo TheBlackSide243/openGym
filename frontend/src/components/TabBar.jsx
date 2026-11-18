@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { useStore } from '../store/useStore.js'
 import { effectiveRoutineIds, effectiveRoutines } from '../lib/history.js'
 import { todayISO } from '../lib/format.js'
+import { dayApart, nextSessionIds } from '../lib/day-sessions.js'
 import { t } from '../lib/i18n.js'
 import Icon from './Icon.jsx'
 import Elapsed from './Elapsed.jsx'
@@ -25,8 +26,9 @@ function Tab({ active, icon, label, onClick, dot, tour }) {
 // Seven tabs share a phone's width, and a long name ("Impostazioni", "Einstellungen") is wider than
 // its tab. Rather than cut it, the names are set a little smaller until the longest fits, never
 // below 8px: all of them together (--tab-fs), so the bar keeps one size of type instead of a
-// different one under each icon. Measured again when the names change (the language) or the bar's
-// width does (a phone turned sideways).
+// different one under each icon. Start's word (Start, Resume, Workout, Edit workout) is one of them.
+// Measured again when the names change (the language, Start's word), when the bar first shows, or
+// when its width does (a phone turned sideways).
 function useFitLabels(ref, key) {
   useLayoutEffect(() => {
     const bar = ref.current
@@ -51,8 +53,12 @@ function useFitLabels(ref, key) {
   }, [key])
 }
 
-export default function TabBar({ onStart }) {
+// How long a press on Start is held before it opens the picker instead (#930).
+export const START_HOLD_MS = 450
+
+export default function TabBar({ onStart, onPick }) {
   const nav = useNavigate()
+  const hold = useRef(null)
   const loc = useLocation()
   const S = useStore(s => s.S)
   const user = useStore(s => s.user)
@@ -63,12 +69,16 @@ export default function TabBar({ onStart }) {
   const barRef = useRef(null)
   // The Health tab goes with the Health module (Settings → Modules, lib/modules.js).
   const healthOn = isOn(S, 'health')
-  useFitLabels(barRef, [t('Home'), t('Plan'), t('Stats'), healthOn ? t('Health') : '', t('Exercises'), t('Settings')].join('|'))
-  if (!user && !isGuest) return null
   const cur = loc.pathname.split('/')[1] || 'home'
+  const running = !!S.active && cur !== 'workout' && !S.active.editingWorkoutId && !S.active.backfill && S.active.start > 0
+  const startLabel = S.active ? (cur === 'workout' ? t('Workout') : S.active.editingWorkoutId ? t('Edit workout') : t('Resume')) : t('Start')
+  // Fitted again when the bar first shows (after signing in), and when Start's own word changes.
+  const shown = !!(user || isGuest)
+  useFitLabels(barRef, [shown, running ? '' : startLabel, t('Home'), t('Plan'), t('Stats'), healthOn ? t('Health') : '', t('Exercises'), t('Settings')].join('|'))
+  if (!shown) return null
   // A screen without a tab of its own lights the tab it is opened from (Muscles from both). Settings
   // and Health have tabs of their own here.
-  const PARENT = { history: 'stats', 'structural-balance': 'stats', 'progress-photos': 'stats', measurements: 'stats', checkin: 'home', muscles: 'library' }
+  const PARENT = { history: 'stats', 'structural-balance': 'stats', tools: 'stats', 'progress-photos': 'stats', measurements: 'stats', checkin: 'home', muscles: 'library', trainer: 'home' }
   const parent = cur === 'muscles' && loc.state?.from === '/stats' ? 'stats' : PARENT[cur]
   const on = k => cur === k || parent === k
 
@@ -79,15 +89,34 @@ export default function TabBar({ onStart }) {
     else retapTab(path)
   }
 
-  const running = !!S.active && cur !== 'workout' && !S.active.editingWorkoutId && !S.active.backfill && S.active.start > 0
   const startWorkout = () => {
+    // The press was held: the picker is open already, and this click is its release.
+    if (hold.current === 'fired') { hold.current = null; return }
     if (!S.active) {
+      // Settings → Workout → Start button (#930): every tap asks which workout.
+      if (S.startPick === 'ask' && onPick) { onPick(); return }
+      // A day trained separately (#908) starts its next session not done yet.
+      if (dayApart(S, todayISO())) {
+        const ids = nextSessionIds(S, todayISO())
+        if (ids) { onStart(ids); return }
       // A weekday can hold several routines; start the combined session if any of them has
       // exercises, otherwise fall through to the picker.
-      if (effectiveRoutines(S, todayISO()).some(r => r.ex.length)) { onStart(effectiveRoutineIds(S, todayISO())); return }
+      } else if (effectiveRoutines(S, todayISO()).some(r => r.ex.length)) { onStart(effectiveRoutineIds(S, todayISO())); return }
     }
     nav('/workout')
   }
+  // A long press on Start opens the picker (#930): today's plan on top, everything else below.
+  // A tap still does what Start always did. Only with no workout running.
+  const holdStart = () => {
+    if (S.active || !onPick) return
+    clearTimeout(hold.current)
+    hold.current = setTimeout(() => {
+      hold.current = 'fired'
+      try { navigator.vibrate?.(10) } catch { /* no vibration here */ }
+      onPick()
+    }, START_HOLD_MS)
+  }
+  const holdEnd = () => { if (hold.current !== 'fired') { clearTimeout(hold.current); hold.current = null } }
 
   return (
     <nav id="tabbar" ref={barRef}>
@@ -104,10 +133,12 @@ export default function TabBar({ onStart }) {
           button still named Resume; a past workout being edited or logged after the fact has no
           clock to run. */}
       <button data-tour="start" className={'start' + (S.active ? ' rec' : '') + (S.active && cur === 'workout' ? ' on' : '')} onClick={startWorkout}
+        onPointerDown={holdStart} onPointerUp={holdEnd} onPointerLeave={holdEnd} onPointerCancel={holdEnd}
+        onContextMenu={e => { if (!S.active && onPick) e.preventDefault() }}
         aria-label={running ? t('Resume') : undefined}>
         <span className="cir"><Icon name="play" /></span>
-        {running ? <span className="tab-time"><Elapsed start={S.active.start} /></span>
-          : <span>{S.active ? (cur === 'workout' ? t('Workout') : S.active.editingWorkoutId ? t('Edit workout') : t('Resume')) : t('Start')}</span>}
+        {running ? <span className="tab-time"><Elapsed start={S.active.start} pausedAt={S.active.pausedAt} /></span>
+          : <span className="tab-l">{startLabel}</span>}
       </button>
       {healthOn && <Tab active={on('health')} icon="heart" label={t('Health')} onClick={() => switchTab('/health')} />}
       <Tab active={on('library')} icon="dumbbell" label={t('Exercises')} onClick={() => switchTab('/library')} tour="tab-library" />

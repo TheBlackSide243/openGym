@@ -42,18 +42,20 @@ test('ask payload: the question, the sessions with planned and extra work told a
   assert.equal(w.entries[1].extra, true);
   assert.equal(w.entries[0].extra, undefined);
   assert.deepEqual(p.conversation.map(c => c.who), ['user', 'coach']);
-  assert.equal(p.library, undefined, 'an answer names no ids, so no library');
+  // coach-146: an answer may carry actions that name exercises, so it gets a library slice,
+  // what they train first.
+  assert.deepEqual(p.library.slice(0, 2).map(e => e.id), ['0001', '0002']);
+  assert.ok(p.library.length <= payloadLib.ASK_LIBRARY + 2);
 });
 
-test('ask payload: health readings travel only for a question about the body', () => {
+test('ask payload: the Health area travels only for a question about the body', () => {
   const plain = payloadLib.build(S, { handle: 'h'.repeat(16), kind: 'ask', note: 'Meglio squat o pressa?' });
-  assert.equal(plain.health, undefined);
-  assert.equal(plain.bodyweight, undefined);
+  assert.equal(plain.healthArea, undefined);
   // A fixed clock: "about a month" is counted from the job's day, not from whenever the test runs.
   const body = payloadLib.build(S, { handle: 'h'.repeat(16), kind: 'ask', now: Date.parse('2026-10-20T12:00:00Z'), note: 'Il mio grasso corporeo sta scendendo?' });
-  assert.deepEqual(body.health.bodyFat, { latest: 17, on: '2026-10-10', monthAgo: 18, since: '2026-09-01' });
-  assert.equal(body.health.steps.avgLast7, 9000);
-  assert.ok(!JSON.stringify(body.health).includes('apple-health'), 'no source, no record ids');
+  assert.deepEqual(body.healthArea.bodyFat, { latest: 17, on: '2026-10-10', monthAgo: 18, since: '2026-09-01' });
+  assert.equal(body.healthArea.steps.avgLast7, 9000);
+  assert.ok(!JSON.stringify(body.healthArea).includes('apple-health'), 'no source, no record ids');
 });
 
 test('a session without extras keeps exactly its old shape', () => {
@@ -79,6 +81,26 @@ test('ask payload: the running session the phone sent is bounded like a logged o
 test('asksAboutBody reads the body words of the app languages, and nothing else', () => {
   for (const q of ['How is my weight?', 'Dormo poco, è un problema?', 'Wie viel Körperfett?', 'Mon sommeil est mauvais ?', 'quanti passi?']) assert.ok(payloadLib.asksAboutBody(q), q);
   for (const q of ['How long should I rest?', 'Aggiungo un altro esercizio?', 'Meglio questo o quello?']) assert.ok(!payloadLib.asksAboutBody(q), q);
+});
+
+// Discord, becory: weigh-ins from a smart scale through Apple Health showed on Home, and the Coach
+// answered "I don't know your weight". The chat's payload had no body weight at all.
+test('ask payload: the last four weeks of weigh-ins, the ones from Apple Health or Health Connect too', () => {
+  const now = Date.parse('2026-11-03T12:00:00Z');
+  const withHealth = {
+    ...S, targetW: 75,
+    bodyweight: [
+      { d: '2026-09-01', w: 84, t: 1 },
+      { d: '2026-10-20', w: 82.4, t: 2, ins: [{ id: 'hk1', at: '07:02', w: 82.4, t: 2, src: 'health', sid: 'HK-1' }] },
+      { d: '2026-11-02', w: 81.9, t: 3, ins: [{ id: 'hk2', at: '07:10', w: 81.9, t: 3, src: 'health', sid: 'HK-2' }, { id: 'hk3', at: '20:00', w: 82.6, t: 4, src: 'health', sid: 'HK-3' }] },
+    ],
+  };
+  const p = payloadLib.build(withHealth, { handle: 'h'.repeat(16), kind: 'ask', note: 'What do I weigh?', now });
+  assert.equal(p.bodyweight.goal, 75);
+  assert.deepEqual(p.bodyweight.series, [{ d: '2026-10-20', w: 82.4 }, { d: '2026-11-02', w: 81.9, n: 2 }]);
+  // The prompt tells the model what it is reading.
+  const parts = buildPromptParts('ask', p);
+  assert.match(JSON.stringify(parts), /Apple Health or Health Connect/);
 });
 
 test('validateAsk: one answer, no changes', () => {

@@ -16,13 +16,37 @@ class MainViewController: CAPBridgeViewController {
     override open func webViewConfiguration(for instanceConfiguration: InstanceConfiguration) -> WKWebViewConfiguration {
         let config = super.webViewConfiguration(for: instanceConfiguration)
         config.setURLSchemeHandler(packFiles, forURLScheme: AnimationPackSchemeHandler.scheme)
+        // Text size "Like the phone" (lib/display-prefs.js): Dynamic Type's size, there before the
+        // page's first line runs, so nothing jumps. A WKWebView never scales our own font with it.
+        config.userContentController.addUserScript(WKUserScript(source: MainViewController.textScaleScript(event: false),
+                                                                injectionTime: .atDocumentStart, forMainFrameOnly: true))
         return config
+    }
+
+    /// Dynamic Type as a factor of the default size (Large, 17 pt body = 1), read through
+    /// UIFontMetrics so every category, the accessibility ones too, maps the way UIKit scales body text.
+    static func textScale() -> Double {
+        let body = UIFontMetrics(forTextStyle: .body).scaledValue(for: 17)
+        let k = Double(body / 17)
+        return k.isFinite && k > 0 ? (k * 100).rounded() / 100 : 1
+    }
+
+    /// The page's copy of it; `event`: also tell a page that is already running (a change in Settings).
+    static func textScaleScript(event: Bool) -> String {
+        let set = "window.__ogTextScale=\(textScale());"
+        return event ? set + "window.dispatchEvent(new Event('opengym:text-scale'));" : set
+    }
+
+    @objc private func textSizeChanged() {
+        webView?.evaluateJavaScript(MainViewController.textScaleScript(event: true), completionHandler: nil)
     }
 
     override open func capacitorDidLoad() {
         bridge?.registerPluginInstance(PrintPlugin())
+        bridge?.registerPluginInstance(SaveImagePlugin())
         bridge?.registerPluginInstance(RestAlertPlugin())
         bridge?.registerPluginInstance(DeviceAuthPlugin())
+        bridge?.registerPluginInstance(OidcBrowserPlugin())
         bridge?.registerPluginInstance(AnimationPacksPlugin())
         bridge?.registerPluginInstance(NudgeCheckPlugin())
         bridge?.registerPluginInstance(GymReminderPlugin())
@@ -41,6 +65,8 @@ class MainViewController: CAPBridgeViewController {
         // The Music app's player for the workout's music bar (lib/music/apple-music.js).
         bridge?.registerPluginInstance(MusicPlayerPlugin())
         WidgetPreview.runIfAsked()
+        NotificationCenter.default.addObserver(self, selector: #selector(textSizeChanged),
+                                               name: UIContentSizeCategory.didChangeNotification, object: nil)
         // After loadView has finished: the view is the web view only once it has.
         if ProcessInfo.processInfo.arguments.contains(MainViewController.pendingProbeArgument) {
             DispatchQueue.main.async { [weak self] in self?.showPendingProbe() }
@@ -57,8 +83,11 @@ class MainViewController: CAPBridgeViewController {
      * below the block (index.css body.tabbar-status).
      */
     private let calls = CXCallObserver()
+    // What the page last took, nil until it has (and again for each new document, which starts
+    // without the class): set only once the script has run, so a page that was not ready still gets it.
     private var islandTall: Bool?
     private var watchingIsland = false
+    private var pageLoads: NSKeyValueObservation?
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -70,6 +99,14 @@ class MainViewController: CAPBridgeViewController {
             }
             if #available(iOS 17.0, *) {
                 registerForTraitChanges([UITraitSceneCaptureState.self]) { (vc: MainViewController, _: UITraitCollection) in vc.reportIsland() }
+            }
+            // A reload, or the page loading again, is a new document: tell it once it has loaded.
+            pageLoads = webView?.observe(\.isLoading, options: [.new]) { [weak self] web, _ in
+                guard !web.isLoading else { return }
+                DispatchQueue.main.async {
+                    self?.islandTall = nil
+                    self?.reportIsland()
+                }
             }
         }
         reportIsland()
@@ -83,8 +120,9 @@ class MainViewController: CAPBridgeViewController {
     @objc private func reportIsland() {
         let tall = recording || calls.calls.contains { !$0.hasEnded }
         guard tall != islandTall, let web = webView else { return }
-        islandTall = tall
-        web.evaluateJavaScript("document.documentElement.classList.toggle('island-tall',\(tall))")
+        web.evaluateJavaScript("document.documentElement.classList.toggle('island-tall',\(tall))") { [weak self] _, error in
+            if error == nil { self?.islandTall = tall }
+        }
     }
 
     /**

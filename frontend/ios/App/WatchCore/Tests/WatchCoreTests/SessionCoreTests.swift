@@ -22,6 +22,21 @@ final class SessionCoreTests: XCTestCase {
         XCTAssertEqual(SessionCore.setIndex(s, entry: 0), 1)
     }
 
+    // Discord, Vam4L: sets logged on the phone only, the watch stayed on the first exercise.
+    func testFollowsThePhoneToTheNextExerciseOfTheSameWorkout() {
+        var s = SessionCore.applySnapshot(SessionState(), snap(workout("p1", sets: [row(60, 8), row(60, 8)])))
+        XCTAssertEqual(s.entryIndex, 0)
+        s = SessionCore.applySnapshot(s, snap(workout("p1", sets: [row(60, 8, done: true, at: 1), row(60, 8, done: true, at: 2)], cur: 1)))
+        XCTAssertEqual(s.entryIndex, 1)
+    }
+
+    func testAPageOpenedOnTheWatchStaysWhileThePhoneStaysPut() {
+        var s = SessionCore.applySnapshot(SessionState(), snap(workout("p1", sets: [row(60, 8), row(60, 8)])))
+        s.entryIndex = 1                                    // swiped on the wrist; the phone still says 0
+        s = SessionCore.applySnapshot(s, snap(workout("p1", sets: [row(60, 8, done: true, at: 1), row(60, 8)])))
+        XCTAssertEqual(s.entryIndex, 1)
+    }
+
     func testATickStaysUntilTheSnapshotShowsItAndTheLaterTickWins() {
         var s = SessionCore.applySnapshot(SessionState(), snap(workout("p1", sets: [row(60, 8), row(60, 8)])))
         let (t, event) = SessionCore.tick(s, entry: 0, set: 0, w: 62.5, r: 7, at: 1000, id: "e1")
@@ -31,18 +46,18 @@ final class SessionCoreTests: XCTestCase {
         // an older snapshot, sent before the phone applied the tick: the tick stays
         s = SessionCore.applySnapshot(s, snap(workout("p1", sets: [row(60, 8), row(60, 8)])))
         XCTAssertEqual(s.workout?.entries[0].sets[0], row(62.5, 7, done: true, at: 1000))
-        XCTAssertNotNil(s.pending["0025#0"])
+        XCTAssertNotNil(s.pending["e0:0025#0"])
         // the phone changed that set itself earlier: the watch's later tick still wins
         s = SessionCore.applySnapshot(s, snap(workout("p1", sets: [row(55, 5, done: true, at: 500), row(60, 8)])))
         XCTAssertEqual(s.workout?.entries[0].sets[0].w, 62.5)
         // the phone has applied it: confirmed, no longer pending
         s = SessionCore.applySnapshot(s, snap(workout("p1", sets: [row(62.5, 7, done: true, at: 1000), row(60, 8)])))
-        XCTAssertNil(s.pending["0025#0"])
+        XCTAssertNil(s.pending["e0:0025#0"])
         // a later change on the phone wins over the watch's tick
         s = SessionCore.tick(s, entry: 0, set: 1, w: 60, r: 8, at: 2000, id: "e2").0
         s = SessionCore.applySnapshot(s, snap(workout("p1", sets: [row(62.5, 7, done: true, at: 1000), row(65, 6, done: true, at: 3000)])))
         XCTAssertEqual(s.workout?.entries[0].sets[1].w, 65)
-        XCTAssertNil(s.pending["0025#1"])
+        XCTAssertNil(s.pending["e0:0025#1"])
     }
 
     func testRelaunchRestoresTheSessionWithItsUnconfirmedTicks() throws {
@@ -191,32 +206,5 @@ final class SessionCoreTests: XCTestCase {
         var after = w
         after.entries[0].sets[0] = SessionCore.markSide(w.entries[0].sets[0], "L", w: 20, r: 10, at: 2000)
         XCTAssertEqual(SessionCore.phoneTicks(before, after).map(\.at), [2000])
-    }
-
-    func testASessionsSizeCountsExercisesAndWorkingSets() {
-        var side = row(20, 0)
-        side.sides = Sides(L: SideRow(w: 20, r: 10, done: false), R: SideRow(w: 20, r: 10, done: false))
-        let warm = SetRow(w: 20, r: 10, sec: nil, done: false, warmup: true, at: nil)
-        let session = ReadySession(routineIds: ["r1"], name: "Push", entries: [
-            Entry(id: "0025", name: "Bench Press", mode: "reps", restSec: nil, last: nil, sets: [warm, row(60, 8), row(60, 8), row(60, 8)]),
-            Entry(id: "0426", name: "Split Squat", mode: "reps", restSec: nil, last: nil, sets: [side, row(20, 10)])])
-        let n = SessionCore.size(session)
-        XCTAssertEqual(n.exercises, 2)
-        XCTAssertEqual(n.sets, 5, "the warm-up is not a set, a per-side set counts once")
-    }
-
-    func testAnEmptyRoutineHasNoSize() {
-        let n = SessionCore.size(ReadySession(routineIds: [], name: "Empty", entries: []))
-        XCTAssertEqual(n.exercises, 0)
-        XCTAssertEqual(n.sets, 0)
-    }
-
-    func testExercisesWithoutWorkingSetsHaveNoSets() {
-        let warm = SetRow(w: 20, r: 10, sec: nil, done: false, warmup: true, at: nil)
-        let n = SessionCore.size(ReadySession(routineIds: [], name: "Odd", entries: [
-            Entry(id: "0025", name: "Bench Press", mode: "reps", restSec: nil, last: nil, sets: []),
-            Entry(id: "0426", name: "Split Squat", mode: "reps", restSec: nil, last: nil, sets: [warm])]))
-        XCTAssertEqual(n.exercises, 2)
-        XCTAssertEqual(n.sets, 0, "the start screen hides the line when there are no sets")
     }
 }

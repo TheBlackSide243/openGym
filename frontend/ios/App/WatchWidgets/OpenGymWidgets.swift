@@ -8,8 +8,7 @@ import WidgetKit
  *
  * The Smart Stack: high relevance only while the watch app runs a session (a rest, a set). Without
  * one this widget is quiet, so the iPhone's Live Activity for a workout running on the phone has
- * the stack instead of two cards saying the same thing. Sets the phone has not got yet raise it
- * a little (20), so that count can be seen there; the faces are in Watch/WidgetViews.swift.
+ * the stack instead of two cards saying the same thing.
  */
 struct Entry: TimelineEntry {
     let date: Date
@@ -19,8 +18,9 @@ struct Entry: TimelineEntry {
         switch state.mode {
         case "rest": return TimelineEntryRelevance(score: 100)
         case "set": return TimelineEntryRelevance(score: 60)
-        case "today": return TimelineEntryRelevance(score: 30)
-        default: return TimelineEntryRelevance(score: state.unsent > 0 ? 20 : 0)
+        case "today": return TimelineEntryRelevance(score: (state.unsent ?? 0) > 0 ? 40 : 30)
+        // Sets that never reached the phone are worth a look, even with nothing running.
+        default: return TimelineEntryRelevance(score: (state.unsent ?? 0) > 0 ? 20 : 0)
         }
     }
 }
@@ -53,6 +53,151 @@ struct Provider: TimelineProvider {
     }
 }
 
+/// Sets logged on the watch that have not reached the iPhone: an arrow and how many.
+struct UnsentBadge: View {
+    let count: Int
+
+    var body: some View {
+        ZStack {
+            AccessoryWidgetBackground()
+            VStack(spacing: -1) {
+                Image(systemName: "arrow.up.circle").font(.system(size: 15, weight: .semibold))
+                Text(verbatim: "\(count)").font(.system(.body, design: .rounded).weight(.semibold).monospacedDigit())
+            }
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text("Waiting to sync"))
+        .accessibilityValue(Text(verbatim: "\(count)"))
+    }
+}
+
+/// "Waiting to sync 3", the words first so no language needs a plural.
+struct UnsentLine: View {
+    let count: Int
+
+    var body: some View {
+        Label {
+            Text("Waiting to sync") + Text(verbatim: " \(count)")
+        } icon: {
+            Image(systemName: "arrow.up.circle")
+        }
+        .font(.caption2)
+        .lineLimit(1)
+        .minimumScaleFactor(0.7)
+    }
+}
+
+/// Work sets done of all today, as a ring (circular and corner complications).
+struct ProgressRing: View {
+    let done: Int
+    let total: Int
+
+    var body: some View {
+        Gauge(value: Double(done), in: 0...Double(max(total, 1))) {
+            Image(systemName: "dumbbell.fill")
+        } currentValueLabel: {
+            Text(verbatim: "\(done)")
+        }
+        .gaugeStyle(.accessoryCircularCapacity)
+    }
+}
+
+struct WidgetView: View {
+    @Environment(\.widgetFamily) var family
+    let entry: Entry
+
+    var body: some View {
+        let s = entry.state
+        let resting = s.mode == "rest" && (s.restEndsAt.map { $0 > entry.date } ?? false)
+        switch family {
+        case .accessoryCircular:
+            if resting, let end = s.restEndsAt {
+                ProgressView(timerInterval: entry.date...end, countsDown: true) {
+                    Image(systemName: "timer")
+                } currentValueLabel: {
+                    Text(timerInterval: entry.date...end, countsDown: true).monospacedDigit()
+                }
+                .progressViewStyle(.circular)
+            } else if let n = s.unsent, n > 0, s.mode != "set" {
+                UnsentBadge(count: n)
+            } else if s.mode == "today" {
+                ZStack {
+                    AccessoryWidgetBackground()
+                    Image(systemName: "play.fill").font(.title3)
+                }
+            } else if s.total > 0 {
+                ProgressRing(done: s.done, total: s.total)
+            } else {
+                ZStack {
+                    AccessoryWidgetBackground()
+                    OpenGymLogo().fill(OpenGymLogo.green).padding(10)
+                }
+            }
+        case .accessoryInline:
+            if resting, let end = s.restEndsAt {
+                Text(timerInterval: entry.date...end, countsDown: true)
+            } else if let n = s.unsent, n > 0, s.mode != "set" {
+                Text(Image(systemName: "arrow.up.circle")) + Text(verbatim: " \(n) · ") + Text("Waiting to sync")
+            } else if s.mode == "today" {
+                Text("Start workout")
+            } else if let n = s.unsent, n > 0 {
+                Text(Image(systemName: "arrow.up.circle")) + Text(verbatim: " \(n) · " + (s.detail.isEmpty ? s.title : "\(s.setLabel) · \(s.detail)"))
+            } else {
+                Text(verbatim: s.detail.isEmpty ? s.title : "\(s.setLabel) · \(s.detail)")
+            }
+        case .accessoryCorner:
+            Group {
+                if s.total > 0 && s.mode != "today" {
+                    Text(verbatim: "\(s.done)")
+                        .font(.title3.monospacedDigit())
+                } else {
+                    Image(systemName: s.mode == "today" ? "play.fill" : "dumbbell.fill").font(.title3)
+                }
+            }
+            .widgetLabel {
+                if resting, let end = s.restEndsAt {
+                    Text(timerInterval: entry.date...end, countsDown: true)
+                } else if let n = s.unsent, n > 0, s.mode != "set" {
+                    Text("Waiting to sync") + Text(verbatim: " \(n)")
+                } else if s.total > 0 && s.mode != "today" {
+                    Gauge(value: Double(s.done), in: 0...Double(max(s.total, 1))) { Text(verbatim: "") }
+                } else {
+                    Text(verbatim: s.title)
+                }
+            }
+        default:
+            VStack(alignment: .leading, spacing: 2) {
+                if resting, let end = s.restEndsAt {
+                    Label("Rest", systemImage: "timer").font(.caption2).foregroundStyle(.secondary)
+                    Text(timerInterval: entry.date...end, countsDown: true)
+                        .font(.system(.title2, design: .rounded).weight(.semibold).monospacedDigit())
+                    Text(verbatim: s.title).font(.caption2).lineLimit(1)
+                } else if s.mode == "today" {
+                    Label("Start workout", systemImage: "play.fill").font(.caption2).foregroundStyle(.secondary)
+                    Text(verbatim: s.title).font(.system(.headline, design: .rounded)).lineLimit(2)
+                } else if s.mode == "set" {
+                    Text(verbatim: s.title).font(.system(.headline, design: .rounded)).lineLimit(1)
+                    if !s.detail.isEmpty {
+                        Text(verbatim: s.setLabel.isEmpty ? s.detail : "\(s.setLabel) · \(s.detail)")
+                            .font(.system(.body, design: .rounded).monospacedDigit()).lineLimit(1)
+                    }
+                    if s.total > 0 && (s.unsent ?? 0) == 0 {
+                        Gauge(value: Double(s.done), in: 0...Double(s.total)) { Text(verbatim: "") }
+                            .gaugeStyle(.accessoryLinearCapacity)
+                    }
+                } else {
+                    HStack(spacing: 6) {
+                        OpenGymLogo().fill(OpenGymLogo.green).frame(width: 26, height: 13)
+                        BrandWord().font(.headline)
+                    }
+                }
+                if let n = s.unsent, n > 0, !resting { UnsentLine(count: n) }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+}
+
 @main
 struct OpenGymWidgets: WidgetBundle {
     var body: some Widget {
@@ -64,7 +209,7 @@ struct OpenGymWidgets: WidgetBundle {
 struct OpenGymWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: "OpenGymWorkout", provider: Provider()) { entry in
-            WidgetView(state: entry.state, date: entry.date)
+            WidgetView(entry: entry)
                 .environment(\.locale, entry.state.locale)
                 .containerBackground(.black, for: .widget)
                 // A tap on "Start" opens the watch app and starts today's workout.
@@ -97,19 +242,20 @@ struct LauncherView: View {
         case .accessoryCircular:
             ZStack {
                 AccessoryWidgetBackground()
-                OpenGymLogo().padding(9)
+                OpenGymLogo().fill(OpenGymLogo.green).padding(9)
             }
         case .accessoryCorner:
             OpenGymLogo()
+                .fill(OpenGymLogo.green)
                 .padding(4)
                 .widgetLabel { Text(verbatim: "openGym") }
         case .accessoryInline:
             Text(verbatim: "openGym")
         default:
             HStack(spacing: 8) {
-                OpenGymLogo().frame(width: 30, height: 20)
+                OpenGymLogo().fill(OpenGymLogo.green).frame(width: 30, height: 15)
                 VStack(alignment: .leading, spacing: 0) {
-                    Text(verbatim: "openGym").font(.headline)
+                    BrandWord().font(.headline)
                     if entry.state.mode == "today" {
                         Text(verbatim: entry.state.title).font(.caption2).foregroundStyle(.secondary).lineLimit(1)
                     }
@@ -134,3 +280,10 @@ struct OpenGymLauncher: Widget {
     }
 }
 
+
+/// "open" plus "Gym" in brand green, the wordmark of the logo (assets/logo).
+struct BrandWord: View {
+    var body: some View {
+        Text(verbatim: "open") + Text(verbatim: "Gym").foregroundColor(OpenGymLogo.green)
+    }
+}
