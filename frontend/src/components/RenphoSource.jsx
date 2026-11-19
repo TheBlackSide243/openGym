@@ -52,23 +52,32 @@ export default function RenphoSource() {
   const [again, setAgain] = useState(false)
   const timer = useRef(null)
   const wasSyncing = useRef(false)
+  // False once the page is left: an answer that comes after that changes nothing and asks no more.
+  const alive = useRef(true)
+  const later = (fn, ms) => { clearTimeout(timer.current); if (alive.current) timer.current = setTimeout(fn, ms) }
 
   const load = () => api('/api/renpho').then(s => {
+    if (!alive.current) return
     setSt(s)
     clearTimeout(timer.current)
-    if (s.syncing) timer.current = setTimeout(load, 2000)
+    if (s.syncing) later(load, 2000)
     // A sync that just ended: bring its readings into this device's copy now.
     if (wasSyncing.current && !s.syncing && typeof pullState === 'function') Promise.resolve().then(pullState).catch(() => {})
     wasSyncing.current = !!s.syncing
   }).catch(e => {
+    if (!alive.current) return
     // No RENPHO here at all (signed out, no server for this phone): nothing shows. The server
     // only out of reach for now (restarting, the phone offline): the card says so and asks again.
     clearTimeout(timer.current)
     if (e && (e.status === 401 || e.status === 404 || e.code === 'not-paired')) { setSt(false); return }
     setSt(s => (s && !s.unreachable ? s : { unreachable: e?.message || t('The sync failed. Try again later.') }))
-    timer.current = setTimeout(load, 10000)
+    later(load, 10000)
   })
-  useEffect(() => { load(); return () => clearTimeout(timer.current) }, [])
+  useEffect(() => {
+    alive.current = true
+    load()
+    return () => { alive.current = false; clearTimeout(timer.current) }
+  }, [])
 
   if (!user || st === false || st === null) return null
   if (st.unreachable) return <Section title="RENPHO Health">
@@ -84,18 +93,20 @@ export default function RenphoSource() {
       const { friend, friendEmail, ...sign } = form
       const body = { ...sign, areaCode: form.areaCode.trim().toUpperCase() || 'US', zone: zone(), ...(friend ? { mode: 'friend', friendEmail: friendEmail.trim() } : {}) }
       const s = await api('/api/renpho/connect', { method: 'POST', body: JSON.stringify(body), timeout: 45000 })
+      toast(t('RENPHO connected. Importing your measurements…'))
+      if (!alive.current) return
       setForm(f => ({ ...f, password: '' }))
       setAgain(false)
       setSt(s); wasSyncing.current = true
-      timer.current = setTimeout(load, 1500)
+      later(load, 1500)
       toast(t('RENPHO connected. Importing your measurements…'))
     } catch (e) {
-      setForm(f => ({ ...f, password: '' }))
       toast(errorText(e.data?.code, e.data?.reason))
-    } finally { setBusy(false) }
+      if (alive.current) setForm(f => ({ ...f, password: '' }))
+    } finally { if (alive.current) setBusy(false) }
   }
   const syncNow = async () => {
-    try { setSt(await api('/api/renpho/sync', { method: 'POST', body: '{}' })); wasSyncing.current = true; timer.current = setTimeout(load, 1500) }
+    try { const s = await api('/api/renpho/sync', { method: 'POST', body: '{}' }); if (alive.current) { setSt(s); wasSyncing.current = true; later(load, 1500) } }
     catch (e) { toast(errorText(e.data?.code)) }
   }
   const disconnect = async () => {
@@ -140,8 +151,10 @@ export default function RenphoSource() {
       <Row icon="download" iconTint="var(--grey)" title={t('RENPHO’s raw data')} subtitle={t('Every field RENPHO sent, as JSON')}>
         <Button size="sm" onClick={downloadRaw}>{t('Download')}</Button>
       </Row>
-      {/* Signed in with the app's own account, a second account is one step away. */}
-      {!again && (st.error?.code === 'auth' || st.mode !== 'friend') && <Row icon="link" iconTint="var(--orange)" title={t('Connect again')}
+      {/* Signed in with the app's own account, a second account is one step away; a second
+          account RENPHO no longer takes (a changed password, or its session refused even after
+          signing in again) is connected again the same way. */}
+      {!again && (st.error?.code === 'auth' || st.error?.code === 'rejected' || st.mode !== 'friend') && <Row icon="link" iconTint="var(--orange)" title={t('Connect again')}
         subtitle={st.mode !== 'friend' ? t('With a second account, the RENPHO app stays signed in on your phone.') : null}>
         <Button size="sm" onClick={() => { setForm(f => ({ ...f, friend: true })); setAgain(true) }}>{t('Connect')}</Button>
       </Row>}

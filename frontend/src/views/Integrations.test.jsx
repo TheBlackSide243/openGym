@@ -170,6 +170,11 @@ describe('the cards', () => {
     act(() => root.render(null))
     await mount()
     expect(card('renpho')).toBeNull()
+    // and its chip offers no connection that leads nowhere
+    act(() => [...host.querySelectorAll('.intg-chip')].find(b => b.textContent === 'Renpho').click())
+    await showSheet()
+    expect([...sheetHost.querySelectorAll('button')].some(b => b.textContent === 'Connect RENPHO')).toBe(false)
+    expect(sheetHost.textContent).toContain('has no direct line to openGym')
   })
 
   it('Plus: on iPhone, the Health area reading Apple Health counts as connected', async () => {
